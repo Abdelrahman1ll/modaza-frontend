@@ -3,7 +3,7 @@ import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 
 export default function Footer() {
   return (
-    <footer className="bg-(--color-dark) text-(--color-light) pt-14 pb-8 px-6 md:px-16  max-[810px]:pb-18 mt-12">
+    <footer className="bg-(--color-dark) text-(--color-light) pt-14 pb-8 px-6 md:px-16  max-[1070px]:pb-18 mt-6">
       <div className="max-w-7xl mx-auto grid grid-cols-4 max-[1100px]:grid-cols-2 max-[800px]:grid-cols-1 gap-10">
         <div>
           <h2 className="text-2xl font-bold text-(--color-primary) mb-3">

@@ -1,15 +1,19 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/home";
-import About from "./pages/About";
-import BackgroundEffect from "./pages/Three/three";
+import BackgroundEffect from "./components/Three/three";
+import Products from "./pages/products/product";
+import ScrollToTop from "./components/ScrollToTop";
+import BackButton from "./components/BackButton";
 
 export default function App() {
   return (
-    <div >
+    <div>
       <BackgroundEffect />
+      <ScrollToTop />
+      <BackButton />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/products" element={<Products />} />
       </Routes>
     </div>
   );
