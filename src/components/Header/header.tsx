@@ -35,10 +35,10 @@ export default function Header() {
               to="/"
               className="font-bold transition"
               onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--color-primary)")
+                (e.currentTarget.style.color = "var(--color-tiger)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--color-text)")
+                (e.currentTarget.style.color = "var(--color-dark)")
               }
             >
               Home
@@ -47,10 +47,10 @@ export default function Header() {
               to="/products"
               className="font-bold transition"
               onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--color-primary)")
+                (e.currentTarget.style.color = "var(--color-tiger)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--color-text)")
+                (e.currentTarget.style.color = "var(--color-dark)")
               }
             >
               Shop Now
@@ -59,10 +59,10 @@ export default function Header() {
               to="/contact"
               className="font-bold transition"
               onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--color-primary)")
+                (e.currentTarget.style.color = "var(--color-tiger)")
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--color-text)")
+                (e.currentTarget.style.color = "var(--color-dark)")
               }
             >
               Contact
@@ -86,19 +86,21 @@ export default function Header() {
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full pl-10 pr-4 py-2 rounded-full focus:border focus:outline-none"
+                className="w-full pl-10  py-2 rounded-full focus:border focus:outline-none"
                 style={{
-                  backgroundColor: "var(--color-primary)",
-                  color: "#000",
+                  color: "var(--color-pakistan)",
                 }}
               />
-              <Search className="absolute left-3 top-2.5" size={18} />
+              <Search
+                className="absolute text-(--color-pakistan) left-3 top-2.5"
+                size={20}
+              />
             </div>
 
             <div className="relative inline-block text-left">
               <span
                 onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex justify-center items-center px-2 py-1 bg-(--color-text) text-white font-medium shadow-md hover:bg-(--color-primary) focus:outline-none cursor-pointer rounded-full"
+                className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
               >
                 <img
                   src={selected.flag}
@@ -115,12 +117,12 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute mt-2 w-40 bg-white rounded-lg shadow-lg z-50 overflow-hidden"
+                    className="absolute mt-2 w-40 bg-(--color-cornsilk) rounded-lg shadow-lg z-50 overflow-hidden"
                   >
                     {countries.map((country) => (
                       <li
                         key={country.name}
-                        className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 cursor-pointer hover:bg-(--color-earth)"
                         onClick={() => {
                           setSelected(country);
                           setIsOpen(false);
@@ -201,7 +203,7 @@ export default function Header() {
                 >
                   <ShoppingCart size={24} />
                   <span
-                    className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-dark)"
+                    className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
                     title="عدد المنتجات في العربة"
                   >
                     2
@@ -228,17 +230,17 @@ export default function Header() {
             </button>
           </motion.div>
           {isMenuOpen && (
-            <div className="fixed top-24 left-0 h-full bg-(--color-light) w-2/3 shadow-lg z-50 flex flex-col p-6 transition-transform duration-300">
+            <div className="fixed top-24 left-0 h-full bg-(--color-cornsilk) w-2/3 shadow-lg z-50 flex flex-col p-6 transition-transform duration-300">
               <nav className="flex flex-col gap-4 font-medium">
                 <Link
                   to="/"
                   className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
                   onClick={() => setIsMenuOpen(false)}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-primary)")
+                    (e.currentTarget.style.color = "var(--color-tiger)")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-text)")
+                    (e.currentTarget.style.color = "var(--color-dark)")
                   }
                 >
                   Home
@@ -249,10 +251,10 @@ export default function Header() {
                   className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
                   onClick={() => setIsMenuOpen(false)}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-primary)")
+                    (e.currentTarget.style.color = "var(--color-tiger)")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-text)")
+                    (e.currentTarget.style.color = "var(--color-dark)")
                   }
                 >
                   Shop Now
@@ -263,10 +265,10 @@ export default function Header() {
                   className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
                   onClick={() => setIsMenuOpen(false)}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-primary)")
+                    (e.currentTarget.style.color = "var(--color-tiger)")
                   }
                   onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-text)")
+                    (e.currentTarget.style.color = "var(--color-dark)")
                   }
                 >
                   Contact
@@ -290,7 +292,7 @@ export default function Header() {
           <div className="relative inline-block text-left">
             <span
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex justify-center items-center px-2 py-1 bg-(--color-text) text-white font-medium shadow-md hover:bg-(--color-primary) focus:outline-none cursor-pointer rounded-full"
+              className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
             >
               <img
                 src={selected.flag}
@@ -307,12 +309,12 @@ export default function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute mt-1 right-0 w-40 bg-white rounded-lg shadow-lg z-50 overflow-hidden"
+                  className="absolute mt-1 right-0 w-40 bg-(--color-cornsilk) rounded-lg shadow-lg z-50 overflow-hidden"
                 >
                   {countries.map((country) => (
                     <li
                       key={country.name}
-                      className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                      className="flex items-center px-4 py-2 cursor-pointer hover:bg-(--color-earth)"
                       onClick={() => {
                         setSelected(country);
                         setIsOpen(false);
@@ -370,7 +372,7 @@ export default function Header() {
           >
             <ShoppingCart size={24} />
             <span
-              className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-dark)"
+              className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
               title="عدد المنتجات في العربة"
             >
               2

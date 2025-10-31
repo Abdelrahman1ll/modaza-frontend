@@ -16,7 +16,7 @@ export default function SearchInput({ onClose }: { onClose: () => void }) {
   return createPortal(
     <div
       className="
-        fixed top-[70px] left-0 w-full flex justify-center z-40
+        fixed top-24 left-0 w-full flex justify-center z-40
         min-[1080px]:hidden
       "
     >
@@ -24,9 +24,9 @@ export default function SearchInput({ onClose }: { onClose: () => void }) {
         <input
           type="text"
           placeholder="Search..."
-          className="w-full pl-12 pr-12 py-2 rounded-full text-lg focus:outline-none shadow-lg"
+          className="w-full pl-12 pr-12 py-2 rounded-full text-lg focus:outline-none shadow-lg opacity-90"
           style={{
-            backgroundColor: "var(--color-primary)",
+            backgroundColor: "var(--color-dark)",
             color: "#000",
           }}
           autoFocus

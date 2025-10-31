@@ -145,7 +145,7 @@ export default function Main() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-3 bg-(--color-text) text-white rounded-full shadow-md text-lg font-medium hover:bg-(--color-primary) transition-all cursor-pointer"
+                  className="px-8 py-3 bg-(--color-pakistan) text-(--color-cornsilk) rounded-full shadow-md text-lg font-medium hover:bg-(--color-dark) transition-all cursor-pointer"
                 >
                   Shop Now
                 </motion.button>
@@ -173,7 +173,7 @@ export default function Main() {
                     rotate: i % 2 === 0 ? -1.5 : 1.5,
                     transition: { type: "spring", stiffness: 150 },
                   }}
-                  className="overflow-hidden rounded-3xl shadow-xl w-full h-[60vh] md:h-[75vh] lg:h-[85vh] bg-transparent"
+                  className="overflow-hidden rounded-3xl w-full h-[60vh] md:h-[75vh] lg:h-[85vh] bg-transparent"
                 >
                   <motion.img
                     src={img}

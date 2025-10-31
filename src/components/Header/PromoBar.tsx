@@ -8,13 +8,13 @@ export default function PromoBar() {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 120, damping: 12 }}
-      className="w-full bg-(--color-primary) text-white text-center py-1 px-2 text-[11px] sm:text-xs md:text-sm font-medium flex items-center justify-center gap-1 sm:gap-1.5 shadow"
+      className="w-full bg-(--color-tiger) text-white text-center py-1 px-2 text-[11px] sm:text-xs md:text-sm font-medium flex items-center justify-center gap-1 sm:gap-1.5 shadow"
     >
       <Tag size={12} className="hidden sm:inline" />
       🎉 Get <span className="font-semibold">30% OFF</span> on all products — limited time!
       <Link
         to="/products"
-        className="ml-2 underline text-(--color-dark) hover:text-(--color-light) transition"
+        className="ml-2 underline text-(--color-pakistan) hover:text-(--color-dark) transition"
       >
         Shop Now
       </Link>

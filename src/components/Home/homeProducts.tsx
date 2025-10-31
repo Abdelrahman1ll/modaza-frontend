@@ -30,7 +30,7 @@ export default function HomeProducts() {
       <h2 className="text-3xl md:text-4xl py-2 font-bold mb-3 mt-24 text-center">
         Latest Products
       </h2>
-      <section className="max-w-7xl mx-auto px-6 py-2 bg-gray-50">
+      <section className="max-w-7xl mx-auto px-6 py-2 bg-transparent">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {products.map((product) => (
             <motion.div
@@ -55,7 +55,7 @@ export default function HomeProducts() {
                 <p className="text-lg font-bold">{product.price}</p>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
-                  className="mt-2 py-2 px-4 bg-(--color-primary) text-white rounded-full font-semibold shadow-md hover:bg-black transition-all"
+                  className="mt-2 py-2 px-4 bg-(--color-tiger) text-white rounded-full font-semibold shadow-md hover:bg-black transition-all"
                 >
                   Shop Now
                 </motion.button>
