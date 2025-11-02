@@ -11,13 +11,14 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "./search";
+import SignupEmail from "../Signup/signup";
 
 const countries = [
-  { name: "Egypt", flag: "https://flagcdn.com/eg.svg" },
-  { name: "Saudi", flag: "https://flagcdn.com/sa.svg" },
-  { name: "Morocco", flag: "https://flagcdn.com/ma.svg" },
-  { name: "Jordan", flag: "https://flagcdn.com/jo.svg" },
-  { name: "Kuwait", flag: "https://flagcdn.com/kw.svg" },
+  { name: "Egypt", flag: "/eg.svg" },
+  // { name: "Saudi", flag: "https://flagcdn.com/sa.svg" },
+  // { name: "Morocco", flag: "https://flagcdn.com/ma.svg" },
+  // { name: "Jordan", flag: "https://flagcdn.com/jo.svg" },
+  // { name: "Kuwait", flag: "https://flagcdn.com/kw.svg" },
 ];
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,7 +26,7 @@ export default function Header() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(countries[0]);
-
+  const [showSignup, setShowSignup] = useState(false);
   return (
     <>
       <header className="shadow-md py-4 px-6 max-[1080px]:hidden">
@@ -147,9 +148,8 @@ export default function Header() {
                 whileTap={{ scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <Link
-                  to="/login"
-                  className="transition"
+                <div
+                  className="transition cursor-pointer"
                   title="تسجيل الدخول"
                   style={{ background: "none" }}
                   onMouseEnter={(e) =>
@@ -158,9 +158,10 @@ export default function Header() {
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.color = "var(--color-text)")
                   }
+                  onClick={() => setShowSignup(true)}
                 >
                   <User size={24} />
-                </Link>
+                </div>
               </motion.div>
 
               <motion.div
@@ -406,9 +407,8 @@ export default function Header() {
           whileTap={{ scale: 0.9 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <Link
-            to="/login"
-            className="transition"
+          <div
+            className="transition cursor-pointer"
             title="تسجيل الدخول"
             style={{ background: "none" }}
             onMouseEnter={(e) =>
@@ -417,9 +417,10 @@ export default function Header() {
             onMouseLeave={(e) =>
               (e.currentTarget.style.color = "var(--color-text)")
             }
+            onClick={() => setShowSignup(true)}
           >
             <User size={24} />
-          </Link>
+          </div>
         </motion.div>
 
         <motion.div
@@ -443,6 +444,8 @@ export default function Header() {
           </Link>
         </motion.div>
       </header>
+
+      {showSignup && <SignupEmail onClose={() => setShowSignup(false)} />}
     </>
   );
 }

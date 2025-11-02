@@ -1,9 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home/home";
+import HomePage from "./pages/Home/home";
 import BackgroundEffect from "./components/Three/three";
-import Products from "./pages/products/product";
+import ProductsPage from "./pages/products/product";
 import ScrollToTop from "./components/ScrollToTop";
 import BackButton from "./components/BackButton";
+import ProductDetailsPage from "./pages/products/productDetails";
 
 export default function App() {
   return (
@@ -12,8 +13,9 @@ export default function App() {
       <ScrollToTop />
       <BackButton />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/products-details/:id" element={<ProductDetailsPage />} />
       </Routes>
     </div>
   );

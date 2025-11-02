@@ -33,6 +33,7 @@ export default function HomeProducts() {
       <section className="max-w-7xl mx-auto px-6 py-2 bg-transparent">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {products.map((product) => (
+            
             <motion.div
               key={product.id}
               className="relative overflow-hidden rounded-3xl cursor-pointer group shadow-lg"

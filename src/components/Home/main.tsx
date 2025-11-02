@@ -145,7 +145,7 @@ export default function Main() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-3 bg-(--color-pakistan) text-(--color-cornsilk) rounded-full shadow-md text-lg font-medium hover:bg-(--color-dark) transition-all cursor-pointer"
+                  className="px-8 py-3 bg-(--color-tiger) text-white rounded-full shadow-md text-lg font-medium hover:bg-(--color-earth) transition-all cursor-pointer"
                 >
                   Shop Now
                 </motion.button>
