@@ -33,9 +33,7 @@ const products: Product[] = [
     price: 89,
     oldPrice: 129,
     images: [
-      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
-      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
-      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
+      "/photo-1495385794356-15371f348c31.jpeg",
       "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
     ],
     sizes: ["M", "L", "XL"],
@@ -48,9 +46,7 @@ const products: Product[] = [
     price: 69,
     oldPrice: 99,
     images: [
-      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
-      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
-      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
+      "/photo-1495385794356-15371f348c31.jpeg",
       "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
     ],
     sizes: ["S", "M", "L", "XL"],
@@ -102,7 +98,7 @@ export default function ProductDetail() {
   const getColor = () => {
     if (percent > 60) return "var(--color-pakistan)"; // أخضر
     if (percent > 30) return "var(--color-tiger)"; // برتقالي
-    return "#FF0000"; // أحمر
+    return "#A80000"; // أحمر
   };
 
   return (
@@ -119,7 +115,7 @@ export default function ProductDetail() {
           key={mainImage}
           src={mainImage}
           alt={product.name}
-          className="w-full h-[750px] object-cover rounded-2xl"
+          className="w-full h-[450px] md:h-[800px] object-cover rounded-2xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
@@ -128,14 +124,14 @@ export default function ProductDetail() {
         {/* أسهم التنقل */}
         <button
           onClick={handlePrev}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-(--color-pakistan) bg-opacity-60 hover:bg-opacity-90 text-(--color-cornsilk) p-3 rounded-full transition cursor-pointer"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-(--color-pakistan) bg-opacity-60 hover:bg-opacity-90 text-(--color-cornsilk) p-2 rounded-full transition cursor-pointer"
         >
           <ChevronLeft size={24} />
         </button>
 
         <button
           onClick={handleNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-(--color-pakistan) bg-opacity-60 hover:bg-opacity-90 text-(--color-cornsilk) p-3 rounded-full transition cursor-pointer"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-(--color-pakistan) bg-opacity-60 hover:bg-opacity-90 text-(--color-cornsilk) p-2 rounded-full transition cursor-pointer"
         >
           <ChevronRight size={24} />
         </button>
@@ -171,16 +167,13 @@ export default function ProductDetail() {
 
         {/* السعر */}
         <div className="flex items-baseline gap-4">
-          <p
-            className="text-2xl font-bold"
-            style={{ color: "var(--color-pakistan)" }}
-          >
+          <p className="text-2xl font-bold text-(--color-pakistan)">
             EGP {product.price}
           </p>
           <p className="text-lg line-through text-gray-500">
             EGP {product.oldPrice}
           </p>
-          <span className="text-(--color-cornsilk) bg-(--color-tiger) px-2 py-1 rounded-full font-semibold">
+          <span className="text-(--color-cornsilk) bg-(--color-tiger) px-2 py-0.5 rounded-full font-semibold">
             {discountPercent}%
           </span>
         </div>
@@ -278,7 +271,7 @@ export default function ProductDetail() {
           <motion.button
             onClick={() => setIsFav(!isFav)}
             whileTap={{ scale: 0.9 }}
-            className="p-3 rounded-full shadow-md border"
+            className="p-3 rounded-full shadow-md border cursor-pointer"
           >
             <Heart
               size={26}

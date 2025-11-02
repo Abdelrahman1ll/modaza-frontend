@@ -3,6 +3,7 @@ import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";
 import ProductDetail from "../../components/Products/ProductDetail";
+import RelatedProducts from "../../components/Products/RelatedProducts";
 
 export default function ProductDetailsPage() {
   return (
@@ -12,6 +13,8 @@ export default function ProductDetailsPage() {
       <Header />
 
       <ProductDetail />
+
+      <RelatedProducts />
 
       <PaymentSection />
 

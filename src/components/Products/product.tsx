@@ -1,28 +1,37 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 const products = [
   {
     id: 1,
     name: "Casual T-Shirt",
     price: "700 EGP",
     discount: "20%",
-    img: "/photo-1495385794356-15371f348c31.jpeg",
+    images: [
+      "/photo-1495385794356-15371f348c31.jpeg",
+      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
+    ],
   },
   {
     id: 2,
     name: "Classic Jeans",
     price: "1200 EGP",
     discount: null,
-    img: "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
+    images: [
+      "/photo-1495385794356-15371f348c31.jpeg",
+      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
+    ],
   },
   {
     id: 3,
     name: "Modern Sweatshirt",
     price: "900 EGP",
     discount: "15%",
-    img: "/premium_photo-1681494700976-861938fe0513.jpeg",
+    images: [
+      "/photo-1495385794356-15371f348c31.jpeg",
+      "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
+    ],
   },
 ];
 
@@ -50,7 +59,7 @@ export default function Product() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {products.map((product) => {
               const isFav = favorites.includes(product.id);
-              
+
               return (
                 <motion.div
                   key={product.id}
@@ -60,7 +69,7 @@ export default function Product() {
                   {/* الصورة */}
                   <div className="relative">
                     <motion.img
-                      src={product.img}
+                      src={product.images[0]}
                       alt={product.name}
                       className="w-full h-[400px] object-cover transition-transform duration-300"
                       whileHover={{ scale: 1.05 }}
@@ -73,7 +82,7 @@ export default function Product() {
                     >
                       <Heart
                         size={24}
-                        color={isFav ? "#FEFAE0" : "black"}
+                        color={isFav ? "#BC6C25" : "black"}
                         fill={isFav ? "#BC6C25" : "transparent"}
                       />
                     </motion.button>
@@ -108,12 +117,10 @@ export default function Product() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="mt-auto w-full py-2 px-4 rounded-full font-semibold text-white shadow-md transition-all self-center cursor-pointer"
-                      style={{
-                        background: "var(--color-tiger)",
-                        boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-                      }}
-                      onClick={() => navigate(`/products-details/${product.id}`)} 
+                      className="mt-auto w-full py-2 px-4 rounded-full font-semibold bg-(--color-tiger) hover:bg-(--color-earth) text-white shadow-md transition-all self-center cursor-pointer"
+                      onClick={() =>
+                        navigate(`/products-details/${product.id}`)
+                      }
                     >
                       Product Details
                     </motion.button>
