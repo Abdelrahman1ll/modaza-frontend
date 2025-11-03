@@ -245,7 +245,7 @@ export default function ProductDetail() {
             </span>
           </div>
 
-          <div className="w-full h-3 bg-[--color-cornsilk] rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-(--color-earth) rounded-full overflow-hidden">
             <motion.div
               className="h-3 rounded-full"
               initial={{ width: 0 }}

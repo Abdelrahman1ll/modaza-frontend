@@ -55,6 +55,7 @@ const products = [
 
 export default function ProductSlider() {
   const [index, setIndex] = useState(0);
+  const [isGrabbing, setIsGrabbing] = useState(false);
 
   const next = () => {
     setIndex((prev) => (prev + 1) % products.length);
@@ -65,10 +66,7 @@ export default function ProductSlider() {
   };
 
   return (
-    <div
-      className="relative w-full h-full mt-4 flex flex-col items-center justify-center overflow-hidden"
-      style={{ background: "var(--color-cornsilk)" }}
-    >
+    <div className="relative w-full h-full mt-2 flex flex-col items-center justify-center overflow-hidden">
       {/* أزرار السحب */}
       <button
         onClick={prev}
@@ -87,13 +85,17 @@ export default function ProductSlider() {
       {/* سلايدر المنتجات */}
       <div className="w-full max-w-5xl overflow-hidden">
         <motion.div
-          className="flex transition-transform duration-700 ease-in-out"
+          className={`flex transition-transform duration-700 ease-in-out
+            ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}
+            `}
           animate={{ x: `-${index * 100}%` }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.3}
+          onDragStart={() => setIsGrabbing(true)}
           onDragEnd={(_, info) => {
+            setIsGrabbing(false);
             if (info.offset.x < -100) next(); // سحب لليسار
             else if (info.offset.x > 100) prev(); // سحب لليمين
           }}
@@ -128,7 +130,7 @@ export default function ProductSlider() {
       </div>
 
       {/* النقاط (Indicators) */}
-      <div className="flex gap-3 mt-6">
+      <div className="flex gap-3 mt-6 mb-1">
         {products.map((_, i) => (
           <button
             key={i}

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const products = [
   {
     id: 1,
@@ -46,7 +46,7 @@ export default function Product() {
   };
   return (
     <>
-      <div className="py-14">
+      <div className="py-14 m-4">
         <h2
           className="text-3xl md:text-4xl font-bold mb-10 text-center"
           style={{ color: "var(--color-dark)" }}
@@ -54,7 +54,7 @@ export default function Product() {
           Products
         </h2>
 
-        <section className="max-w-7xl mx-auto px-6">
+        <section className="max-w-7xl mx-auto ">
           {/* شبكة المنتجات */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {products.map((product) => {
@@ -63,22 +63,26 @@ export default function Product() {
               return (
                 <motion.div
                   key={product.id}
-                  className="rounded-3xl overflow-hidden bg-transparent shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col"
+                  className=" bg-transparent transition-all duration-300 flex flex-col"
                   whileHover={{ y: -5 }}
                 >
                   {/* الصورة */}
-                  <div className="relative">
+                  <div className="relative rounded-3xl overflow-hidden group">
+                    {/* الصورة */}
+                    <Link to={`/products-details/${product.id}`}>
                     <motion.img
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-full h-[400px] object-cover transition-transform duration-300"
+                      className="w-full h-[460px] rounded-3xl object-cover transition-transform duration-500"
                       whileHover={{ scale: 1.05 }}
                     />
+                    </Link>
 
+                    {/* زرار القلب */}
                     <motion.button
                       onClick={() => toggleFavorite(product.id)}
                       whileTap={{ scale: 0.8 }}
-                      className="absolute top-4 right-4 backdrop-blur-md p-2 rounded-full shadow-md cursor-pointer"
+                      className="absolute top-4 right-4 backdrop-blur-md p-2 rounded-full shadow-md cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     >
                       <Heart
                         size={24}
@@ -89,7 +93,7 @@ export default function Product() {
 
                     {/* الخصم */}
                     {product.discount && (
-                      <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg">
+                      <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                         {product.discount} OFF
                       </span>
                     )}
@@ -98,7 +102,7 @@ export default function Product() {
                   {/* التفاصيل */}
                   <div className="p-4 flex flex-col gap-4 grow">
                     {/* الاسم والسعر في صف واحد */}
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-2">
                       <h3
                         className="text-lg font-semibold"
                         style={{ color: "var(--color-dark)" }}
@@ -122,7 +126,7 @@ export default function Product() {
                         navigate(`/products-details/${product.id}`)
                       }
                     >
-                      Product Details
+                      View Product
                     </motion.button>
                   </div>
                 </motion.div>

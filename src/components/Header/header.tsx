@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "./search";
-import SignupEmail from "../Signup/signup";
+import Signup from "../Signup/signup";
 
 const countries = [
   { name: "Egypt", flag: "/eg.svg" },
@@ -445,7 +445,7 @@ export default function Header() {
         </motion.div>
       </header>
 
-      {showSignup && <SignupEmail onClose={() => setShowSignup(false)} />}
+      {showSignup && <Signup onClose={() => setShowSignup(false)} />}
     </>
   );
 }

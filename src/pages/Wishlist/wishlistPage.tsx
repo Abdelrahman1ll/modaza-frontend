@@ -2,23 +2,20 @@ import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";
-import ProductDetail from "../../components/Products/ProductDetail";
-import RelatedProducts from "../../components/Products/RelatedProducts";
+import Product from "../../components/Products/product";
 
-export default function ProductDetailsPage() {
+export default function WishlistPage() {
   return (
-    <>
+    <div>
       <PromoBar />
 
       <Header />
 
-      <ProductDetail />
-
-      <RelatedProducts />
+      <Product />
 
       <PaymentSection />
 
       <Footer />
-    </>
+    </div>
   );
 }

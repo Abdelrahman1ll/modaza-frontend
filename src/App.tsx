@@ -1,10 +1,12 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/Home/home";
+import HomePage from "./pages/Home/homePage";
 import BackgroundEffect from "./components/Three/three";
-import ProductsPage from "./pages/products/product";
+import ProductsPage from "./pages/products/productPage";
 import ScrollToTop from "./components/ScrollToTop";
 import BackButton from "./components/BackButton";
-import ProductDetailsPage from "./pages/products/productDetails";
+import ProductDetailsPage from "./pages/products/productDetailsPage";
+import CartPage from "./pages/Cart/cartPage";
+import WishlistPage from "./pages/Wishlist/wishlistPage";
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products-details/:id" element={<ProductDetailsPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
       </Routes>
     </div>
   );
