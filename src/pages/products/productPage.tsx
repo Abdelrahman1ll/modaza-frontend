@@ -10,6 +10,13 @@ export default function ProductsPage() {
 
       <Header />
 
+      <h2
+        className="text-3xl md:text-4xl font-bold mt-10 text-center"
+        style={{ color: "var(--color-dark)" }}
+      >
+        Products
+      </h2>
+
       <Product />
 
       <PaymentSection />

@@ -7,6 +7,11 @@ import BackButton from "./components/BackButton";
 import ProductDetailsPage from "./pages/products/productDetailsPage";
 import CartPage from "./pages/Cart/cartPage";
 import WishlistPage from "./pages/Wishlist/wishlistPage";
+import ProfilePage from "./pages/Profile/profilePage";
+import OrdersPage from "./pages/Orders/ordersPage";
+import OrderDetailsPage from "./pages/Orders/orderDetailsPage";
+import AddProductPage from "./pages/products/addProductPage";
+import EditProductPage from "./pages/products/editProductPage";
 
 export default function App() {
   return (
@@ -20,6 +25,11 @@ export default function App() {
         <Route path="/products-details/:id" element={<ProductDetailsPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/orders/:id" element={<OrderDetailsPage />} />
+        <Route path="/add-product" element={<AddProductPage />} />
+        <Route path="/edit-product/:id" element={<EditProductPage />} />
       </Routes>
     </div>
   );

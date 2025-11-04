@@ -11,6 +11,13 @@ export default function WishlistPage() {
 
       <Header />
 
+        <h2
+          className="text-3xl md:text-4xl font-bold mt-10 text-center"
+          style={{ color: "var(--color-dark)" }}
+        >
+        My Wishlist
+        </h2>
+
       <Product />
 
       <PaymentSection />

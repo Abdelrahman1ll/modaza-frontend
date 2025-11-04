@@ -7,6 +7,8 @@ import {
   Menu,
   House,
   Heart,
+  LogOut,
+  ShoppingBag,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -27,6 +29,14 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(countries[0]);
   const [showSignup, setShowSignup] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [openMenu, setOpenMenu] = useState(false);
+
+  const user = {
+    email: "alient@example.com",
+  };
+
+  const firstLetter = user.email.charAt(0).toUpperCase();
   return (
     <>
       <header className="shadow-md py-4 px-6 max-[1080px]:hidden">
@@ -143,26 +153,83 @@ export default function Header() {
             </div>
 
             <div className="flex items-center gap-8 mr-2">
-              <motion.div
-                whileHover={{ scale: 1.2, y: -4 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div
-                  className="transition cursor-pointer"
-                  title="تسجيل الدخول"
-                  style={{ background: "none" }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-primary)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-text)")
-                  }
-                  onClick={() => setShowSignup(true)}
-                >
-                  <User size={24} />
+              {isLoggedIn ? (
+                <div className="relative">
+                  <div
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setOpenMenu(!openMenu)}
+                    title="حسابي"
+                  >
+                    {/* دائرة فيها أول حرف */}
+                    <div className="w-10 h-10 flex items-center text-2xl justify-center rounded-full bg-(--color-tiger) opacity-90 text-(--color-cornsilk) font-bold shadow-sm">
+                      {firstLetter}
+                    </div>
+                  </div>
+
+                  {/* القائمة المنسدلة */}
+                  {openMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute right-0 mt-4 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90"
+                    >
+                      <Link
+                        to="/profile"
+                        className="flex items-center gap-2 px-4 py-2 transition"
+                        onClick={() => setOpenMenu(false)}
+                      >
+                        <User size={18} className="text-(--color-tiger)" />{" "}
+                        <span>Profile</span>
+                      </Link>
+
+                      <Link
+                        to="/orders"
+                        className="flex items-center gap-2 px-4 py-2 transition"
+                        onClick={() => setOpenMenu(false)}
+                      >
+                        <ShoppingBag
+                          size={18}
+                          className=" text-(--color-tiger)"
+                        />{" "}
+                        <span>My Orders</span>
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          setIsLoggedIn(false);
+                          setOpenMenu(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-left transition"
+                      >
+                        <LogOut size={18} className="text-[#A80000]" />{" "}
+                        <span>Log Out</span>
+                      </button>
+                    </motion.div>
+                  )}
                 </div>
-              </motion.div>
+              ) : (
+                <motion.div
+                  whileHover={{ scale: 1.2, y: -4 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <div
+                    className="transition cursor-pointer"
+                    title="تسجيل الدخول"
+                    style={{ background: "none" }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "var(--color-primary)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "var(--color-text)")
+                    }
+                    onClick={() => setShowSignup(true)}
+                  >
+                    <User size={24} />
+                  </div>
+                </motion.div>
+              )}
 
               <motion.div
                 whileHover={{ scale: 1.2, y: -4 }}
@@ -338,7 +405,7 @@ export default function Header() {
 
       <header
         className="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 
-             bg-(--color-light) flex items-center justify-between shadow-lg 
+             flex items-center justify-between shadow-lg 
              border border-(--color-text) py-3 px-6 rounded-full w-[90%] 
              backdrop-blur-md bg-opacity-90 min-[1080px]:hidden"
       >
@@ -402,26 +469,80 @@ export default function Header() {
           </Link>
         </motion.div>
 
-        <motion.div
-          whileHover={{ scale: 1.2, y: -4 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          <div
-            className="transition cursor-pointer"
-            title="تسجيل الدخول"
-            style={{ background: "none" }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.color = "var(--color-primary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.color = "var(--color-text)")
-            }
-            onClick={() => setShowSignup(true)}
-          >
-            <User size={24} />
+        {isLoggedIn ? (
+          <div className="relative">
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setOpenMenu(!openMenu)}
+              title="حسابي"
+            >
+              {/* دائرة فيها أول حرف */}
+              <div className="w-10 h-10 flex items-center text-2xl justify-center rounded-full bg-(--color-tiger) opacity-90 text-(--color-cornsilk) font-bold shadow-sm">
+                {firstLetter}
+              </div>
+            </div>
+
+            {/* القائمة المنسدلة */}
+            {openMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="absolute right-0 -top-36 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90"
+              >
+                <Link
+                  to="/profile"
+                  className="flex items-center gap-2 px-4 py-2 transition"
+                  onClick={() => setOpenMenu(false)}
+                >
+                  <User size={18} className="text-(--color-tiger)" />{" "}
+                  <span>Profile</span>
+                </Link>
+
+                <Link
+                  to="/orders"
+                  className="flex items-center gap-2 px-4 py-2 transition"
+                  onClick={() => setOpenMenu(false)}
+                >
+                  <ShoppingBag size={18} className=" text-(--color-tiger)" />{" "}
+                  <span>My Orders</span>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setIsLoggedIn(false);
+                    setOpenMenu(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-lefttransition"
+                >
+                  <LogOut size={18} className="text-[#A80000]" />{" "}
+                  <span>Log Out</span>
+                </button>
+              </motion.div>
+            )}
           </div>
-        </motion.div>
+        ) : (
+          <motion.div
+            whileHover={{ scale: 1.2, y: -4 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <div
+              className="transition cursor-pointer"
+              title="تسجيل الدخول"
+              style={{ background: "none" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.color = "var(--color-primary)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = "var(--color-text)")
+              }
+              onClick={() => setShowSignup(true)}
+            >
+              <User size={24} />
+            </div>
+          </motion.div>
+        )}
 
         <motion.div
           whileHover={{ scale: 1.2, y: -4 }}

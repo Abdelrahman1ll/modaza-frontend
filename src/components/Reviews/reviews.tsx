@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star } from "lucide-react";
 
-export default function ReviewsProduct() {
+export default function Reviews() {
   const [showReviews, setShowReviews] = useState(false);
   const [reviews, setReviews] = useState([
     {
@@ -181,30 +181,3 @@ export default function ReviewsProduct() {
     </section>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

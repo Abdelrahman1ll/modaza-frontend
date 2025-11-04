@@ -4,7 +4,7 @@ import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";
 import ProductDetail from "../../components/Products/productDetail";
 import ProductSlider from "../../components/Products/productSlider";
-import ReviewsProduct from "../../components/Products/reviewsProduct";
+import Reviews from "../../components/Reviews/reviews";
 
 export default function ProductDetailsPage() {
   return (
@@ -15,7 +15,7 @@ export default function ProductDetailsPage() {
 
       <ProductDetail />
 
-      <ReviewsProduct />
+      <Reviews />
 
       <ProductSlider />
 
