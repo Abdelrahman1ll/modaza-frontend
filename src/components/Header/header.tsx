@@ -10,6 +10,7 @@ import {
   LogOut,
   ShoppingBag,
   Plus,
+  LayoutDashboard,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -199,6 +200,18 @@ export default function Header() {
 
                       {user?.role !== "user" && (
                         <div>
+                          <Link
+                            to="/dashboard"
+                            className="flex items-center gap-2 px-4 py-2 transition"
+                            onClick={() => setOpenMenu(false)}
+                          >
+                            <LayoutDashboard
+                              size={18}
+                              className=" text-(--color-tiger)"
+                            />{" "}
+                            <span>Dashboard</span>
+                          </Link>
+
                           <Link
                             to="/add-product"
                             className="flex items-center gap-2 px-4 py-2 transition"
@@ -540,7 +553,7 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className={`absolute right-0 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90
-                  ${user?.role === "user" ? "-top-36" : "-top-86"}
+                  ${user?.role === "user" ? "-top-36" : "-top-96"}
                   
                   `}
               >
@@ -564,6 +577,18 @@ export default function Header() {
 
                 {user?.role !== "user" && (
                   <div>
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center gap-2 px-4 py-2 transition"
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      <LayoutDashboard
+                        size={18}
+                        className=" text-(--color-tiger)"
+                      />{" "}
+                      <span>Dashboard</span>
+                    </Link>
+
                     <Link
                       to="/add-product"
                       className="flex items-center gap-2 px-4 py-2 transition"

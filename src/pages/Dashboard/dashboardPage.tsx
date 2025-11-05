@@ -1,0 +1,18 @@
+import Dashboard from "../../components/Dashboard/dashboard";
+import Footer from "../../components/Footer/footer";
+import Header from "../../components/Header/header";
+import PromoBar from "../../components/Header/PromoBar";
+
+export default function DashboardPage() {
+  return (
+    <>
+      <PromoBar />
+
+      <Header />
+
+      <Dashboard />
+
+      <Footer />
+    </>
+  );
+}

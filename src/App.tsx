@@ -16,6 +16,7 @@ import AddDeliveryPage from "./pages/Delivery/addDeliveryPage";
 import DiscountCodesPage from "./pages/DiscountCodes/DiscountCodesPage";
 import AllUsersMessagesPage from "./pages/AllUsersMessages/allUsersMessagesPage";
 import EmailOrderDispatcherPage from "./pages/EmailOrderDispatcher/emailOrderDispatcherPage";
+import DashboardPage from "./pages/Dashboard/dashboardPage";
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/discount-codes" element={<DiscountCodesPage />} />
         <Route path="/all-users-messages" element={<AllUsersMessagesPage />} />
         <Route path="/email-order-dispatcher" element={<EmailOrderDispatcherPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </div>
   );
