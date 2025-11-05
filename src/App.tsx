@@ -12,6 +12,10 @@ import OrdersPage from "./pages/Orders/ordersPage";
 import OrderDetailsPage from "./pages/Orders/orderDetailsPage";
 import AddProductPage from "./pages/products/addProductPage";
 import EditProductPage from "./pages/products/editProductPage";
+import AddDeliveryPage from "./pages/Delivery/addDeliveryPage";
+import DiscountCodesPage from "./pages/DiscountCodes/DiscountCodesPage";
+import AllUsersMessagesPage from "./pages/AllUsersMessages/allUsersMessagesPage";
+import EmailOrderDispatcherPage from "./pages/EmailOrderDispatcher/emailOrderDispatcherPage";
 
 export default function App() {
   return (
@@ -30,6 +34,10 @@ export default function App() {
         <Route path="/orders/:id" element={<OrderDetailsPage />} />
         <Route path="/add-product" element={<AddProductPage />} />
         <Route path="/edit-product/:id" element={<EditProductPage />} />
+        <Route path="/add-delivery" element={<AddDeliveryPage />} />
+        <Route path="/discount-codes" element={<DiscountCodesPage />} />
+        <Route path="/all-users-messages" element={<AllUsersMessagesPage />} />
+        <Route path="/email-order-dispatcher" element={<EmailOrderDispatcherPage />} />
       </Routes>
     </div>
   );

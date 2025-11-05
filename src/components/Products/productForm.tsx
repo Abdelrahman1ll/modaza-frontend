@@ -13,15 +13,15 @@ interface Size {
 interface Product {
   id?: number;
   name: string;
-  price: number;
-  promoPrice: number;
+  price: string;
+  promoPrice: string;
   category: string;
   description: string;
   color: string;
-  stock: number;
-  wholesalePrice: number;
-  packagingCost: number;
-  marketingCost: number;
+  stock: string;
+  wholesalePrice: string;
+  packagingCost: string;
+  marketingCost: string;
   images: string[];
   sizes: Size[];
 }
@@ -30,15 +30,15 @@ const mockProducts: Product[] = [
   {
     id: 1,
     name: "Classic Hoodie",
-    price: 700,
-    promoPrice: 600,
+    price: '700',
+    promoPrice: '600',
     category: "Hoodies",
     description: "Warm and comfortable hoodie for casual wear.",
     color: "Black",
-    stock: 20,
-    wholesalePrice: 500,
-    packagingCost: 50,
-    marketingCost: 30,
+    stock: '20',
+    wholesalePrice: '500',
+    packagingCost: '50',
+    marketingCost: '30',
     images: ["/photo-1495385794356-15371f348c31.jpeg"],
     sizes: [
       { size: "M", length: "60", width: "50", stock: "5" },
@@ -48,15 +48,15 @@ const mockProducts: Product[] = [
   {
     id: 2,
     name: "Street Jacket",
-    price: 900,
-    promoPrice: 800,
+    price: '900',
+    promoPrice: '800',
     category: "Jackets",
     description: "Stylish street jacket with soft lining.",
     color: "Gray",
-    stock: 15,
-    wholesalePrice: 650,
-    packagingCost: 70,
-    marketingCost: 40,
+    stock: '15',
+    wholesalePrice: '650',
+    packagingCost: '70',
+    marketingCost: '40',
     images: ["/premium_photo-1667520043080-53dcca77e2aa.jpeg"],
     sizes: [{ size: "XL", length: "70", width: "60", stock: "5" }],
   },
@@ -66,15 +66,15 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
   const { id } = useParams();
   const [formData, setFormData] = useState<Product>({
     name: "",
-    price: 0,
-    promoPrice: 0,
+    price: "",
+    promoPrice: "",
     category: "",
     description: "",
     color: "",
-    stock: 0,
-    wholesalePrice: 0,
-    packagingCost: 0,
-    marketingCost: 0,
+    stock: "",
+    wholesalePrice: "",
+    packagingCost: "",
+    marketingCost: "",
     images: [],
     sizes: [{ size: "", length: "", width: "", stock: "" }],
   });
@@ -231,7 +231,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                     {input.label}
                   </label>
                   <input
-                    type="text"
+                    type={input.name == "color" ? "text" : "number"}
                     name={input.name}
                     value={formData[input.name as keyof Product] as any}
                     placeholder={input.label}

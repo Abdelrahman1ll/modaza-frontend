@@ -124,14 +124,14 @@ export default function ProductDetail() {
         {/* أسهم التنقل */}
         <button
           onClick={handlePrev}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-(--color-pakistan) bg-opacity-60 hover:bg-opacity-90 text-(--color-cornsilk) p-2 rounded-full transition cursor-pointer"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white hover:bg-opacity-90 text-(--color-tiger) p-2 rounded-full transition cursor-pointer"
         >
           <ChevronLeft size={24} />
         </button>
 
         <button
           onClick={handleNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-(--color-pakistan) bg-opacity-60 hover:bg-opacity-90 text-(--color-cornsilk) p-2 rounded-full transition cursor-pointer"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white hover:bg-opacity-90 text-(--color-tiger) p-2 rounded-full transition cursor-pointer"
         >
           <ChevronRight size={24} />
         </button>

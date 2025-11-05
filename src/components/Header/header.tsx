@@ -9,6 +9,7 @@ import {
   Heart,
   LogOut,
   ShoppingBag,
+  Plus,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -34,6 +35,7 @@ export default function Header() {
 
   const user = {
     email: "alient@example.com",
+    role: "admin",
   };
 
   const firstLetter = user.email.charAt(0).toUpperCase();
@@ -194,6 +196,55 @@ export default function Header() {
                         />{" "}
                         <span>My Orders</span>
                       </Link>
+
+                      {user?.role !== "user" && (
+                        <div>
+                          <Link
+                            to="/add-product"
+                            className="flex items-center gap-2 px-4 py-2 transition"
+                            onClick={() => setOpenMenu(false)}
+                          >
+                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                            <span>Add Product</span>
+                          </Link>
+
+                          <Link
+                            to="/add-delivery"
+                            className="flex items-center gap-2 px-4 py-2 transition"
+                            onClick={() => setOpenMenu(false)}
+                          >
+                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                            <span>Add Delivery</span>
+                          </Link>
+
+                          <Link
+                            to="/discount-codes"
+                            className="flex items-center gap-2 px-4 py-2 transition"
+                            onClick={() => setOpenMenu(false)}
+                          >
+                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                            <span>Discount Codes</span>
+                          </Link>
+
+                          <Link
+                            to="/all-users-messages"
+                            className="flex items-center gap-2 px-4 py-2 transition"
+                            onClick={() => setOpenMenu(false)}
+                          >
+                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                            <span>Send Message All...</span>
+                          </Link>
+
+                          <Link
+                            to="/email-order-dispatcher"
+                            className="flex items-center gap-2 px-4 py-2 transition"
+                            onClick={() => setOpenMenu(false)}
+                          >
+                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                            <span>Email Order</span>
+                          </Link>
+                        </div>
+                      )}
 
                       <button
                         onClick={() => {
@@ -488,7 +539,10 @@ export default function Header() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="absolute right-0 -top-36 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90"
+                className={`absolute right-0 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90
+                  ${user?.role === "user" ? "-top-36" : "-top-86"}
+                  
+                  `}
               >
                 <Link
                   to="/profile"
@@ -507,6 +561,55 @@ export default function Header() {
                   <ShoppingBag size={18} className=" text-(--color-tiger)" />{" "}
                   <span>My Orders</span>
                 </Link>
+
+                {user?.role !== "user" && (
+                  <div>
+                    <Link
+                      to="/add-product"
+                      className="flex items-center gap-2 px-4 py-2 transition"
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                      <span>Add Product</span>
+                    </Link>
+
+                    <Link
+                      to="/add-delivery"
+                      className="flex items-center gap-2 px-4 py-2 transition"
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                      <span>Add Delivery</span>
+                    </Link>
+
+                    <Link
+                      to="/discount-codes"
+                      className="flex items-center gap-2 px-4 py-2 transition"
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                      <span>Discount Codes</span>
+                    </Link>
+
+                    <Link
+                      to="/all-users-messages"
+                      className="flex items-center gap-2 px-4 py-2 transition"
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                      <span>Send Message All...</span>
+                    </Link>
+
+                    <Link
+                      to="/email-order-dispatcher"
+                      className="flex items-center gap-2 px-4 py-2 transition"
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
+                      <span>Email Order</span>
+                    </Link>
+                  </div>
+                )}
 
                 <button
                   onClick={() => {
