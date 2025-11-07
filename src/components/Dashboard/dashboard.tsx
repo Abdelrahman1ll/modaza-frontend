@@ -14,6 +14,14 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import {
+  PieChart as PieIcon,
+  TrendingUp,
+  BarChart3,
+  Users,
+  ShoppingBag,
+  DollarSign,
+} from "lucide-react";
 
 export default function Dashboard() {
   const [stats] = useState<any>({
@@ -44,37 +52,36 @@ export default function Dashboard() {
         yearly: "12.00%",
       },
       topProducts: {
-        product1: 300,
-        product2: 250,
-        product3: 200,
+        "Product A": 300,
+        "Product B": 250,
+        "Product C": 200,
       },
       topCustomers: {
-        customer1: 100,
-        customer2: 80,
-        customer3: 60,
+        "Customer 1": 100,
+        "Customer 2": 80,
+        "Customer 3": 60,
       },
       ordersByStatus: {
         Paid: 10,
         Delivered: 8,
         Canceled: 2,
+        Shipped: 3,
       },
       statusPercentages: {
         Paid: "50%",
         Delivered: "40%",
         Canceled: "10%",
+        Shipped: "10%",
       },
     },
   });
 
-  const COLORS = ["#DDA15E", "#BC6C25", "#606C38", "#283618"];
-
-  const theme = {
-    dark: "#FEFAE0",
-    pakistan: "#283618",
-    cornsilk: "#606C38",
-    earth: "#DDA15E",
-    tiger: "#BC6C25",
-  };
+  const COLORS = [
+    "var(--color-earth)",
+    "var(--color-tiger)",
+    "var(--color-dark)",
+    "var(--color-pakistan)",
+  ];
 
   const {
     totals,
@@ -85,77 +92,68 @@ export default function Dashboard() {
     statusPercentages,
   } = stats.stats;
 
-  // 🥧 Pie Chart
   const pieData = [
-    { name: "باستخدام خصم", value: discounts.withDiscount },
-    { name: "بدون خصم", value: discounts.withoutDiscount },
+    { name: "With Discount", value: discounts.withDiscount },
+    { name: "Without Discount", value: discounts.withoutDiscount },
   ];
 
-  // 📊 Bar Chart
   const barData = Object.keys(ordersByStatus).map((status) => ({
     status,
     count: ordersByStatus[status],
   }));
 
-  // 📈 Line Chart
   const lineData = [
-    { name: "يومي", value: parseFloat(changes.daily) },
-    { name: "أسبوعي", value: parseFloat(changes.weekly) },
-    { name: "شهري", value: parseFloat(changes.monthly) },
-    { name: "سنوي", value: parseFloat(changes.yearly) },
+    { name: "Daily", value: parseFloat(changes.daily) },
+    { name: "Weekly", value: parseFloat(changes.weekly) },
+    { name: "Monthly", value: parseFloat(changes.monthly) },
+    { name: "Yearly", value: parseFloat(changes.yearly) },
   ];
 
-  // 🧾 الكروت
   const totalsCards = [
-    { title: "إجمالي الطلبات", value: totals.totalOrders },
-    { title: "طلبات اليوم", value: totals.totalToday },
-    { title: "طلبات الأمس", value: totals.totalYesterday },
-    { title: "طلبات الأسبوع", value: totals.totalWeek },
-    { title: "طلبات الشهر", value: totals.totalMonth },
-    { title: "طلبات السنة", value: totals.totalYear },
+    { title: "Total Orders", value: totals.totalOrders, icon: <ShoppingBag /> },
+    { title: "Today Orders", value: totals.totalToday, icon: <TrendingUp /> },
+    {
+      title: "Yesterday Orders",
+      value: totals.totalYesterday,
+      icon: <BarChart3 />,
+    },
+    { title: "This Week", value: totals.totalWeek, icon: <PieIcon /> },
+    { title: "This Month", value: totals.totalMonth, icon: <BarChart3 /> },
+    { title: "This Year", value: totals.totalYear, icon: <TrendingUp /> },
   ];
 
   return (
-    <div
-      className="p-6 min-h-screen space-y-6"
-      style={{ color: theme.cornsilk }}
-    >
+    <div className="p-6 min-h-screen space-y-6">
       <h1
-        className="text-3xl font-bold mb-4 text-center"
-        style={{ color: theme.earth }}
+        className="text-3xl font-bold mb-4 text-center flex items-center justify-center gap-2"
+        style={{ color: "var(--color-earth)" }}
       >
-        📊 لوحة التحكم
+        Dashboard Overview
       </h1>
 
-      {/* 🔹 الكروت الإجمالية */}
+      {/* Totals Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {totalsCards.map((item, i) => (
           <div
             key={i}
-            className="p-5 rounded-xl shadow-lg flex flex-col justify-center items-center transition-transform hover:scale-105"
+            className="p-5 rounded-xl shadow-lg flex flex-col justify-center items-center gap-2 transition-transform hover:scale-105"
             style={{
-              background: `linear-gradient(135deg, ${theme.dark}, ${theme.earth})`,
+              background: `linear-gradient(135deg, var(--color-dark), var(--color-earth))`,
+              color: "var(--color-cornsilk)",
             }}
           >
+            <div className="text-3xl">{item.icon}</div>
             <p className="text-sm opacity-90">{item.title}</p>
-            <p className="text-3xl font-bold mt-2">
-              {item.value.toLocaleString()}
-            </p>
+            <p className="text-3xl font-bold">{item.value.toLocaleString()}</p>
           </div>
         ))}
       </div>
 
-      {/* 🔹 Pie + Line */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* 🥧 الخصومات */}
-        <div
-          className="p-6 rounded-xl shadow-lg"
-          style={{ backgroundColor: theme.dark }}
-        >
-          <h3 className="text-xl font-bold mb-2" style={{ color: theme.earth }}>
-            الطلبات بالخصم
-          </h3>
-          <ResponsiveContainer width="100%" height={250}>
+      {/* Pie + Line Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+        {/* Discounts */}
+        <div className="bg-(--color-cornsilk) rounded-xl shadow-lg">
+          <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
                 data={pieData}
@@ -163,47 +161,82 @@ export default function Dashboard() {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={90}
-                label
+                outerRadius={100}
+                labelLine={false}
+                label={({
+                  cx,
+                  cy,
+                  midAngle,
+                  innerRadius,
+                  outerRadius,
+                  percent,
+                  name,
+                }: any) => {
+                  let radius: number =
+                    innerRadius + (outerRadius - innerRadius) / 2;
+                  let x: number =
+                    cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+                  let y: number =
+                    cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      fill="#fff"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      fontSize={12}
+                    >
+                      {`${
+                        name === "With Discount"
+                          ? "with a discount"
+                          : "Without discount"
+                      } ${(percent * 100).toFixed(0)}%`}
+                    </text>
+                  );
+                }}
               >
                 {pieData.map((_entry, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={index}
+                    fill={COLORS[index % COLORS.length]}
+                    stroke="#fff"
+                    strokeWidth={2}
+                  />
                 ))}
               </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: theme.pakistan,
-                  color: theme.cornsilk,
-                }}
-              />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-        {/* 📈 نسب التغير */}
+        {/* Changes */}
         <div
-          className="p-6 rounded-xl shadow-lg"
-          style={{ backgroundColor: theme.dark }}
+          className="p-2 md:p-6 rounded-xl shadow-lg"
+          style={{ backgroundColor: "var(--color-cornsilk)" }}
         >
-          <h3 className="text-xl font-bold mb-2" style={{ color: theme.earth }}>
-            نسب التغير (٪)
+          <h3
+            className="text-xl font-bold mb-2 flex items-center gap-2"
+            style={{ color: "var(--color-earth)" }}
+          >
+            <TrendingUp /> Performance Changes (%)
           </h3>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={lineData}>
+            <LineChart data={lineData} margin={{ right: 12, left: -32 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="name" stroke={theme.cornsilk} />
-              <YAxis stroke={theme.cornsilk} />
+              <XAxis dataKey="name" stroke="var(--color-dark)" />
+              <YAxis stroke="var(--color-dark)" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: theme.pakistan,
-                  color: theme.cornsilk,
+                  backgroundColor: "var(--color-pakistan)",
+                  color: "var(--color-cornsilk)",
                 }}
               />
               <Legend />
+
               <Line
                 type="monotone"
                 dataKey="value"
-                stroke={theme.tiger}
+                stroke="var(--color-tiger)"
                 strokeWidth={3}
               />
             </LineChart>
@@ -211,57 +244,77 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 🔹 Bar Chart */}
+      {/* Orders by Status */}
       <div
-        className="p-6 rounded-xl shadow-lg"
-        style={{ backgroundColor: theme.dark }}
+        className="p-2 md:p-6 rounded-xl shadow-lg"
+        style={{ backgroundColor: "var(--color-cornsilk)" }}
       >
-        <h3 className="text-xl font-bold mb-3" style={{ color: theme.earth }}>
-          الطلبات حسب الحالة
+        <h3
+          className="text-xl font-bold mb-3 flex items-center gap-2"
+          style={{ color: "var(--color-earth)" }}
+        >
+          <BarChart3 /> Orders by Status
         </h3>
+
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={barData}>
+          <BarChart data={barData} margin={{ right: 12, left: -32 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#555" />
-            <XAxis dataKey="status" stroke={theme.cornsilk} />
-            <YAxis stroke={theme.cornsilk} />
+            <XAxis
+              dataKey="status"
+              stroke="var(--color-dark)"
+              tickFormatter={(status) =>
+                window.innerWidth < 768
+                  ? status.charAt(0).toUpperCase()
+                  : status
+              }
+            />
+            <YAxis stroke="var(--color-dark)" />
             <Tooltip
               contentStyle={{
-                backgroundColor: theme.pakistan,
-                color: theme.cornsilk,
+                backgroundColor: "var(--color-pakistan)",
+                color: "var(--color-cornsilk)",
               }}
             />
-            <Bar dataKey="count" fill={theme.tiger} barSize={40} />
+            <Bar dataKey="count" fill="var(--color-tiger)" barSize={40} />
           </BarChart>
         </ResponsiveContainer>
-        <div className="flex justify-around mt-3 text-sm">
-          {Object.entries(statusPercentages).map(([key, val]: any) => (
-            <p key={key}>
-              {key}: <span style={{ color: theme.earth }}>{val}</span>
-            </p>
-          ))}
+
+        <div className="flex justify-around mt-2 mb-1 ml-12 text-sm flex-wrap gap-2">
+          {Object.entries(statusPercentages).map(([key, val]: any) => {
+            const shortKey =
+              window.innerWidth < 768 ? key.charAt(0).toUpperCase() : key;
+            return (
+              <p key={key}>
+                {shortKey}:{" "}
+                <span style={{ color: "var(--color-earth)" }}>{val}</span>
+              </p>
+            );
+          })}
         </div>
       </div>
 
-      {/* 🔹 أكثر 5 عملاء */}
+      {/* Top Customers */}
       <div
         className="p-6 rounded-xl shadow-lg"
-        style={{ backgroundColor: theme.dark }}
+        style={{ backgroundColor: "var(--color-cornsilk)" }}
       >
-        <h3 className="text-xl font-bold mb-3" style={{ color: theme.earth }}>
-          🔝 أكثر 5 عملاء من حيث عدد الطلبات
+        <h3
+          className="text-xl font-bold mb-3 flex items-center gap-2"
+          style={{ color: "var(--color-earth)" }}
+        >
+          <Users /> Top 5 Customers by Orders
         </h3>
-
         <div className="overflow-x-auto">
           <table className="min-w-full text-center border-collapse">
             <thead>
               <tr
                 style={{
-                  backgroundColor: theme.pakistan,
-                  color: theme.cornsilk,
+                  backgroundColor: "var(--color-cornsilk)",
+                  color: "var(--color-pakistan)",
                 }}
               >
-                <th className="p-3 border-b border-gray-600">العميل</th>
-                <th className="p-3 border-b border-gray-600">عدد الطلبات</th>
+                <th className="p-3 border-b border-gray-600">Customer</th>
+                <th className="p-3 border-b border-gray-600">Orders</th>
               </tr>
             </thead>
             <tbody>
@@ -272,14 +325,16 @@ export default function Dashboard() {
                     className="hover:bg-opacity-20 hover:bg-white transition"
                     style={{
                       backgroundColor:
-                        i % 2 === 0 ? theme.pakistan : theme.dark,
-                      color: theme.cornsilk,
+                        i % 2 === 0
+                          ? "var(--color-tiger)"
+                          : "var(--color-earth)",
+                      color: "var(--color-cornsilk)",
                     }}
                   >
                     <td className="p-3 border-b border-gray-700">{customer}</td>
                     <td
                       className="p-3 border-b border-gray-700 font-bold"
-                      style={{ color: theme.earth }}
+                      style={{ color: "var(--color-cornsilk)" }}
                     >
                       {count}
                     </td>
@@ -291,82 +346,48 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* 🔹 أكثر منتجين مبيعًا */}
+      {/* Profits & Costs */}
       <div
-        className="p-6 rounded-xl shadow-lg mt-6"
-        style={{ backgroundColor: "#283618" }} // color-pakistan
+        className="p-6 rounded-xl shadow-lg"
+        style={{ backgroundColor: "var(--color-cornsilk)" }}
       >
         <h3
           className="text-xl font-bold mb-3 flex items-center gap-2"
-          style={{ color: "#DDA15E" }} // color-earth
+          style={{ color: "var(--color-earth)" }}
         >
-          🛍️ أكثر منتجين مبيعًا
+          <DollarSign /> Profits & Costs
         </h3>
-
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-center border-collapse">
-            <thead>
-              <tr style={{ backgroundColor: "#606C38", color: "#FEFAE0" }}>
-                <th className="p-3 border-b border-gray-700">اسم المنتج</th>
-                <th className="p-3 border-b border-gray-700">عدد المبيعات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(stats.stats.topProducts)
-                .slice(0, 2) // 🧮 نعرض فقط أول منتجين
-                .map(([product, sold]: any, i) => (
-                  <tr
-                    key={i}
-                    className="hover:bg-opacity-20 hover:bg-white transition"
-                    style={{
-                      backgroundColor: i % 2 === 0 ? "#283618" : "#606C38",
-                      color: "#FEFAE0",
-                    }}
-                  >
-                    <td className="p-3 border-b border-gray-700">{product}</td>
-                    <td
-                      className="p-3 border-b border-gray-700 font-bold"
-                      style={{ color: "#BC6C25" }} // color-tiger
-                    >
-                      {sold}
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 🔹 الأرباح والتكاليف */}
-      <div
-        className="p-6 rounded-xl shadow-lg"
-        style={{ backgroundColor: theme.dark }}
-      >
-        <h3 className="text-xl font-bold mb-3" style={{ color: theme.earth }}>
-          الأرباح والتكاليف
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
           <div>
-            <p>سعر الجملة</p>
-            <p className="text-lg font-bold" style={{ color: theme.earth }}>
+            <p>Wholesale</p>
+            <p
+              className="text-lg font-bold"
+              style={{ color: "var(--color-earth)" }}
+            >
               ${costs.totalWholesalePrice}
             </p>
           </div>
           <div>
-            <p>التسويق</p>
-            <p className="text-lg font-bold" style={{ color: theme.earth }}>
+            <p>Marketing</p>
+            <p
+              className="text-lg font-bold"
+              style={{ color: "var(--color-earth)" }}
+            >
               ${costs.totalMarketingCosts}
             </p>
           </div>
           <div>
-            <p>التغليف</p>
-            <p className="text-lg font-bold" style={{ color: theme.earth }}>
+            <p>Packaging</p>
+            <p
+              className="text-lg font-bold"
+              style={{ color: "var(--color-earth)" }}
+            >
               ${costs.totalPackagingCost}
             </p>
           </div>
           <div>
-            <p>صافي الربح</p>
-            <p className="text-lg font-bold text-green-400">
+            <p>Net Profit</p>
+            <p className="text-lg font-bold text-green-600">
               ${costs.totalNetProfit}
             </p>
           </div>

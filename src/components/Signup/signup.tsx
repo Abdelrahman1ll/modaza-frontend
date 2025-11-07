@@ -1,80 +1,22 @@
 import { X } from "lucide-react";
-import { useState } from "react";
-
+import useSignup from "./useSignup";
+import { GoogleLogin } from "@react-oauth/google";
 export default function Signup({ onClose }: { onClose: () => void }) {
-  const [email, setEmail] = useState<string>("");
-  const [showCodeInput, setShowCodeInput] = useState<boolean>(false);
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Signing up with email:", email);
-    setShowCodeInput(true);
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const value = e.target.value;
-    if (/^\d?$/.test(value)) {
-      const newCode = [...code];
-      newCode[index] = value;
-      setCode(newCode);
-
-      if (value && index < code.length - 1) {
-        const nextInput = document.getElementById(
-          `code-${index + 1}`
-        ) as HTMLInputElement;
-        nextInput?.focus();
-      }
-    }
-  };
-
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    if (e.key === "Backspace") {
-      e.preventDefault();
-      const newCode = [...code];
-      newCode[index] = "";
-      setCode(newCode);
-
-      if (index > 0) {
-        const prevInput = document.getElementById(
-          `code-${index - 1}`
-        ) as HTMLInputElement;
-        prevInput?.focus();
-      }
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pasteData = e.clipboardData.getData("Text").slice(0, 6);
-    const newCode = pasteData.split("");
-    setCode((prev) => {
-      const updated = [...prev];
-      for (let i = 0; i < updated.length; i++) {
-        updated[i] = newCode[i] || "";
-      }
-      return updated;
-    });
-
-    // وضع التركيز على آخر مربع تم لصقه
-    const lastIndex = Math.min(newCode.length, code.length - 1);
-    const lastInput = document.getElementById(
-      `code-${lastIndex}`
-    ) as HTMLInputElement;
-    lastInput?.focus();
-  };
-
-  const handleVerifyCode = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Verifying code:", code.join(""));
-    onClose();
-  };
+  const {
+    email,
+    setEmail,
+    showCodeInput,
+    code,
+    handleChange,
+    handleKeyDown,
+    handlePaste,
+    handleVerifyCode,
+    handleSignup,
+    isLoading,
+    isLoadingUser,
+    handleSuccess,
+    handleError,
+  } = useSignup(onClose as () => void);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[rgba(0,0,0,0.3)] backdrop-blur-sm z-50">
@@ -89,7 +31,7 @@ export default function Signup({ onClose }: { onClose: () => void }) {
 
         {!showCodeInput ? (
           <form className="text-left" onSubmit={handleSignup}>
-            <h2 className="text-3xl font-bold flex justify-center mb-6 text-(--color-pakistan)">
+            <h2 className="text-3xl font-bold flex justify-center mb-4 text-(--color-pakistan)">
               Sign Up
             </h2>
 
@@ -109,6 +51,11 @@ export default function Signup({ onClose }: { onClose: () => void }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length > 0 && (
+              <p className="text-red-500 text-xs mb-4">
+                Please enter a valid email address
+              </p>
+            )}
 
             <p className="text-xs mb-8 text-(--color-dark)">
               We will send you a verification message to confirm your email
@@ -117,10 +64,27 @@ export default function Signup({ onClose }: { onClose: () => void }) {
 
             <button
               type="submit"
-              className="w-full py-2 rounded-xl font-semibold text-white transition bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer"
+              disabled={!email || isLoading}
+              className={`w-full py-2 rounded-xl mb-4 font-semibold text-white transition 
+              flex items-center justify-center
+              ${
+                isLoading
+                  ? "bg-(--color-earth) cursor-not-allowed"
+                  : "bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer"
+              }`}
             >
-              Sign Up
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                "Sign Up"
+              )}
             </button>
+            {/* Sign Up with Google button */}
+            <GoogleLogin
+              onSuccess={handleSuccess}
+              onError={handleError}
+              // useOneTap // يفتح الـ One Tap مباشرة لو تحب
+            />
           </form>
         ) : (
           <form className="text-left" onSubmit={handleVerifyCode}>
@@ -151,22 +115,27 @@ export default function Signup({ onClose }: { onClose: () => void }) {
               ))}
             </div>
 
-            <p className="text-xs mb-8 text-(--color-dark) text-center">
-              Didn’t receive the code?{" "}
-              <button
-                type="button"
-                className="text-(--color-tiger) hover:text-(--color-earth) font-medium transition underline cursor-pointer"
-                onClick={() => alert("Code resent!")}
-              >
-                Resend
-              </button>
-            </p>
+            {!/^\d{6}$/.test(code.join("")) && code.join("").length !== 6 && (
+              <p className="text-red-500 text-xs mb-4 ml-8">
+                Please enter a valid 6-digit code
+              </p>
+            )}
 
             <button
               type="submit"
-              className="w-full py-2 rounded-xl font-semibold text-white transition bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer"
+              disabled={code.join("").length !== 6 || isLoadingUser}
+              className={`w-full py-2 rounded-xl font-semibold text-white transition flex items-center justify-center
+              ${
+                isLoadingUser
+                  ? "bg-(--color-earth) cursor-not-allowed"
+                  : "bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer"
+              }`}
             >
-              Verify Code
+              {isLoadingUser ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                "Verify Code"
+              )}
             </button>
           </form>
         )}

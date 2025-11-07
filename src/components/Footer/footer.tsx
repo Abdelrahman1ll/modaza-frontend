@@ -1,7 +1,10 @@
 import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok } from "react-icons/fa6";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
+import { useState } from "react";
+import Signup from "../Signup/signup";
 
 export default function Footer() {
+  const [showSignup, setShowSignup] = useState(false);
   return (
     <footer className="bg-(--color-pakistan)  pt-14 pb-8 px-6 md:px-16  max-[1070px]:pb-18 mt-6">
       <div className="max-w-7xl mx-auto grid grid-cols-4 max-[1100px]:grid-cols-2 max-[800px]:grid-cols-1 gap-10">
@@ -21,27 +24,42 @@ export default function Footer() {
           </h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="#"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 T-Shirts
               </a>
             </li>
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="#"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Pants
               </a>
             </li>
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="#"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Jackets
               </a>
             </li>
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="#"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Shoes
               </a>
             </li>
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="#"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Accessories
               </a>
             </li>
@@ -54,22 +72,34 @@ export default function Footer() {
           </h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="/sales-payment-policy"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Sales & Payment Policy
               </a>
             </li>
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="/return-exchange-policy"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Return & Exchange Policy
               </a>
             </li>
             <li>
-              <a href="#" className="text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="/privacy-policy"
+                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Privacy Policy
               </a>
             </li>
             <li>
-              <a href="#" className=" text-(--color-earth) hover:text-(--color-cornsilk) transition">
+              <a
+                href="/terms-conditions"
+                className=" text-(--color-earth) hover:text-(--color-cornsilk) transition"
+              >
                 Terms & Conditions
               </a>
             </li>
@@ -101,10 +131,16 @@ export default function Footer() {
                 type="email"
                 placeholder="Enter your email"
                 className="p-2 text-sm rounded-l-md w-full bg-(--color-cornsilk) text-(--color-pakistan) border border-(--color-tiger) focus:outline-none"
+               onChange={() => setShowSignup(true)}
+               value={''}
               />
-              <button className="bg-(--color-tiger) cursor-pointer hover:opacity-90 text-white px-4 rounded-r-md text-sm font-medium">
+              <button
+                className="bg-(--color-tiger) cursor-pointer hover:opacity-90 text-white px-4 rounded-r-md text-sm font-medium"
+                onClick={() => setShowSignup(true)}
+              >
                 Subscribe
               </button>
+              {showSignup && <Signup onClose={() => setShowSignup(false)} />}
             </div>
           </div>
 

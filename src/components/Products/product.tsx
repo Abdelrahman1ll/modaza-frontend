@@ -106,7 +106,7 @@ export default function Product() {
                         onClick={() =>
                           prevImage(product.id, product.images.length)
                         }
-                        className="absolute left-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute left-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       >
                         <ChevronLeft
                           size={20}
@@ -117,7 +117,7 @@ export default function Product() {
                         onClick={() =>
                           nextImage(product.id, product.images.length)
                         }
-                        className="absolute right-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute right-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                       >
                         <ChevronRight size={20} />
                       </button>
@@ -128,7 +128,7 @@ export default function Product() {
                   <motion.button
                     onClick={() => toggleFavorite(product.id)}
                     whileTap={{ scale: 0.8 }}
-                    className="absolute top-4 right-4 backdrop-blur-md p-2 rounded-full shadow-md cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    className="absolute top-4 right-4 backdrop-blur-md p-2 rounded-full shadow-md cursor-pointer opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500"
                   >
                     <motion.div
                       initial={false}
@@ -145,7 +145,7 @@ export default function Product() {
 
                   {/* الخصم */}
                   {product.discount && (
-                    <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500">
                       {product.discount} OFF
                     </span>
                   )}

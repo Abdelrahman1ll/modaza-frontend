@@ -1,0 +1,18 @@
+import Footer from "../../components/Footer/footer";
+import Header from "../../components/Header/header";
+import PromoBar from "../../components/Header/PromoBar";
+import Users from "../../components/Users/users";
+
+export default function UsersPage() {
+  return (
+    <>
+      <PromoBar />
+
+      <Header />
+
+      <Users />
+
+      <Footer />
+    </>
+  );
+}

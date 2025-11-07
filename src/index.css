@@ -1,19 +1,11 @@
 @import "tailwindcss";
 
 :root {
- 
-
-
   --color-dark: #606C38;
   --color-pakistan: #283618;
   --color-cornsilk: #FEFAE0;
   --color-earth: #DDA15E;
   --color-tiger: #BC6C25;
-
-
-
-
-
 }
 
 body {

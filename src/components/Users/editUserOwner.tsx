@@ -1,17 +1,87 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Save, Gift } from "lucide-react";
-import useProfile from "./useProfile";
+import { Save, CheckCircle2, Gift } from "lucide-react";
+import { useParams } from "react-router-dom";
+const users = [
+  {
+    id: 1,
+    firstName: "John",
+    lastName: "Doe",
+    email: "abdo@example.com",
+    phone: "123-456-7890",
+    birthDate: "1990-01-01",
+    role: "admin",
+  },
+  {
+    id: 2,
+    firstName: "Jane",
+    lastName: "Smith",
+    email: "jane@example.com",
+    phone: "987-654-3210",
+    birthDate: "1985-12-31",
+    role: "admin",
+  },
+  {
+    id: 3,
+    firstName: "Bob",
+    lastName: "Johnson",
+    email: "bob@example.com",
+    phone: "555-555-5555",
+    birthDate: "1970-01-01",
+    role: "admin",
+  },
+];
+export default function EditUserOwner() {
+  const { id } = useParams();
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    birthDate: "",
+    role: "",
+  });
 
-export default function Profile() {
-  const {
-    userData,
-    handleChange,
-    handleSave,
-    progress,
-    errors,
-    isLoading,
-    rewardVisible,
-  } = useProfile();
+  useEffect(() => {
+    const found = users.find((u) => u.id === Number(id));
+    if (found) {
+      setUserData(found);
+    } else {
+      // اختياري: مسك الحالة لو مفيش user للـ id ده
+      console.warn("User not found for id", id);
+    }
+  }, [id]);
+
+  const [progress, setProgress] = useState(20);
+  const [saved, setSaved] = useState(false);
+  const [rewardVisible, setRewardVisible] = useState(false);
+
+  useEffect(() => {
+    let filled = 0;
+    if (userData.firstName) filled += 1;
+    if (userData.lastName) filled += 1;
+    if (userData.phone) filled += 1;
+    if (userData.birthDate) filled += 1;
+
+    const completion = 20 + filled * 20;
+    setProgress(completion);
+
+    // إظهار رسالة الخصم إذا اكتمل الملف بنسبة 100%
+    if (completion === 100) setRewardVisible(true);
+    else setRewardVisible(false);
+  }, [userData]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Updated Data:", userData);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
@@ -22,7 +92,7 @@ export default function Profile() {
         className=" shadow-lg rounded-2xl p-4 w-full max-w-5xl"
       >
         <h2 className="text-3xl font-bold text-(--color-pakistan) mb-8 text-center">
-          Profile Information
+          Edit Profile
         </h2>
 
         {/* شريط التقدم */}
@@ -78,13 +148,8 @@ export default function Profile() {
                     value={userData.firstName}
                     onChange={handleChange}
                     placeholder="Enter your first name"
-                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
+                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-tiger)"
                   />
-                  {errors.firstName && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.firstName}
-                    </p>
-                  )}
                 </div>
 
                 <div>
@@ -97,13 +162,22 @@ export default function Profile() {
                     value={userData.lastName}
                     onChange={handleChange}
                     placeholder="Enter your last name"
-                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
+                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-tiger)"
                   />
-                  {errors.lastName && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.lastName}
-                    </p>
-                  )}
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium text-(--color-pakistan)">
+                    Role
+                  </label>
+                  <input
+                    type="text"
+                    name="role"
+                    value={userData.role}
+                    onChange={handleChange}
+                    placeholder="Role of the user"
+                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-tiger)"
+                  />
                 </div>
 
                 <div>
@@ -112,18 +186,11 @@ export default function Profile() {
                   </label>
                   <input
                     type="date"
-                    name="birthday"
-                    value={
-                      userData.birthday ? userData.birthday.split("T")[0] : ""
-                    }
+                    name="birthDate"
+                    value={userData.birthDate}
                     onChange={handleChange}
                     className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
                   />
-                  {errors.birthday && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.birthday}
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -159,9 +226,6 @@ export default function Profile() {
                     placeholder="Enter your phone number"
                     className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
                   />
-                  {errors.phone && (
-                    <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
-                  )}
                 </div>
               </div>
             </div>
@@ -169,26 +233,27 @@ export default function Profile() {
 
           {/* زر الحفظ */}
           <motion.button
-            whileHover={!isLoading ? { scale: 1.03 } : {}}
-            whileTap={!isLoading ? { scale: 0.95 } : {}}
-            disabled={isLoading}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.95 }}
             type="submit"
-            className={`w-full flex items-center justify-center gap-2 text-white font-semibold py-2 rounded-lg shadow-md transition
-             ${
-               isLoading
-                 ? "bg-(--color-earth) cursor-not-allowed opacity-90"
-                 : "bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer"
-             }`}
+            className="w-full flex items-center justify-center gap-2 bg-(--color-tiger) text-white font-semibold py-2 rounded-lg shadow-md hover:bg-(--color-earth) transition"
           >
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <>
-                <Save size={18} />
-                Save Changes
-              </>
-            )}
+            <Save size={18} />
+            Save Changes
           </motion.button>
+
+          {/* إشعار الحفظ */}
+          {saved && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="flex justify-center items-center gap-2 mt-3 text-green-600 font-medium"
+            >
+              <CheckCircle2 size={20} />
+              Changes saved successfully!
+            </motion.div>
+          )}
         </form>
       </motion.div>
     </div>

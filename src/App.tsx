@@ -17,13 +17,31 @@ import DiscountCodesPage from "./pages/DiscountCodes/DiscountCodesPage";
 import AllUsersMessagesPage from "./pages/AllUsersMessages/allUsersMessagesPage";
 import EmailOrderDispatcherPage from "./pages/EmailOrderDispatcher/emailOrderDispatcherPage";
 import DashboardPage from "./pages/Dashboard/dashboardPage";
-
+import UsersPage from "./pages/Users/usersPage";
+import EditUserOwnerPage from "./pages/Users/editUserOwnerPage";
+import PrivacyPolicyPage from "./pages/Policies/privacyPolicyPage";
+import ReturnExchangePolicyPage from "./pages/Policies/returnExchangePolicyPage";
+import SalesPaymentPolicyPage from "./pages/Policies/salesPaymentPolicyPage";
+import TermsConditionsPage from "./pages/Policies/termsConditionsPage";
+import { ToastContainer } from 'react-toastify';
 export default function App() {
   return (
     <div>
       <BackgroundEffect />
       <ScrollToTop />
       <BackButton />
+       <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
@@ -38,8 +56,23 @@ export default function App() {
         <Route path="/add-delivery" element={<AddDeliveryPage />} />
         <Route path="/discount-codes" element={<DiscountCodesPage />} />
         <Route path="/all-users-messages" element={<AllUsersMessagesPage />} />
-        <Route path="/email-order-dispatcher" element={<EmailOrderDispatcherPage />} />
+        <Route
+          path="/email-order-dispatcher"
+          element={<EmailOrderDispatcherPage />}
+        />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/all-users" element={<UsersPage />} />
+        <Route path="/edit-user-owner/:id" element={<EditUserOwnerPage />} />
+        <Route
+          path="/sales-payment-policy"
+          element={<SalesPaymentPolicyPage />}
+        />
+        <Route
+          path="/return-exchange-policy"
+          element={<ReturnExchangePolicyPage />}
+        />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-conditions" element={<TermsConditionsPage />} />
       </Routes>
     </div>
   );

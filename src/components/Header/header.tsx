@@ -11,12 +11,14 @@ import {
   ShoppingBag,
   Plus,
   LayoutDashboard,
+  Users,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "./search";
 import Signup from "../Signup/signup";
-
+import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
 const countries = [
   { name: "Egypt", flag: "/eg.svg" },
   // { name: "Saudi", flag: "https://flagcdn.com/sa.svg" },
@@ -31,15 +33,27 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(countries[0]);
   const [showSignup, setShowSignup] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [openMenu, setOpenMenu] = useState(false);
 
-  const user = {
-    email: "alient@example.com",
-    role: "admin",
+  const secretKey = import.meta.env.VITE_SECRET_KEY;
+
+  const encryptedUser = Cookies.get("user");
+
+  let user;
+  if (encryptedUser) {
+    const decryptedUser = CryptoJS.AES.decrypt(
+      encryptedUser,
+      secretKey
+    ).toString(CryptoJS.enc.Utf8);
+
+    user = JSON.parse(decryptedUser);
+  }
+
+  const handleLogout = () => {
+    Cookies.remove("user");
+    return (window.location.href = "/");
   };
 
-  const firstLetter = user.email.charAt(0).toUpperCase();
   return (
     <>
       <header className="shadow-md py-4 px-6 max-[1080px]:hidden">
@@ -156,7 +170,7 @@ export default function Header() {
             </div>
 
             <div className="flex items-center gap-8 mr-2">
-              {isLoggedIn ? (
+              {user && user.user ? (
                 <div className="relative">
                   <div
                     className="flex items-center gap-2 cursor-pointer"
@@ -165,7 +179,7 @@ export default function Header() {
                   >
                     {/* دائرة فيها أول حرف */}
                     <div className="w-10 h-10 flex items-center text-2xl justify-center rounded-full bg-(--color-tiger) opacity-90 text-(--color-cornsilk) font-bold shadow-sm">
-                      {firstLetter}
+                      {user.user.email.charAt(0).toUpperCase()}
                     </div>
                   </div>
 
@@ -175,7 +189,7 @@ export default function Header() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="absolute right-0 mt-4 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90"
+                      className="absolute right-0 mt-6 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90"
                     >
                       <Link
                         to="/profile"
@@ -198,7 +212,7 @@ export default function Header() {
                         <span>My Orders</span>
                       </Link>
 
-                      {user?.role !== "user" && (
+                      {user?.user.role !== "user" && (
                         <div>
                           <Link
                             to="/dashboard"
@@ -210,6 +224,18 @@ export default function Header() {
                               className=" text-(--color-tiger)"
                             />{" "}
                             <span>Dashboard</span>
+                          </Link>
+
+                          <Link
+                            to="/all-users"
+                            className="flex items-center gap-2 px-4 py-2 transition"
+                            onClick={() => setOpenMenu(false)}
+                          >
+                            <Users
+                              size={18}
+                              className=" text-(--color-tiger)"
+                            />{" "}
+                            <span>All Users</span>
                           </Link>
 
                           <Link
@@ -261,7 +287,7 @@ export default function Header() {
 
                       <button
                         onClick={() => {
-                          setIsLoggedIn(false);
+                          handleLogout();
                           setOpenMenu(false);
                         }}
                         className="w-full flex items-center gap-2 px-4 py-2 text-left transition"
@@ -533,7 +559,7 @@ export default function Header() {
           </Link>
         </motion.div>
 
-        {isLoggedIn ? (
+        {user && user.user ? (
           <div className="relative">
             <div
               className="flex items-center gap-2 cursor-pointer"
@@ -542,7 +568,7 @@ export default function Header() {
             >
               {/* دائرة فيها أول حرف */}
               <div className="w-10 h-10 flex items-center text-2xl justify-center rounded-full bg-(--color-tiger) opacity-90 text-(--color-cornsilk) font-bold shadow-sm">
-                {firstLetter}
+                {user.user.email.charAt(0).toUpperCase()}
               </div>
             </div>
 
@@ -553,7 +579,7 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className={`absolute right-0 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90
-                  ${user?.role === "user" ? "-top-36" : "-top-96"}
+                  ${user?.user.role === "user" ? "-top-36" : "-top-106"}
                   
                   `}
               >
@@ -575,7 +601,7 @@ export default function Header() {
                   <span>My Orders</span>
                 </Link>
 
-                {user?.role !== "user" && (
+                {user?.user.role !== "user" && (
                   <div>
                     <Link
                       to="/dashboard"
@@ -587,6 +613,15 @@ export default function Header() {
                         className=" text-(--color-tiger)"
                       />{" "}
                       <span>Dashboard</span>
+                    </Link>
+
+                    <Link
+                      to="/all-users"
+                      className="flex items-center gap-2 px-4 py-2 transition"
+                      onClick={() => setOpenMenu(false)}
+                    >
+                      <Users size={18} className=" text-(--color-tiger)" />{" "}
+                      <span>All Users</span>
                     </Link>
 
                     <Link
@@ -638,7 +673,7 @@ export default function Header() {
 
                 <button
                   onClick={() => {
-                    setIsLoggedIn(false);
+                    handleLogout();
                     setOpenMenu(false);
                   }}
                   className="w-full flex items-center gap-2 px-4 py-2 text-lefttransition"
