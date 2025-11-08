@@ -6,7 +6,6 @@ import {
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
-import { useUsersSignupGoogleMutation } from "../../redux/users/apiUsers";
 
 export default function useSignup(onClose: () => void) {
   const [email, setEmail] = useState<string>("");
@@ -124,40 +123,6 @@ export default function useSignup(onClose: () => void) {
     }
   };
 
-  // signup with google
-  const [signupGoogle] = useUsersSignupGoogleMutation();
-  const handleSuccess = async (credentialResponse: any) => {
-    const token = credentialResponse.credential;
-    if (!token) {
-      toast.error("Google login failed");
-      return;
-    }
-
-    try {
-      const response = await signupGoogle({ token_google: token }).unwrap();
-      if (response) {
-        onClose();
-        const secretKey = import.meta.env.VITE_SECRET_KEY;
-        const encryptedUser = CryptoJS.AES.encrypt(
-          JSON.stringify(response),
-          secretKey
-        ).toString();
-        Cookies.set("user", encryptedUser, {
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90),
-          secure: import.meta.env.VITE_NODE_ENV === "production" ? true : false,
-          sameSite: "strict",
-          path: "/",
-        });
-        toast.success("Logged in successfully with Google!");
-      }
-    } catch {
-      toast.error("Failed to login with Google");
-    }
-  };
-  const handleError = () => {
-    toast.error("Google login failed");
-  };
-
   return {
     email,
     setEmail,
@@ -170,7 +135,5 @@ export default function useSignup(onClose: () => void) {
     handleSignup,
     isLoading,
     isLoadingUser,
-    handleSuccess,
-    handleError,
   };
 }

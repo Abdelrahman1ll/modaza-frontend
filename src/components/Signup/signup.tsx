@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import useSignup from "./useSignup";
-import { GoogleLogin } from "@react-oauth/google";
+import GoogleSignup from "./googleSignup";
 export default function Signup({ onClose }: { onClose: () => void }) {
   const {
     email,
@@ -14,8 +14,6 @@ export default function Signup({ onClose }: { onClose: () => void }) {
     handleSignup,
     isLoading,
     isLoadingUser,
-    handleSuccess,
-    handleError,
   } = useSignup(onClose as () => void);
 
   return (
@@ -30,62 +28,61 @@ export default function Signup({ onClose }: { onClose: () => void }) {
         </button>
 
         {!showCodeInput ? (
-          <form className="text-left" onSubmit={handleSignup}>
-            <h2 className="text-3xl font-bold flex justify-center mb-4 text-(--color-pakistan)">
-              Sign Up
-            </h2>
+          <div>
+            <form className="text-left" onSubmit={handleSignup}>
+              <h2 className="text-3xl font-bold flex justify-center mb-4 text-(--color-pakistan)">
+                Sign Up
+              </h2>
 
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium mb-2 ml-1 text-(--color-pakistan)"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full px-4 py-2 rounded-lg border border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-earth) mb-4 text-(--color-pakistan) bg-white"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length > 0 && (
-              <p className="text-red-500 text-xs mb-4">
-                Please enter a valid email address
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium mb-2 ml-1 text-(--color-pakistan)"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="w-full px-4 py-2 rounded-lg border border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-earth) mb-4 text-(--color-pakistan) bg-white"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+                email.length > 0 && (
+                  <p className="text-red-500 text-xs mb-4">
+                    Please enter a valid email address
+                  </p>
+                )}
+
+              <p className="text-xs mb-8 text-(--color-dark)">
+                We will send you a verification message to confirm your email
+                address.
               </p>
-            )}
 
-            <p className="text-xs mb-8 text-(--color-dark)">
-              We will send you a verification message to confirm your email
-              address.
-            </p>
-
-            <button
-              type="submit"
-              disabled={!email || isLoading}
-              className={`w-full py-2 rounded-xl mb-4 font-semibold text-white transition 
+              <button
+                type="submit"
+                disabled={!email || isLoading}
+                className={`w-full py-2 rounded-xl mb-4 font-semibold text-white transition 
               flex items-center justify-center
               ${
                 isLoading
                   ? "bg-(--color-earth) cursor-not-allowed"
                   : "bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer"
               }`}
-            >
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                "Sign Up"
-              )}
-            </button>
-            {/* Sign Up with Google button */}
-            <GoogleLogin
-              onSuccess={handleSuccess}
-              onError={handleError}
-              // useOneTap // يفتح الـ One Tap مباشرة لو تحب
-            />
-          </form>
+              >
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  "Sign Up"
+                )}
+              </button>
+              {/* Sign Up with Google button */}
+              <GoogleSignup onClose={onClose} />
+            </form>
+          </div>
         ) : (
           <form className="text-left" onSubmit={handleVerifyCode}>
             <h2 className="text-3xl font-bold flex justify-center mb-6 text-(--color-pakistan)">

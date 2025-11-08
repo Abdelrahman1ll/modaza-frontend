@@ -1,36 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Save, CheckCircle2, Gift } from "lucide-react";
+import { Save } from "lucide-react";
 import { useParams } from "react-router-dom";
-const users = [
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "abdo@example.com",
-    phone: "123-456-7890",
-    birthDate: "1990-01-01",
-    role: "admin",
-  },
-  {
-    id: 2,
-    firstName: "Jane",
-    lastName: "Smith",
-    email: "jane@example.com",
-    phone: "987-654-3210",
-    birthDate: "1985-12-31",
-    role: "admin",
-  },
-  {
-    id: 3,
-    firstName: "Bob",
-    lastName: "Johnson",
-    email: "bob@example.com",
-    phone: "555-555-5555",
-    birthDate: "1970-01-01",
-    role: "admin",
-  },
-];
+import { toast } from "react-toastify";
+import {
+  useGetUsersQuery,
+  usePatchUsersOwnerByIdMutation,
+} from "../../redux/users/apiUsers";
+
 export default function EditUserOwner() {
   const { id } = useParams();
   const [userData, setUserData] = useState({
@@ -38,49 +15,113 @@ export default function EditUserOwner() {
     lastName: "",
     email: "",
     phone: "",
-    birthDate: "",
+    birthday: "",
     role: "",
   });
 
+  const [errors, setErrors] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    birthday: "",
+    role: "",
+  });
+
+  const { data: getUsers } = useGetUsersQuery({});
+  const users = Array.isArray(getUsers) ? getUsers : getUsers?.users || [];
   useEffect(() => {
-    const found = users.find((u) => u.id === Number(id));
-    if (found) {
-      setUserData(found);
-    } else {
-      // اختياري: مسك الحالة لو مفيش user للـ id ده
-      console.warn("User not found for id", id);
+    const user = users.find((user: any) => Number(user.id) === Number(id));
+    if (user) {
+      setUserData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        birthday: user.birthday || "",
+        role: user.role || "",
+      });
     }
-  }, [id]);
-
-  const [progress, setProgress] = useState(20);
-  const [saved, setSaved] = useState(false);
-  const [rewardVisible, setRewardVisible] = useState(false);
-
-  useEffect(() => {
-    let filled = 0;
-    if (userData.firstName) filled += 1;
-    if (userData.lastName) filled += 1;
-    if (userData.phone) filled += 1;
-    if (userData.birthDate) filled += 1;
-
-    const completion = 20 + filled * 20;
-    setProgress(completion);
-
-    // إظهار رسالة الخصم إذا اكتمل الملف بنسبة 100%
-    if (completion === 100) setRewardVisible(true);
-    else setRewardVisible(false);
-  }, [userData]);
+  }, [users, id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const [PatchUsersOwnerById, { isLoading }] = usePatchUsersOwnerByIdMutation();
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Updated Data:", userData);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    const newErrors = {
+      email: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      birthday: "",
+      role: "",
+    };
+    let isValid = true;
+
+    if (
+      userData.firstName &&
+      (userData.firstName.length < 2 || userData.firstName.length > 50)
+    ) {
+      newErrors.firstName = "First name must be between 2 and 50 characters";
+      isValid = false;
+    }
+
+    if (
+      userData.lastName &&
+      (userData.lastName.length < 2 || userData.lastName.length > 50)
+    ) {
+      newErrors.lastName = "Last name must be between 2 and 50 characters";
+      isValid = false;
+    }
+
+    if (userData.phone && userData.phone.trim().length !== 11) {
+      newErrors.phone = "Phone number must be 11 digits";
+      isValid = false;
+    }
+
+    if (userData.birthday && new Date(userData.birthday) > new Date()) {
+      newErrors.birthday = "Birthday must be a valid past date";
+      isValid = false;
+    }
+
+    if (
+      userData.role &&
+      userData.role !== "admin" &&
+      userData.role !== "owner" &&
+      userData.role !== "user"
+    ) {
+      newErrors.role = "Role must be 'admin' or 'owner' or 'user'";
+      isValid = false;
+    }
+
+    if (userData.email && !/^\S+@\S+\.\S+$/.test(userData.email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    if (!isValid) return;
+
+    try {
+      await PatchUsersOwnerById({
+        id,
+        data: {
+          email: userData.email || null,
+          firstName: userData.firstName || null,
+          lastName: userData.lastName || null,
+          phone: userData.phone || null,
+          birthday: userData.birthday || null,
+          role: userData.role || null,
+        },
+      }).unwrap();
+      toast.success("User saved successfully");
+    } catch {
+      toast.error("Error saving profile");
+    }
   };
 
   return (
@@ -92,43 +133,8 @@ export default function EditUserOwner() {
         className=" shadow-lg rounded-2xl p-4 w-full max-w-5xl"
       >
         <h2 className="text-3xl font-bold text-(--color-pakistan) mb-8 text-center">
-          Edit Profile
+          Edit User
         </h2>
-
-        {/* شريط التقدم */}
-        <div className="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5 }}
-            className="h-4 bg-(--color-tiger) rounded-full"
-          />
-        </div>
-        <p className="text-sm text-center text-gray-600 mb-4">
-          Profile Completion: <span className="font-bold">{progress}%</span>
-        </p>
-
-        {/* عرض مكافأة الخصم */}
-        {rewardVisible && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="
-      flex flex-col sm:flex-row items-center justify-center 
-      text-center sm:text-left flex-wrap
-      bg-green-100 text-green-700 font-medium 
-      py-3 px-4 rounded-lg mb-4
-      gap-1 sm:gap-2 leading-snug
-    "
-          >
-            <Gift size={22} className="text-green-700 mb-1 sm:mb-0" />
-            <p className="text-sm sm:text-base">
-              Congratulations! You’ve unlocked a{" "}
-              <span className="font-bold">10% discount</span> on your first
-              order 🎉
-            </p>
-          </motion.div>
-        )}
 
         <form onSubmit={handleSave} className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -148,8 +154,13 @@ export default function EditUserOwner() {
                     value={userData.firstName}
                     onChange={handleChange}
                     placeholder="Enter your first name"
-                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-tiger)"
+                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
                   />
+                  {errors.firstName && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {errors.firstName}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -162,8 +173,33 @@ export default function EditUserOwner() {
                     value={userData.lastName}
                     onChange={handleChange}
                     placeholder="Enter your last name"
-                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-tiger)"
+                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
                   />
+                  {errors.lastName && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {errors.lastName}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-medium text-(--color-pakistan)">
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    name="birthday"
+                    value={
+                      userData.birthday ? userData.birthday.split("T")[0] : ""
+                    }
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
+                  />
+                  {errors.birthday && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {errors.birthday}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -175,22 +211,11 @@ export default function EditUserOwner() {
                     name="role"
                     value={userData.role}
                     onChange={handleChange}
-                    placeholder="Role of the user"
-                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-1 focus:ring-(--color-tiger)"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-medium text-(--color-pakistan)">
-                    Date of Birth
-                  </label>
-                  <input
-                    type="date"
-                    name="birthDate"
-                    value={userData.birthDate}
-                    onChange={handleChange}
                     className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
                   />
+                  {errors.role && (
+                    <p className="text-red-600 text-sm mt-1">{errors.role}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -209,9 +234,12 @@ export default function EditUserOwner() {
                     type="email"
                     name="email"
                     value={userData.email}
-                    disabled
-                    className="w-full p-2 border rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
                   />
+                  {errors.email && (
+                    <p className="text-red-600 text-sm mt-1">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -226,6 +254,9 @@ export default function EditUserOwner() {
                     placeholder="Enter your phone number"
                     className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
                   />
+                  {errors.phone && (
+                    <p className="text-red-600 text-sm mt-1">{errors.phone}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -233,27 +264,26 @@ export default function EditUserOwner() {
 
           {/* زر الحفظ */}
           <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={!isLoading ? { scale: 1.03 } : {}}
+            whileTap={!isLoading ? { scale: 0.95 } : {}}
+            disabled={isLoading}
             type="submit"
-            className="w-full flex items-center justify-center gap-2 bg-(--color-tiger) text-white font-semibold py-2 rounded-lg shadow-md hover:bg-(--color-earth) transition"
+            className={`w-full flex items-center justify-center gap-2 text-white font-semibold py-2 rounded-lg shadow-md transition
+             ${
+               isLoading
+                 ? "bg-(--color-earth) cursor-not-allowed opacity-90"
+                 : "bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer"
+             }`}
           >
-            <Save size={18} />
-            Save Changes
+            {isLoading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <>
+                <Save size={18} />
+                Save Changes
+              </>
+            )}
           </motion.button>
-
-          {/* إشعار الحفظ */}
-          {saved && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className="flex justify-center items-center gap-2 mt-3 text-green-600 font-medium"
-            >
-              <CheckCircle2 size={20} />
-              Changes saved successfully!
-            </motion.div>
-          )}
         </form>
       </motion.div>
     </div>

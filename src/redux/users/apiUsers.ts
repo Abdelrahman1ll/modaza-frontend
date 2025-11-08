@@ -1,33 +1,8 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import URL from "../../api/baseUrl";
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
-import { toast } from "react-toastify";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
 export const apiUsers = createApi({
   reducerPath: "apiUsers",
-  baseQuery: fetchBaseQuery({
-    baseUrl: URL,
-    prepareHeaders: (headers) => {
-      const secretKey = import.meta.env.VITE_SECRET_KEY;
-      const encryptedUser = Cookies.get("user");
-      if (encryptedUser) {
-        try {
-          const decryptedUser = CryptoJS.AES.decrypt(
-            encryptedUser,
-            secretKey
-          ).toString(CryptoJS.enc.Utf8);
-          if (decryptedUser) {
-            const user = JSON.parse(decryptedUser);
-            headers.set("Authorization", `Bearer ${user.accessToken}`);
-          }
-        } catch {
-          toast.error("Error decrypting user");
-        }
-      }
-
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     UsersCheckEmail: builder.mutation({
       query: (data: { email: string }) => ({

@@ -2,14 +2,11 @@ import { motion } from "framer-motion";
 import { User, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useGetUsersQuery } from "../../redux/users/apiUsers";
-
 export default function AllUsers() {
-  const { data: getUsers, isLoading, isError, error } = useGetUsersQuery({});
+  const { data: getUsers } = useGetUsersQuery({});
 
-  const users = Array.isArray(getUsers)
-    ? getUsers
-    : getUsers?.users || [];
-    
+  const users = Array.isArray(getUsers) ? getUsers : getUsers?.users || [];
+
   return (
     <div className="min-h-screen flex flex-col items-center py-10 px-4">
       <motion.h1
@@ -23,10 +20,11 @@ export default function AllUsers() {
       </motion.h1>
 
       <div className="w-full max-w-3xl space-y-3">
+        <div></div>
         {users &&
           users.map((user: any, index: number) => (
             <div key={index}>
-              <Link to={`/edit-user-owner/${user.id}`}>
+              <Link to={`/edit-user-owner/${user?.id}`}>
                 <motion.div
                   key={user.id}
                   initial={{ opacity: 0, y: 10 }}
