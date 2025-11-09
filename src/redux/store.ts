@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { apiUsers } from "../redux/users/apiUsers";
+import { ApiUsers } from "../redux/users/apiUsers";
+import { ApiProducts } from "./products/apiProducts";
 export const store = configureStore({
   reducer: {
-    [apiUsers.reducerPath]: apiUsers.reducer,
+    [ApiUsers.reducerPath]: ApiUsers.reducer,
+    [ApiProducts.reducerPath]: ApiProducts.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiUsers.middleware),
+    getDefaultMiddleware().concat(ApiUsers.middleware, ApiProducts.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;

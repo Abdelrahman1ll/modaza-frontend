@@ -65,8 +65,7 @@ export default function Signup({ onClose }: { onClose: () => void }) {
               <button
                 type="submit"
                 disabled={!email || isLoading}
-                className={`w-full py-2 rounded-xl mb-4 font-semibold text-white transition 
-              flex items-center justify-center
+                className={`w-full py-2 rounded-xl mb-4 font-semibold text-white transition flex items-center justify-center
               ${
                 isLoading
                   ? "bg-(--color-earth) cursor-not-allowed"

@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
-export const apiUsers = createApi({
+export const ApiUsers = createApi({
   reducerPath: "apiUsers",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
@@ -60,4 +60,4 @@ export const {
   usePostUsersMutation,
   useUsersCheckEmailMutation,
   useUsersSignupGoogleMutation,
-} = apiUsers;
+} = ApiUsers;

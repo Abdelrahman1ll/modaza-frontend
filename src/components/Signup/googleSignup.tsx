@@ -47,7 +47,10 @@ export default function GoogleSignup({ onClose }: GoogleSignupProps) {
     <GoogleLogin
       onSuccess={handleSuccess}
       onError={handleError}
-      // useOneTap
+      text="signup_with"
+      shape="rectangular"
+      width="100%"
+      logo_alignment="center"
     />
   );
 }
