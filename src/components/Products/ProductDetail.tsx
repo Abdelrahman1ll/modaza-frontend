@@ -3,40 +3,13 @@ import { ChevronLeft, ChevronRight, Heart, PackageSearch } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useGetProductIdQuery } from "../../redux/products/apiProducts";
-export interface ProductSize {
-  id: number;
-  size: string;
-  length: number;
-  width: number;
-  stock: number;
-}
-
-export interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  promotionalPrice: number;
-  discountPercentage: number;
-  images: string[];
-  category: string;
-  stock: number;
-  wholesalePrice: number;
-  packagingCost: number;
-  marketingCosts: number;
-  sold: number;
-  sizes: ProductSize[];
-  colors: string;
-  totalReviews: number;
-  createdAt: string; // يمكنك تحويله لـ Date إذا أحببت
-  maxStock?: number;
-}
+import type { ProductSizeType, ProductType } from "../../types/ProductType";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const { data: products, isLoading } = useGetProductIdQuery(id);
 
-  const product = products?.product;
+  const product: ProductType = products?.product;
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isFav, setIsFav] = useState(false);
@@ -66,11 +39,11 @@ export default function ProductDetail() {
   const increase = () => setQuantity((prev) => Math.min(prev + 1, 10)); // أقصى 10
   const decrease = () => setQuantity((prev) => Math.max(prev - 1, 1)); // أدنى 1
 
-  const percentstock = Math.min((product?.stock / 100) * 100, 100) || 0;
-
+  const percentstock =
+    Math.min((product?.stock / product?.total_stock) * 100, 100) || 0;
   const getColor = () => {
-    if (percentstock > 60) return "var(--color-pakistan)"; // أخضر
-    if (percentstock > 30) return "var(--color-tiger)"; // برتقالي
+    if (percentstock > 60) return "var(--color-tiger)"; // أخضر
+    if (percentstock > 30) return "var(--color-dark)"; // برتقالي
     return "#A80000"; // أحمر
   };
 
@@ -173,7 +146,7 @@ export default function ProductDetail() {
             </button>
 
             {/* الصور المصغّرة */}
-            <div className="flex justify-center flex-wrap gap-3 mt-4">
+            <div className="flex justify-center flex-wrap gap-3 mt-4 pb-2">
               {Array.isArray(product?.images) &&
                 product?.images?.map((img: string, index: number) => (
                   <motion.img
@@ -205,23 +178,22 @@ export default function ProductDetail() {
             {/* السعر */}
             <div className="flex items-baseline gap-4">
               <p className="text-2xl font-bold text-(--color-pakistan)">
-                EGP {product?.price}
+                EGP {product?.price.toFixed(2)}
               </p>
               {product?.promotionalPrice !== 0 && (
                 <p className="text-lg line-through text-gray-500">
-                  EGP {product?.promotionalPrice}
+                  EGP {product?.promotionalPrice.toFixed(2)}
                 </p>
               )}
 
               <span className="text-(--color-cornsilk) bg-(--color-tiger) px-2 py-0.5 rounded-full font-semibold">
-                {product?.discountPercentage}%
+                {product?.discountPercentage.toFixed(0)}%
               </span>
             </div>
 
             {/* وصف بسيط */}
             <p className="text-(--color-pakistan) leading-relaxed">
-              Elevate your style with our premium {product?.name}. Designed for
-              comfort and crafted with high-quality materials.
+              {product?.description}
             </p>
 
             <div>
@@ -230,26 +202,62 @@ export default function ProductDetail() {
               </h4>
               <div className="flex gap-3 flex-wrap">
                 {Array.isArray(product?.sizes) &&
-                  product?.sizes?.map((size: ProductSize, index: number) => (
-                    <motion.button
-                      key={index}
-                      onClick={() => setSelectedSize(size.size)}
-                      whileTap={{ scale: 0.9 }}
-                      className={`px-4 py-2 rounded-full test-lg font-medium border-2 transition-all cursor-pointer ${
-                        selectedSize === size.size
-                          ? "bg-(--color-tiger) text-white border-(--color-tiger)"
-                          : "border-gray-400 text-gray-700 hover:border-(--color-tiger)"
-                      }`}
-                    >
-                      {size.size}
-                    </motion.button>
-                  ))}
+                  product?.sizes?.map(
+                    (size: ProductSizeType, index: number) => {
+                      if (!size.size) return null;
+                      const isOutOfStock = size.stock === 0;
+                      return (
+                        <motion.button
+                          key={index}
+                          onClick={() => setSelectedSize(size.size)}
+                          whileTap={!isOutOfStock ? { scale: 0.9 } : {}}
+                          disabled={isOutOfStock}
+                          className={`px-4 py-2 rounded-full test-lg font-medium border-2 transition-all  ${
+                            isOutOfStock
+                              ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed opacity-60"
+                              : selectedSize === size.size
+                              ? "bg-(--color-tiger) text-white border-(--color-tiger) cursor-pointer"
+                              : "border-gray-400 text-gray-700 hover:border-(--color-tiger) cursor-pointer"
+                          }`}
+                          title={
+                            isOutOfStock
+                              ? "Out of stock"
+                              : `Select size ${size.size}`
+                          }
+                        >
+                          {size.size}
+                        </motion.button>
+                      );
+                    }
+                  )}
               </div>
               {selectedSize && (
-                <p className="text-sm text-(--color-pakistan) mt-2">
-                  Selected size:{" "}
-                  <span className="font-semibold">{selectedSize}</span>
-                </p>
+                <div className="mt-3 p-3 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit">
+                  <p className="text-sm text-(--color-pakistan)">
+                    <span className="font-semibold text-(--color-tiger)">
+                      Size: {selectedSize}
+                    </span>
+                    {(() => {
+                      const selected = product?.sizes?.find(
+                        (size) => size.size === selectedSize
+                      );
+                      if (!selected) return null;
+                      return (
+                        <span className="ml-2 text-(--color-dark)">
+                          (
+                          <span className="font-medium text-(--color-pakistan)">
+                            Length:
+                          </span>{" "}
+                          {selected.length} cm —{" "}
+                          <span className="font-medium text-(--color-pakistan)">
+                            Width:
+                          </span>{" "}
+                          {selected.width} cm)
+                        </span>
+                      );
+                    })()}
+                  </p>
+                </div>
               )}
             </div>
 
@@ -282,7 +290,7 @@ export default function ProductDetail() {
               <div className="flex justify-between mb-1 text-sm font-semibold text-[--color-dark]">
                 <span>Available Stock</span>
                 <span>
-                  {product?.stock} / {100}
+                  {product?.stock} / {product?.total_stock}
                 </span>
               </div>
 

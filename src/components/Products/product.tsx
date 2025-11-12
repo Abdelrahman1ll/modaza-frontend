@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
+import type { ProductType } from "../../types/ProductType";
 
 export default function Product() {
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -74,9 +75,9 @@ export default function Product() {
               </div>
             ))
           ) : products?.products?.length ? (
-            products?.products.map((product: any, index: number) => {
-              const isFav = favorites.includes(product.id);
-              const imgIndex = currentImage[product.id] || 0;
+            products?.products.map((product: ProductType, index: number) => {
+              const isFav = favorites.includes(product?.id);
+              const imgIndex = currentImage[product?.id] || 0;
 
               return (
                 <motion.div
@@ -89,9 +90,8 @@ export default function Product() {
                     {/* سلايدر الصور */}
                     <motion.img
                       key={imgIndex}
-                      // src={product.images[0]}
-                      src="/photo-1495385794356-15371f348c31.jpeg"
-                      alt={product.name}
+                      src={product?.images[imgIndex]}
+                      alt={product?.name}
                       className="w-full h-[460px] rounded-3xl object-cover transition-transform duration-500"
                       whileHover={{ scale: 1.05 }}
                     />
@@ -101,7 +101,7 @@ export default function Product() {
                       <>
                         <button
                           onClick={() =>
-                            prevImage(product.id, product.images.length)
+                            prevImage(product?.id, product.images.length)
                           }
                           className="absolute left-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                         >
@@ -113,7 +113,7 @@ export default function Product() {
 
                         <button
                           onClick={() =>
-                            nextImage(product.id, product.images.length)
+                            nextImage(product?.id, product.images.length)
                           }
                           className="absolute right-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                         >
@@ -124,7 +124,7 @@ export default function Product() {
 
                     {/* زرار القلب */}
                     <motion.button
-                      onClick={() => toggleFavorite(product.id)}
+                      onClick={() => toggleFavorite(product?.id)}
                       whileTap={{ scale: 0.8 }}
                       className="absolute top-4 right-4 backdrop-blur-md p-2 rounded-full shadow-md cursor-pointer opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500"
                     >

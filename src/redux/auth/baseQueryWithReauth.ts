@@ -25,8 +25,7 @@ const baseQuery = fetchBaseQuery({
           const user = JSON.parse(decryptedUser);
           headers.set("Authorization", `Bearer ${user.accessToken}`);
         }
-      } catch (error) {
-        console.error("Error decrypting user:", error);
+      } catch {
         toast.error("Error decrypting user");
       }
     }
@@ -92,9 +91,8 @@ export const baseQueryWithReauth = async (
           // إعادة تنفيذ الطلب الأصلي بعد تحديث التوكن
           result = await baseQuery(args, api, extraOptions);
         }
-      } catch (error) {
+      } catch {
         toast.error("Session expired. Please login again.");
-        console.error(error);
       }
     }
   }

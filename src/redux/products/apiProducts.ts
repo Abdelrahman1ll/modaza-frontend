@@ -16,7 +16,26 @@ export const ApiProducts = createApi({
         method: "GET",
       }),
     }),
+    PostProduct: builder.mutation({
+      query: (data) => ({
+        url: "/products",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    PatchProduct: builder.mutation({
+      query: ({ data, id }) => ({
+        url: `/products/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetProductsQuery, useGetProductIdQuery } = ApiProducts;
+export const {
+  useGetProductsQuery,
+  useGetProductIdQuery,
+  usePostProductMutation,
+  usePatchProductMutation,
+} = ApiProducts;
