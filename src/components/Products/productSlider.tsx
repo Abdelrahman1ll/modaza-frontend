@@ -3,8 +3,11 @@ import { ChevronLeft, ChevronRight, PackageSearch } from "lucide-react";
 import { motion } from "framer-motion";
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductSlider() {
+  const navigate = useNavigate();
+
   const { data: products, isLoading } = useGetProductsQuery({});
   const [index, setIndex] = useState(0);
   const [isGrabbing, setIsGrabbing] = useState(false);
@@ -86,9 +89,10 @@ export default function ProductSlider() {
                   <div
                     className="rounded-2xl shadow-2xl overflow-hidden w-80"
                     style={{ background: "var(--color-dark)" }}
-                    onClick={() =>
-                      (window.location.href = `/products-details/${product?.id}`)
-                    }
+                    onClick={() => {
+                      navigate(`/products-details/${product?.id}`);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                   >
                     <img
                       src={product?.images[0]}

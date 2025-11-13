@@ -1,39 +1,97 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star } from "lucide-react";
+import {
+  usePostReviewsMutation,
+  useGetReviewsQuery,
+  usePatchReviewsMutation,
+  useDeleteReviewsMutation,
+} from "../../redux/reviews/apiReviews";
+import { useParams } from "react-router-dom";
+import type { ReviewType } from "../../types/ReviewsType";
+import { toast } from "react-toastify";
 
 export default function Reviews() {
+  const { id } = useParams();
+  const { data: reviewsData, refetch } = useGetReviewsQuery(id);
+  const [postReviews] = usePostReviewsMutation();
+  const [patchReviews] = usePatchReviewsMutation();
+  const [deleteReviews] = useDeleteReviewsMutation();
   const [showReviews, setShowReviews] = useState(false);
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: "Ahmed Khaled",
-      rating: 5,
-      comment: "Excellent quality and fast delivery! Highly recommend 👌",
-    },
-    {
-      id: 2,
-      name: "Sara Mostafa",
-      rating: 4,
-      comment: "Nice product, but the size was a bit smaller.",
-    },
-  ]);
+  const reviewFormRef = useRef<HTMLDivElement>(null);
 
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
   const [hoverRating, setHoverRating] = useState(0);
 
-  const handleAddReview = () => {
-    if (!newRating || !newComment.trim()) return;
-    const newReview = {
-      id: Date.now(),
-      name: "New Customer",
-      rating: newRating,
-      comment: newComment,
-    };
-    setReviews([...reviews, newReview]);
-    setNewRating(0);
-    setNewComment("");
+  const handleDeleteReview = async (reviewId: number) => {
+    try {
+      await deleteReviews(reviewId).unwrap();
+      toast.success("Review deleted successfully!");
+      setNewRating(0);
+      setNewComment("");
+      refetch();
+    } catch {
+      toast.error("Failed to delete review. Please try again.");
+    }
+  };
+
+  const [editingReview, setEditingReview] = useState<ReviewType | null>(null);
+
+  const handleEditReview = (review: ReviewType) => {
+    // تحميل بيانات الريفيو القديم إلى النموذج
+    setEditingReview(review);
+    setNewRating(review.rating);
+    setNewComment(review.comment);
+    setShowReviews(true);
+    reviewFormRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const handleSubmitReview = async () => {
+    if (!newRating || !newComment.trim()) {
+      toast.error("Please enter a rating and comment.");
+      return;
+    }
+
+    try {
+      if (editingReview) {
+        // تعديل الريفيو القديم
+        await patchReviews({
+          id: editingReview.id,
+          data: {
+            rating: newRating,
+            comment: newComment,
+          },
+        }).unwrap();
+        toast.success("Review updated successfully!");
+        setEditingReview(null);
+      } else {
+        // إضافة ريفيو جديد
+        await postReviews({
+          rating: newRating,
+          comment: newComment,
+          product: Number(id),
+        }).unwrap();
+        toast.success("Review added successfully!");
+      }
+
+      setNewRating(0);
+      setNewComment("");
+      refetch();
+    } catch (err: any) {
+      if (err?.data?.message?.includes("Error in RolesGuard")) {
+        toast.error("You are not allowed to add a review.");
+      } else if (
+        err?.data?.message?.includes("You have already reviewed this product")
+      ) {
+        toast.error("You have already reviewed this product.");
+      } else {
+        toast.error("Failed to submit review. Please try again.");
+      }
+    }
   };
 
   return (
@@ -58,120 +116,146 @@ export default function Reviews() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="w-full mx-auto rounded-2xl shadow-lg p-6 md:p-10"
+            className="w-full mx-auto rounded-2xl shadow-lg p-4"
           >
-            {/* Rating section */}
-            <div className="mb-6">
-              <label
-                className="block mb-4 text-lg font-semibold text-left"
-                style={{ color: "var(--color-dark)" }}
-              >
-                Choose your rating:
-              </label>
-              <div className="flex gap-3 flex-row-reverse" dir="rtl">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    size={32}
-                    className="cursor-pointer transition-transform hover:scale-110"
-                    onClick={() => setNewRating(i + 1)}
-                    onMouseEnter={() => setHoverRating(i + 1)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    color={
-                      i < (hoverRating || newRating)
-                        ? "var(--color-tiger)"
-                        : "#ccc"
-                    }
-                    fill={
-                      i < (hoverRating || newRating)
-                        ? "var(--color-tiger)"
-                        : "transparent"
-                    }
-                  />
-                ))}
+            <div ref={reviewFormRef}>
+              {/* Rating section */}
+              <div className="mb-6">
+                <label
+                  className="block mb-4 text-lg font-semibold text-left"
+                  style={{ color: "var(--color-dark)" }}
+                >
+                  Choose your rating:
+                </label>
+                <div className="flex gap-3 flex-row-reverse" dir="rtl">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      size={32}
+                      className="cursor-pointer transition-transform hover:scale-110"
+                      onClick={() => setNewRating(i + 1)}
+                      onMouseEnter={() => setHoverRating(i + 1)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      color={
+                        i < (hoverRating || newRating)
+                          ? "var(--color-tiger)"
+                          : "#ccc"
+                      }
+                      fill={
+                        i < (hoverRating || newRating)
+                          ? "var(--color-tiger)"
+                          : "transparent"
+                      }
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Comment input */}
-            <div className="mb-6">
-              <label
-                className="block mb-2 text-lg font-semibold text-left"
-                style={{ color: "var(--color-dark)" }}
-              >
-                Your opinion:
-              </label>
-              <textarea
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                name="comment"
-                rows={4}
-                className="w-full border rounded-xl p-4 outline-none focus:ring-2 focus:ring-(--color-tiger) text-base"
+              {/* Comment input */}
+              <div className="mb-6">
+                <label
+                  className="block mb-2 text-lg font-semibold text-left"
+                  style={{ color: "var(--color-dark)" }}
+                >
+                  Your opinion:
+                </label>
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  name="comment"
+                  rows={4}
+                  className="w-full border rounded-xl p-4 outline-none focus:ring-2 focus:ring-(--color-tiger) text-base"
+                  style={{
+                    borderColor: "var(--color-earth)",
+                    color: "var(--color-pakistan)",
+                  }}
+                  placeholder="Write your review here..."
+                />
+              </div>
+
+              {/* Submit button */}
+              <button
+                onClick={handleSubmitReview}
+                className="w-full py-2 rounded-xl text-lg font-semibold transition-transform hover:scale-102 cursor-pointer"
                 style={{
-                  borderColor: "var(--color-earth)",
-                  color: "var(--color-pakistan)",
+                  backgroundColor: "var(--color-tiger)",
+                  color: "var(--color-cornsilk)",
                 }}
-                placeholder="Write your review here..."
-              />
+              >
+                {editingReview ? "Update Review" : "Submit Review"}
+              </button>
             </div>
-
-            {/* Submit button */}
-            <button
-              onClick={handleAddReview}
-              className="w-full py-2 rounded-xl text-lg font-semibold transition-transform hover:scale-102 cursor-pointer"
-              style={{
-                backgroundColor: "var(--color-tiger)",
-                color: "var(--color-cornsilk)",
-              }}
-            >
-              Submit Review
-            </button>
 
             {/* Reviews list */}
-            <div className="mt-10 space-y-6">
-              {reviews.map((review) => (
+            <div className="mt-4 space-y-6">
+              {reviewsData?.review.map((review: ReviewType) => (
                 <motion.div
-                  key={review.id}
+                  key={review?.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-5 rounded-xl border shadow-sm"
+                  className="p-4 rounded-xl border shadow-sm"
                   style={{
                     backgroundColor: "var(--color-cornsilk)",
                     borderColor: "var(--color-earth)",
                   }}
                 >
-                  <div
-                    className="flex justify-end gap-1 mb-2 flex-row-reverse"
-                    dir="rtl"
-                  >
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        size={20}
-                        color={
-                          i < review.rating
-                            ? "var(--color-tiger)"
-                            : "var(--color-earth)"
-                        }
-                        fill={
-                          i < review.rating
-                            ? "var(--color-tiger)"
-                            : "transparent"
-                        }
-                      />
-                    ))}
+                  <div className="flex bg-(--color-earth)/10 border border-(--color-earth)/30 p-1 rounded-xl justify-between items-center mb-2">
+                    {/* نجوم التقييم */}
+                    <div className="flex gap-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          size={20}
+                          color={
+                            i < review?.rating
+                              ? "var(--color-tiger)"
+                              : "var(--color-earth)"
+                          }
+                          fill={
+                            i < review?.rating
+                              ? "var(--color-tiger)"
+                              : "transparent"
+                          }
+                        />
+                      ))}
+                    </div>
+
+                    {/* أي عنصر جانبي */}
+                    <div className="text-sm font-semibold text-gray-600">
+                      {review?.createdAt &&
+                        new Date(review?.createdAt).toLocaleDateString()}
+                    </div>
                   </div>
-                  <p
-                    className="text-base leading-relaxed text-left"
-                    style={{ color: "var(--color-pakistan)" }}
-                  >
-                    {review.comment}
-                  </p>
-                  <p
-                    className="text-sm font-semibold mt-2 text-left"
-                    style={{ color: "var(--color-dark)" }}
-                  >
-                    — {review.name}
-                  </p>
+
+                  <div>
+                    <p
+                      className="text-base leading-relaxed text-left"
+                      style={{ color: "var(--color-pakistan)" }}
+                    >
+                      {review?.comment}
+                    </p>
+                    <p
+                      className="text-sm font-semibold text-left"
+                      style={{ color: "var(--color-dark)" }}
+                    >
+                      — {review?.user?.firstName} {review?.user?.lastName}
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex gap-3 justify-between">
+                    <button
+                      onClick={() => handleEditReview(review)}
+                      className="px-3 py-1 bg-(--color-tiger) text-white rounded-lg hover:text-blue-600 transition-colors cursor-pointer"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteReview(review.id)}
+                      className="px-3 py-1 bg-(--color-tiger) text-white rounded-lg hover:text-red-600 transition-colors cursor-pointer"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </motion.div>
               ))}
             </div>

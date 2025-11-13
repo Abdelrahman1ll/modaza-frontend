@@ -59,7 +59,7 @@ export default function HomeProducts() {
           ) : (
             products?.products.slice(0, 3).map((product: ProductType) => {
               return (
-                <div>
+                <div key={product?.id}>
                   <Link to={`/products-details/${product?.id}`}>
                     <motion.div
                       key={product?.id}

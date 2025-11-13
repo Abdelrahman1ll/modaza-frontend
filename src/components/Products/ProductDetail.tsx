@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useGetProductIdQuery } from "../../redux/products/apiProducts";
 import type { ProductSizeType, ProductType } from "../../types/ProductType";
+import MotionZoomImage from "./ImageZoom";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -112,7 +113,6 @@ export default function ProductDetail() {
         </div>
       ) : (
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 m-4 mt-12">
-          {/* ✅ الجزء الأيسر: معرض الصور */}
           <motion.div
             className="relative rounded-t-3xl overflow-hidden  w-full md:w-1/2"
             initial={{ opacity: 0, x: -50 }}
@@ -120,15 +120,7 @@ export default function ProductDetail() {
             transition={{ duration: 0.6 }}
           >
             {/* الصورة الرئيسية */}
-            <motion.img
-              key={mainImage}
-              src={mainImage}
-              alt={product?.name || "Product"}
-              className="w-full h-[450px] md:h-[800px] object-cover rounded-2xl"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-            />
+            <MotionZoomImage mainImage={mainImage} />
 
             {/* أسهم التنقل */}
             <button
