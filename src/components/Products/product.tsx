@@ -1,55 +1,22 @@
 import { motion } from "framer-motion";
-import { Heart, ChevronRight, ChevronLeft, PackageSearch } from "lucide-react";
-import { useState } from "react";
+import { ChevronRight, ChevronLeft, PackageSearch, Heart } from "lucide-react";
+
 import { Link } from "react-router-dom";
-import { useGetProductsQuery } from "../../redux/products/apiProducts";
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
+
 import type { ProductType } from "../../types/ProductType";
+import useProduct from "./useProduct";
 
 export default function Product() {
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [currentImage, setCurrentImage] = useState<{ [key: number]: number }>(
-    {}
-  );
-
-  const { data: products, isLoading } = useGetProductsQuery({});
-
-  // Check if user is logged in
-  const secretKey = import.meta.env.VITE_SECRET_KEY;
-
-  const encryptedUser = Cookies.get("user");
-
-  let user: { user: { role: string } };
-  if (encryptedUser) {
-    const decryptedUser = CryptoJS.AES.decrypt(
-      encryptedUser,
-      secretKey
-    ).toString(CryptoJS.enc.Utf8);
-
-    user = JSON.parse(decryptedUser);
-  }
-
-  const toggleFavorite = (id: number) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]
-    );
-  };
-
-  const nextImage = (id: number, total: number) => {
-    setCurrentImage((prev) => ({
-      ...prev,
-      [id]: ((prev[id] || 0) + 1) % total,
-    }));
-  };
-
-  const prevImage = (id: number, total: number) => {
-    setCurrentImage((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 0) === 0 ? total - 1 : (prev[id] || 0) - 1,
-    }));
-  };
-
+  const {
+    products,
+    isLoading,
+    isFav,
+    handleToggleWishlist,
+    currentImage,
+    nextImage,
+    prevImage,
+    user,
+  } = useProduct();
   return (
     <div className="py-14 m-4">
       <section className="max-w-7xl mx-auto">
@@ -76,9 +43,7 @@ export default function Product() {
             ))
           ) : products?.products?.length ? (
             products?.products.map((product: ProductType, index: number) => {
-              const isFav = favorites.includes(product?.id);
               const imgIndex = currentImage[product?.id] || 0;
-
               return (
                 <motion.div
                   key={index}
@@ -124,23 +89,22 @@ export default function Product() {
 
                     {/* زرار القلب */}
                     <motion.button
-                      onClick={() => toggleFavorite(product?.id)}
+                      onClick={() => handleToggleWishlist(product?.id)}
                       whileTap={{ scale: 0.8 }}
                       className="absolute top-4 right-4 backdrop-blur-md p-2 rounded-full shadow-md cursor-pointer opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500"
                     >
                       <motion.div
                         initial={false}
-                        animate={{ scale: isFav ? 1.3 : 1 }}
+                        animate={{ scale: isFav[product.id] ? 1.3 : 1 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
                         <Heart
                           size={24}
-                          color={isFav ? "#BC6C25" : "black"}
-                          fill={isFav ? "#BC6C25" : "transparent"}
+                          color={isFav[product.id] ? "#BC6C25" : "black"}
+                          fill={isFav[product.id] ? "#BC6C25" : "transparent"}
                         />
                       </motion.div>
                     </motion.button>
-
                     {/* الخصم */}
                     {product.discountPercentage !== 0 && (
                       <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500">

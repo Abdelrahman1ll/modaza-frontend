@@ -1,20 +1,65 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Heart, PackageSearch } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetProductIdQuery } from "../../redux/products/apiProducts";
 import type { ProductSizeType, ProductType } from "../../types/ProductType";
 import MotionZoomImage from "./ImageZoom";
-
+import {
+  useDeleteWishlistMutation,
+  useGetWishlistQuery,
+  usePostWishlistMutation,
+} from "../../redux/wishlist/apiWishlist";
+import { toast } from "react-toastify";
+import { useGetCartQuery, usePostCartMutation } from "../../redux/Cart/apiCart";
 export default function ProductDetail() {
   const { id } = useParams();
   const { data: products, isLoading } = useGetProductIdQuery(id);
 
   const product: ProductType = products?.product;
 
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [isFav, setIsFav] = useState(false);
+  const [postWishlist] = usePostWishlistMutation();
+  const { data, refetch } = useGetWishlistQuery({});
+  const [deleteWishlist] = useDeleteWishlistMutation();
+  const [postCart] = usePostCartMutation();
+  const { refetch: refetchCart } = useGetCartQuery({});
 
+  useEffect(() => {
+    if (data?.wishlist) {
+      const exist = data.wishlist.some(
+        (item: any) => String(item.product.id) === String(id)
+      );
+      setIsFav(exist);
+    }
+  }, [data, id]);
+
+  const handleToggleWishlist = async () => {
+    try {
+      if (isFav) {
+        const wishlistItem = data?.wishlist?.find(
+          (item: any) => String(item.product.id) === String(id)
+        );
+
+        if (!wishlistItem) {
+          toast.info("Item already removed from wishlist");
+          setIsFav(false);
+          return;
+        }
+
+        await deleteWishlist(wishlistItem.id).unwrap();
+        setIsFav(false);
+        refetch();
+      } else {
+        await postWishlist({ product: Number(id) }).unwrap();
+        setIsFav(true);
+        refetch();
+      }
+    } catch {
+      toast.error("Failed to toggle favorite");
+    }
+  };
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const mainImage =
     product?.images && product.images.length > 0
@@ -46,6 +91,43 @@ export default function ProductDetail() {
     if (percentstock > 60) return "var(--color-tiger)"; // أخضر
     if (percentstock > 30) return "var(--color-dark)"; // برتقالي
     return "#A80000"; // أحمر
+  };
+
+  const [errors, setErrors] = useState({
+    selectedSize: null,
+    quantity: null,
+    id: null,
+  });
+
+  const addToCart = async () => {
+    let newErrors: any = {
+      selectedSize: null,
+      quantity: null,
+      id: null,
+    };
+
+    if (!selectedSize) newErrors.selectedSize = "Please select a size";
+    if (!id) newErrors.id = "Invalid product";
+    if (!quantity || quantity === 0)
+      newErrors.quantity = "Quantity must be greater than 0";
+
+    // لو في أي Error وقف
+    if (newErrors.selectedSize || newErrors.quantity || newErrors.id) {
+      setErrors(newErrors);
+      return;
+    }
+    try {
+      await postCart({
+        product: Number(id),
+        quantity: quantity,
+        sizes: selectedSize,
+      }).unwrap();
+
+      toast.success("Item add to cart");
+      refetchCart();
+    } catch {
+      toast.error("Failed to add item to cart");
+    }
   };
 
   return (
@@ -201,13 +283,13 @@ export default function ProductDetail() {
                       return (
                         <motion.button
                           key={index}
-                          onClick={() => setSelectedSize(size.size)}
+                          onClick={() => setSelectedSize(size?.id!)}
                           whileTap={!isOutOfStock ? { scale: 0.9 } : {}}
                           disabled={isOutOfStock}
                           className={`px-4 py-2 rounded-full test-lg font-medium border-2 transition-all  ${
                             isOutOfStock
                               ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed opacity-60"
-                              : selectedSize === size.size
+                              : selectedSize === size?.id
                               ? "bg-(--color-tiger) text-white border-(--color-tiger) cursor-pointer"
                               : "border-gray-400 text-gray-700 hover:border-(--color-tiger) cursor-pointer"
                           }`}
@@ -224,32 +306,39 @@ export default function ProductDetail() {
                   )}
               </div>
               {selectedSize && (
-                <div className="mt-3 p-3 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit">
+                <div className="mt-3 p-2 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit">
                   <p className="text-sm text-(--color-pakistan)">
-                    <span className="font-semibold text-(--color-tiger)">
-                      Size: {selectedSize}
-                    </span>
                     {(() => {
                       const selected = product?.sizes?.find(
-                        (size) => size.size === selectedSize
+                        (size) => size.id === selectedSize
                       );
                       if (!selected) return null;
+
                       return (
-                        <span className="ml-2 text-(--color-dark)">
-                          (
-                          <span className="font-medium text-(--color-pakistan)">
-                            Length:
-                          </span>{" "}
-                          {selected.length} cm —{" "}
-                          <span className="font-medium text-(--color-pakistan)">
-                            Width:
-                          </span>{" "}
-                          {selected.width} cm)
-                        </span>
+                        <>
+                          <span className="font-semibold text-(--color-tiger)">
+                            Size: {selected.size}
+                          </span>
+
+                          <span className="ml-2 text-(--color-dark)">
+                            (
+                            <span className="font-medium text-(--color-pakistan)">
+                              Length:
+                            </span>{" "}
+                            {selected.length} cm —{" "}
+                            <span className="font-medium text-(--color-pakistan)">
+                              Width:
+                            </span>{" "}
+                            {selected.width} cm )
+                          </span>
+                        </>
                       );
                     })()}
                   </p>
                 </div>
+              )}
+              {errors.selectedSize && (
+                <p className="text-red-500 text-sm">{errors.selectedSize}</p>
               )}
             </div>
 
@@ -257,10 +346,10 @@ export default function ProductDetail() {
               <span className="text-lg font-semibold text-(--color-dark)">
                 Quantity:
               </span>
-              <div className="flex items-center gap-4 mt-4">
+              <div className="flex items-center gap-4 mt-4 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30 w-fit p-0.5">
                 <button
                   onClick={decrease}
-                  className="w-10 h-10 flex items-center justify-center bg-(--color-cornsilk) text-(--color-pakistan) rounded-full text-xl font-bold shadow hover:bg-(--color-tiger) hover:text-(--color-cornsilk) transition cursor-pointer"
+                  className="w-10 h-10 flex items-center justify-center bg-(--color-tiger) text-(--color-cornsilk) rounded-full text-xl font-bold shadow hover:bg-(--color-tiger)/80 transition cursor-pointer"
                 >
                   −
                 </button>
@@ -271,11 +360,14 @@ export default function ProductDetail() {
 
                 <button
                   onClick={increase}
-                  className="w-10 h-10 flex items-center justify-center bg-(--color-cornsilk) text-(--color-pakistan) rounded-full text-xl font-bold shadow hover:bg-(--color-tiger) hover:text-(--color-cornsilk) transition cursor-pointer"
+                  className="w-10 h-10 flex items-center justify-center bg-(--color-tiger) text-(--color-cornsilk) rounded-full text-xl font-bold shadow hover:bg-(--color-tiger)/80 transition cursor-pointer"
                 >
                   +
                 </button>
               </div>
+              {errors.quantity && (
+                <p className="text-red-500 text-sm">{errors.quantity}</p>
+              )}
             </div>
 
             <div className="mt-4 w-full">
@@ -301,7 +393,7 @@ export default function ProductDetail() {
 
             <div className="flex items-center gap-4 mt-8">
               <button
-                // onClick={addToCart}
+                onClick={addToCart}
                 // disabled={!selectedSize}
                 className={`flex-1 py-3 rounded-full font-semibold text-white shadow-md text-lg transition-all bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer`}
                 style={{
@@ -313,7 +405,7 @@ export default function ProductDetail() {
 
               {/* زر القلب جنب الزر */}
               <motion.button
-                onClick={() => setIsFav(!isFav)}
+                onClick={handleToggleWishlist}
                 whileTap={{ scale: 0.9 }}
                 className="p-3 rounded-full shadow-md border cursor-pointer"
               >

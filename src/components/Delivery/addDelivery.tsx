@@ -1,8 +1,29 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-
+import {
+  useGetDeliveryQuery,
+  usePostDeliveryMutation,
+} from "../../redux/Delivery/apiDelivery";
+import { toast } from "react-toastify";
 export default function DeliveryPrice() {
   const [price, setPrice] = useState("");
+  const [postDelivery, { isLoading }] = usePostDeliveryMutation();
+  const { data, refetch } = useGetDeliveryQuery({});
+  const delivery = data?.deliveries.find((delivery: any) => delivery.id === 1);
+  const handleAddDelivery = async () => {
+    if (!price || Number(price) <= 0) {
+      toast.error("Delivery price already set");
+      return;
+    }
+    try {
+      await postDelivery({ deliveryPrice: Number(price) });
+      refetch();
+      setPrice("");
+      toast.success("Delivery price added successfully");
+    } catch (error) {
+      toast.error("Error adding delivery price");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-start px-4 mt-20 mb-8">
@@ -29,12 +50,16 @@ export default function DeliveryPrice() {
         />
 
         <div className="bg-(--color-cornsilk) text-(--color-dark) rounded-2xl px-4 py-3 mt-4">
-          <p className="text-2xl sm:text-3xl font-bold">{price || 0} EGP</p>
+          <p className="text-2xl sm:text-3xl font-bold">
+            {delivery?.deliveryPrice || 0} EGP
+          </p>
         </div>
 
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={handleAddDelivery}
+          disabled={isLoading}
           className="w-full mt-6 py-3 rounded-full font-semibold bg-(--color-tiger) hover:bg-(--color-earth) text-white shadow-md transition-all text-base sm:text-lg"
         >
           Save Price

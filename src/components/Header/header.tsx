@@ -13,12 +13,13 @@ import {
   LayoutDashboard,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "./search";
 import Signup from "../Signup/signup";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
+import { useGetCartQuery } from "../../redux/Cart/apiCart";
 const countries = [
   { name: "Egypt", flag: "/eg.svg" },
   // { name: "Saudi", flag: "https://flagcdn.com/sa.svg" },
@@ -34,7 +35,11 @@ export default function Header() {
   const [selected, setSelected] = useState(countries[0]);
   const [showSignup, setShowSignup] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
-
+  const { data: cart, refetch: refetchCart } = useGetCartQuery({});
+  const totalItems: number = cart?.carts?.items.length || 0;
+  useEffect(() => {
+    refetchCart();
+  });
   const secretKey = import.meta.env.VITE_SECRET_KEY;
 
   const encryptedUser = Cookies.get("user");
@@ -364,7 +369,7 @@ export default function Header() {
                     className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
                     title="عدد المنتجات في العربة"
                   >
-                    2
+                    {totalItems}
                   </span>
                 </Link>
               </motion.div>
@@ -533,7 +538,7 @@ export default function Header() {
               className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
               title="عدد المنتجات في العربة"
             >
-              2
+              {totalItems}
             </span>
           </Link>
         </motion.div>

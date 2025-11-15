@@ -1,72 +1,72 @@
 import { motion } from "framer-motion";
-import { X, Plus, Minus } from "lucide-react";
-import { useState } from "react";
-
-interface CartProduct {
-  id: number;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  image: string;
-  quantity: number;
-  stock: number;
-  maxStock: number;
-  sizes?: string[];
-  selectedSize?: string;
-}
-
-const initialCart: CartProduct[] = [
-  {
-    id: 1,
-    name: "Street Hoodie",
-    price: 49,
-    oldPrice: 69,
-    image: "/photo-1495385794356-15371f348c31.jpeg",
-    quantity: 1,
-    stock: 50,
-    maxStock: 100,
-    sizes: ["M"],
-    selectedSize: "M",
-  },
-  {
-    id: 2,
-    name: "Casual Jacket",
-    price: 89,
-    oldPrice: 129,
-    image: "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
-    quantity: 2,
-    stock: 20,
-    maxStock: 50,
-    sizes: ["L"],
-    selectedSize: "L",
-  },
-];
+import { X, Plus, Minus, ShoppingCart } from "lucide-react";
+import {
+  useGetCartQuery,
+  usePatchCartMutation,
+  useDeleteCartMutation,
+} from "../../redux/Cart/apiCart";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import type { CartItemType } from "../../types/CartType";
 
 export default function Cart() {
-  const [cart, setCart] = useState<CartProduct[]>(initialCart);
+  const navigate = useNavigate();
+  const { data, isLoading, refetch } = useGetCartQuery({});
+  const [deleteCart] = useDeleteCartMutation();
+  const [patchCart] = usePatchCartMutation();
+  const decreaseQuantity = async ({
+    id,
+    quantity,
+  }: {
+    id: number;
+    quantity: number;
+  }) => {
+    if (quantity <= 1) {
+      toast.info("Minimum quantity reached");
+      return;
+    }
 
-  const increaseQuantity = (id: number) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.min(item.quantity + 1, item.stock) }
-          : item
-      )
-    );
+    try {
+      await patchCart({
+        id: String(id),
+        data: { quantity: quantity - 1 },
+      });
+      refetch();
+    } catch {
+      toast.error("Error decreasing quantity");
+    }
   };
 
-  const decreaseQuantity = (id: number) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(item.quantity - 1, 1) }
-          : item
-      )
-    );
+  const increaseQuantity = async ({
+    id,
+    quantity,
+  }: {
+    id: number;
+    quantity: number;
+  }) => {
+    if (quantity >= 15) {
+      toast.info("Maximum quantity reached");
+      return;
+    }
+
+    try {
+      await patchCart({
+        id: String(id),
+        data: { quantity: quantity + 1 },
+      });
+      refetch();
+    } catch {
+      toast.error("Error increasing quantity");
+    }
   };
 
-  const removeItem = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const removeItem = async (id: number) => {
+    try {
+      await deleteCart(String(id));
+      refetch();
+    } catch {
+      toast.error("Error removing item");
+    }
   };
 
   return (
@@ -78,21 +78,76 @@ export default function Cart() {
         Shopping Cart
       </h2>
 
-      {cart.length === 0 ? (
-        <p
-          className="text-center text-xl"
-          style={{ color: "var(--color-dark)" }}
+      {isLoading ? (
+        <div className="flex flex-col gap-6">
+          {[1, 2].map((_, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 rounded-2xl shadow-md animate-pulse"
+              style={{ backgroundColor: "var(--color-cornsilk)" }}
+            >
+              <div className="w-44 h-44 bg-(--color-earth)/30 rounded-xl" />
+              <div className="flex-1 flex flex-col gap-2 w-full">
+                <div className="flex justify-between items-start">
+                  <div className="h-6 bg-(--color-earth)/30 rounded w-1/3"></div>
+                  <div className="w-8 h-8 rounded-full bg-(--color-earth)/30"></div>
+                </div>
+                <div className="h-6 bg-(--color-earth)/30 rounded w-1/4 mt-2"></div>
+
+                <div className="mt-1 w-full">
+                  <div className="flex justify-between mb-1">
+                    <div className="h-3 bg-(--color-earth)/30 rounded w-1/4"></div>
+                    <div className="h-3 bg-(--color-earth)/30 rounded w-1/6"></div>
+                  </div>
+                  <div className="w-full h-3 bg-(--color-earth)/20 rounded-full" />
+                </div>
+
+                <div className="flex flex-row max-[470px]:flex-col max-[470px]:gap-4 justify-between mt-3">
+                  <div className="p-2 bg-(--color-earth)/20 rounded-xl border w-fit max-[470px]:w-full h-10" />
+                  <div className="flex items-end p-0.5 gap-2 bg-(--color-earth)/20 rounded-2xl border max-[470px]:w-full max-[470px]:justify-between h-10" />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+
+          {/* زر الدفع */}
+          <div className="mt-4 mb-4 w-full py-3 rounded-2xl shadow-md bg-(--color-earth)/20 animate-pulse h-12"></div>
+        </div>
+      ) : data?.carts?.items.length === 0 ? (
+        <motion.div
+          className="flex flex-col items-center justify-center h-64 rounded-2xl shadow-md p-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          Your cart is empty
-        </p>
+          <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
+          <p className="text-xl sm:text-2xl font-bold text-(--color-dark) mb-2">
+            Your cart is empty
+          </p>
+          <p className="text-center text-sm sm:text-base text-(--color-dark)/70 mb-4">
+            Looks like you haven’t added anything to your cart yet.
+          </p>
+          <button
+            onClick={() => navigate("/products")}
+            className="px-6 py-2 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-earth) transition"
+          >
+            Start Shopping
+          </button>
+        </motion.div>
       ) : (
         <div className="flex flex-col gap-6">
-          {cart.map((item, index) => {
-            const percent = Math.min((item.stock / item.maxStock) * 100, 100);
+          {data?.carts?.items.map((item: CartItemType) => {
+            const percentstock = Math.min(
+              (item?.product?.stock / item?.product?.total_stock) * 100,
+              100
+            );
 
             const getColor = () => {
-              if (percent > 60) return "var(--color-pakistan)";
-              if (percent > 30) return "var(--color-tiger)";
+              if (percentstock > 60) return "var(--color-tiger)";
+              if (percentstock > 30) return "var(--color-dark)";
               return "#A80000";
             };
 
@@ -106,8 +161,8 @@ export default function Cart() {
                 style={{ backgroundColor: "var(--color-cornsilk)" }}
               >
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={item?.product?.images[0]}
+                  alt={item?.product?.name}
                   className="w-44 h-44 object-cover rounded-xl"
                 />
 
@@ -118,10 +173,10 @@ export default function Cart() {
                       className="text-xl font-bold"
                       style={{ color: "var(--color-dark)" }}
                     >
-                      {item.name}
+                      {item?.product?.name}
                     </h3>
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeItem(item?.id)}
                       className="p-1 rounded-full transition cursor-pointer text-(--color-cornsilk) bg-(--color-tiger)"
                     >
                       <X size={20} />
@@ -133,15 +188,15 @@ export default function Cart() {
                     className="text-lg font-bold mt-2"
                     style={{ color: "var(--color-pakistan)" }}
                   >
-                    {item.price}.00 EGP
+                    {item?.product?.price}.00 EGP
                   </p>
 
                   {/* شريط الكمية */}
-                  <div className="mt-2 w-full">
+                  <div className="mt-1 w-full">
                     <div className="flex justify-between mb-1 text-sm font-semibold text-[--color-dark]">
                       <span>Available Stock</span>
                       <span>
-                        {item.stock} / {item.maxStock}
+                        {item?.product?.stock}/{item?.product?.total_stock}
                       </span>
                     </div>
 
@@ -150,7 +205,7 @@ export default function Cart() {
                         className="h-3 rounded-full"
                         initial={{ width: 0 }}
                         animate={{
-                          width: `${percent}%`,
+                          width: `${percentstock}%`,
                           backgroundColor: getColor(),
                         }}
                         transition={{ duration: 0.8 }}
@@ -158,12 +213,36 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  {/* المقاس على الشمال - الكمية على اليمين */}
-                  <div className="flex justify-between items-center mt-4">
+                  <div className="flex flex-row max-[470px]:flex-col max-[470px]:gap-4 justify-between mt-3">
+                    {/* المقاس */}
+                    <div className="p-2 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit max-[470px]:w-full">
+                      <p className="text-sm text-(--color-pakistan)">
+                        <span className="font-semibold text-(--color-tiger)">
+                          Size: {item?.sizes?.size}
+                        </span>
+                        <span className="ml-2 text-(--color-dark)">
+                          (
+                          <span className="font-medium text-(--color-pakistan)">
+                            Length:
+                          </span>{" "}
+                          {item?.sizes.length} cm —{" "}
+                          <span className="font-medium text-(--color-pakistan)">
+                            Width:
+                          </span>{" "}
+                          {item?.sizes.width} cm)
+                        </span>
+                      </p>
+                    </div>
+
                     {/* الكمية */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-end p-0.5 gap-2 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30 max-[470px]:w-full max-[470px]:justify-between">
                       <button
-                        onClick={() => decreaseQuantity(item.id)}
+                        onClick={() =>
+                          decreaseQuantity({
+                            id: item?.id,
+                            quantity: item?.quantity,
+                          })
+                        }
                         className="w-8 h-8 flex items-center justify-center text-white rounded-full transition"
                         style={{ backgroundColor: "var(--color-tiger)" }}
                       >
@@ -173,42 +252,21 @@ export default function Cart() {
                         className="text-lg font-semibold"
                         style={{ color: "var(--color-dark)" }}
                       >
-                        {item.quantity}
+                        {item?.quantity}
                       </span>
                       <button
-                        onClick={() => increaseQuantity(item.id)}
+                        onClick={() =>
+                          increaseQuantity({
+                            id: item?.id,
+                            quantity: item?.quantity,
+                          })
+                        }
                         className="w-8 h-8 flex items-center justify-center text-white rounded-full transition"
                         style={{ backgroundColor: "var(--color-tiger)" }}
                       >
                         <Plus size={18} />
                       </button>
                     </div>
-
-                    {/* المقاس */}
-                    {item.sizes && (
-                      <div>
-                        <div className="flex gap-2 flex-wrap">
-                          {item.sizes.map((size) => (
-                            <motion.button
-                              key={size}
-                              onClick={() => {
-                                const newCart = [...cart];
-                                newCart[index].selectedSize = size;
-                                setCart(newCart);
-                              }}
-                              whileTap={{ scale: 0.9 }}
-                              className={`px-3 py-1 rounded-full text-sm font-medium border-2 transition-all cursor-pointer ${
-                                item.selectedSize === size
-                                  ? "bg-(--color-tiger) text-white border-(--color-tiger)"
-                                  : "border-gray-400 text-gray-700 hover:border-(--color-tiger)"
-                              }`}
-                            >
-                              {size}
-                            </motion.button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               </motion.div>
