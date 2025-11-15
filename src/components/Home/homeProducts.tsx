@@ -4,30 +4,6 @@ import type { ProductType } from "../../types/ProductType";
 import { Link } from "react-router-dom";
 import { PackageSearch } from "lucide-react";
 
-// const products = [
-//   {
-//     id: 1,
-//     name: "Casual T-Shirt",
-//     price: "700 EGP",
-//     discount: "20%",
-//     img: "/photo-1495385794356-15371f348c31.jpeg",
-//   },
-//   {
-//     id: 2,
-//     name: "Classic Jeans",
-//     price: "1200 EGP",
-//     discount: null,
-//     img: "/premium_photo-1667520043080-53dcca77e2aa.jpeg",
-//   },
-//   {
-//     id: 3,
-//     name: "Modern Sweatshirt",
-//     price: "900 EGP",
-//     discount: "15%",
-//     img: "/premium_photo-1681494700976-861938fe0513.jpeg",
-//   },
-// ];
-
 export default function HomeProducts() {
   const { data: products, isLoading } = useGetProductsQuery({});
   return (

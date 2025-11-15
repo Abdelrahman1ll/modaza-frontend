@@ -36,15 +36,12 @@ export default function Header() {
   const [showSignup, setShowSignup] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const { data: cart, refetch: refetchCart } = useGetCartQuery({});
-  const totalItems: number = cart?.carts?.items.length || 0;
-  useEffect(() => {
-    refetchCart();
-  });
+
   const secretKey = import.meta.env.VITE_SECRET_KEY;
 
   const encryptedUser = Cookies.get("user");
 
-  let user;
+  let user: any = null;
   if (encryptedUser) {
     const decryptedUser = CryptoJS.AES.decrypt(
       encryptedUser,
@@ -58,6 +55,14 @@ export default function Header() {
     Cookies.remove("user");
     return (window.location.href = "/");
   };
+
+  useEffect(() => {
+    if (user?.role === "user") {
+      refetchCart();
+    }
+  }, [refetchCart, user?.role]);
+
+  const totalItems: number = cart?.carts?.items.length || 0;
 
   return (
     <>

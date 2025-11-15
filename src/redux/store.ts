@@ -6,6 +6,8 @@ import { ApiWishlist } from "./wishlist/apiWishlist";
 import { ApiDiscountCodes } from "./DiscountCodes/apiDiscountCodes";
 import { ApiDelivery } from "./Delivery/apiDelivery";
 import { ApiCart } from "./Cart/apiCart";
+import { ApiEmailOrderDispatcher } from "./EmailOrderDispatcher/apiEmailOrderDispatcher";
+import { ApiEmail } from "./Email/apiEmail";
 export const store = configureStore({
   reducer: {
     [ApiUsers.reducerPath]: ApiUsers.reducer,
@@ -15,6 +17,8 @@ export const store = configureStore({
     [ApiDiscountCodes.reducerPath]: ApiDiscountCodes.reducer,
     [ApiDelivery.reducerPath]: ApiDelivery.reducer,
     [ApiCart.reducerPath]: ApiCart.reducer,
+    [ApiEmailOrderDispatcher.reducerPath]: ApiEmailOrderDispatcher.reducer,
+    [ApiEmail.reducerPath]: ApiEmail.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -24,7 +28,9 @@ export const store = configureStore({
       ApiWishlist.middleware,
       ApiDiscountCodes.middleware,
       ApiDelivery.middleware,
-      ApiCart.middleware
+      ApiCart.middleware,
+      ApiEmailOrderDispatcher.middleware,
+      ApiEmail.middleware
     ),
 });
 

@@ -1,39 +1,33 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useSendEmailMutation } from "../../redux/Email/apiEmail";
+import { toast } from "react-toastify";
 
 export default function AllUsersMessages() {
+  const [sendEmail, { isLoading }] = useSendEmailMutation();
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
   const handleSendMessage = async () => {
-    if (!subject || !message) return;
+    if (!subject || !message) {
+      setError("Please enter a subject and message.");
+      return;
+    }
 
-    setLoading(true);
     setSuccess(false);
     setError("");
 
-    // try {
-    //   await fetch("/api/send-email", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       subject: subject,
-    //       message: `<p>${message}</p>`,
-    //     }),
-    //   });
-
-    //   setSuccess(true);
-    //   setSubject("");
-    //   setMessage("");
-    // } catch (err) {
-    //   console.error(err);
-    //   setError("Failed to send message. Please try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      await sendEmail({ subject, message }).unwrap();
+      setSuccess(true);
+      setMessage("");
+      setSubject("");
+      toast.success("Email sent successfully!");
+    } catch {
+      toast.error("Failed to send email. Please try again.");
+    }
   };
 
   return (
@@ -76,12 +70,12 @@ export default function AllUsersMessages() {
 
         <motion.button
           onClick={handleSendMessage}
-          disabled={loading}
+          disabled={isLoading || !subject || !message}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="w-full py-3 rounded-full font-semibold bg-(--color-tiger) hover:bg-(--color-earth) text-white shadow-md transition-all disabled:opacity-50"
         >
-          {loading ? "Sending..." : "Send Message to All Customers"}
+          {isLoading ? "Sending..." : "Send Message to All Customers"}
         </motion.button>
       </motion.div>
     </div>
