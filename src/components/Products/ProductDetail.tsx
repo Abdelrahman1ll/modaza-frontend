@@ -1,135 +1,31 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Heart, PackageSearch } from "lucide-react";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useGetProductIdQuery } from "../../redux/products/apiProducts";
-import type { ProductSizeType, ProductType } from "../../types/ProductType";
+import type { ProductSizeType } from "../../types/ProductType";
 import MotionZoomImage from "./ImageZoom";
-import {
-  useDeleteWishlistMutation,
-  useGetWishlistQuery,
-  usePostWishlistMutation,
-} from "../../redux/wishlist/apiWishlist";
-import { toast } from "react-toastify";
-import { useGetCartQuery, usePostCartMutation } from "../../redux/Cart/apiCart";
+import Signup from "../Signup/signup";
+import useProductDetail from "./useProductDetail";
 export default function ProductDetail() {
-  const { id } = useParams();
-  const { data: products, isLoading } = useGetProductIdQuery(id);
-
-  const product: ProductType = products?.product;
-
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [isFav, setIsFav] = useState(false);
-  const [postWishlist] = usePostWishlistMutation();
-  const { data, refetch } = useGetWishlistQuery({});
-  const [deleteWishlist] = useDeleteWishlistMutation();
-  const [postCart] = usePostCartMutation();
-  const { refetch: refetchCart } = useGetCartQuery({});
-
-  useEffect(() => {
-    if (data?.wishlist) {
-      const exist = data.wishlist.some(
-        (item: any) => String(item.product.id) === String(id)
-      );
-      setIsFav(exist);
-    }
-  }, [data, id]);
-
-  const handleToggleWishlist = async () => {
-    try {
-      if (isFav) {
-        const wishlistItem = data?.wishlist?.find(
-          (item: any) => String(item.product.id) === String(id)
-        );
-
-        if (!wishlistItem) {
-          toast.info("Item already removed from wishlist");
-          setIsFav(false);
-          return;
-        }
-
-        await deleteWishlist(wishlistItem.id).unwrap();
-        setIsFav(false);
-        refetch();
-      } else {
-        await postWishlist({ product: Number(id) }).unwrap();
-        setIsFav(true);
-        refetch();
-      }
-    } catch {
-      toast.error("Failed to toggle favorite");
-    }
-  };
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const mainImage =
-    product?.images && product.images.length > 0
-      ? product.images[currentIndex]
-      : "/photo-1495385794356-15371f348c31.jpeg";
-
-  const handleNext = () => {
-    if (!product?.images?.length) return;
-    setCurrentIndex((prevIndex: number) =>
-      prevIndex === product?.images?.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  const handlePrev = () => {
-    if (!product?.images?.length) return;
-    setCurrentIndex((prevIndex: number) =>
-      prevIndex === 0 ? product?.images?.length - 1 : prevIndex - 1
-    );
-  };
-
-  const [quantity, setQuantity] = useState(1);
-
-  const increase = () => setQuantity((prev) => Math.min(prev + 1, 10)); // أقصى 10
-  const decrease = () => setQuantity((prev) => Math.max(prev - 1, 1)); // أدنى 1
-
-  const percentstock =
-    Math.min((product?.stock / product?.total_stock) * 100, 100) || 0;
-  const getColor = () => {
-    if (percentstock > 60) return "var(--color-tiger)"; // أخضر
-    if (percentstock > 30) return "var(--color-dark)"; // برتقالي
-    return "#A80000"; // أحمر
-  };
-
-  const [errors, setErrors] = useState({
-    selectedSize: null,
-    quantity: null,
-    id: null,
-  });
-
-  const addToCart = async () => {
-    let newErrors: any = {
-      selectedSize: null,
-      quantity: null,
-      id: null,
-    };
-
-    if (!selectedSize) newErrors.selectedSize = "Please select a size";
-    if (!id) newErrors.id = "Invalid product";
-    if (!quantity || quantity === 0)
-      newErrors.quantity = "Quantity must be greater than 0";
-
-    // لو في أي Error وقف
-    if (newErrors.selectedSize || newErrors.quantity || newErrors.id) {
-      setErrors(newErrors);
-      return;
-    }
-    try {
-      await postCart({
-        product: Number(id),
-        quantity: quantity,
-        sizes: selectedSize,
-      }).unwrap();
-
-      toast.success("Item add to cart");
-      refetchCart();
-    } catch {
-      toast.error("Failed to add item to cart");
-    }
-  };
-
+  const {
+    product,
+    isFav,
+    handleToggleWishlist,
+    mainImage,
+    handleNext,
+    handlePrev,
+    quantity,
+    increase,
+    decrease,
+    percentstock,
+    getColor,
+    errors,
+    addToCart,
+    selectedSize,
+    setSelectedSize,
+    setShowSignup,
+    isLoading,
+    showSignup,
+    setCurrentIndex,
+  } = useProductDetail();
   return (
     <>
       {isLoading ? (
@@ -260,8 +156,8 @@ export default function ProductDetail() {
                 </p>
               )}
 
-              <span className="text-(--color-cornsilk) bg-(--color-tiger) px-2 py-0.5 rounded-full font-semibold">
-                {product?.discountPercentage.toFixed(0)}%
+              <span className="text-(--color-cornsilk) bg-(--color-tiger) px-2 py-0.5 rounded-full ">
+                {product?.discountPercentage.toFixed(0)}% OFF
               </span>
             </div>
 
@@ -394,7 +290,6 @@ export default function ProductDetail() {
             <div className="flex items-center gap-4 mt-8">
               <button
                 onClick={addToCart}
-                // disabled={!selectedSize}
                 className={`flex-1 py-3 rounded-full font-semibold text-white shadow-md text-lg transition-all bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer`}
                 style={{
                   boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
@@ -419,6 +314,7 @@ export default function ProductDetail() {
           </motion.div>
         </div>
       )}
+      {showSignup && <Signup onClose={() => setShowSignup(false)} />}
     </>
   );
 }

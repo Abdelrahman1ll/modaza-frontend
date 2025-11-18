@@ -1,25 +1,11 @@
 import { motion } from "framer-motion";
 import { Package, ShoppingBag, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import type { OrderType } from "../../types/OrderType";
+import useOrders from "./useOrders";
 
 export default function Orders() {
-  const orders = [
-    {
-      id: "ORD-1023",
-      date: "2025-10-29",
-      total: "850 EGP",
-      status: "Delivered",
-      items: 3,
-    },
-    {
-      id: "ORD-1024",
-      date: "2025-11-01",
-      total: "420 EGP",
-      status: "Processing",
-      items: 2,
-    },
-  ];
-
+  const { orders, isLoading, formatEndDateArabic } = useOrders();
   return (
     <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4 ">
       <motion.h1
@@ -31,7 +17,35 @@ export default function Orders() {
         My Orders
       </motion.h1>
 
-      {orders.length === 0 ? (
+      {isLoading ? (
+        <div className="w-full max-w-3xl space-y-4">
+          {[1, 2, 3, 4].map((i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-between animate-pulse bg-white"
+            >
+              {/* Left side */}
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-gray-200"></div>
+
+                <div className="space-y-2">
+                  <div className="h-3 w-32 bg-gray-200 rounded"></div>
+                  <div className="h-3 w-20 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+
+              {/* Right side */}
+              <div className="text-right space-y-2">
+                <div className="h-3 w-20 bg-gray-200 rounded ml-auto"></div>
+                <div className="h-3 w-28 bg-gray-200 rounded ml-auto"></div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : orders?.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -45,45 +59,69 @@ export default function Orders() {
         </motion.div>
       ) : (
         <div className="w-full max-w-3xl space-y-4">
-          {orders.map((order) => (
-            <Link to={`/orders/${order.id}`}>
-              <motion.div
-                key={order.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="rounded-2xl shadow-sm p-5 mb-4 flex items-center justify-between hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-4">
-                  <Package className="text-(--color-tiger)" size={28} />
-                  <div>
+          {orders.map((order: OrderType) => (
+            <div key={order?.id}>
+              <Link to={`/orders/${order?.id}`}>
+                <motion.div
+                  key={order?.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-between hover:shadow-md transition"
+                >
+                  <div className="flex items-center gap-4">
+                    <Package className="text-(--color-tiger)" size={28} />
+                    <div>
+                      <p className="font-semibold text-(--color-pakistan)">
+                        Order ID: {order?.orderNumber}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {order?.items.length} items •{" "}
+                        {formatEndDateArabic(order?.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    {/* السعر */}
                     <p className="font-semibold text-(--color-pakistan)">
-                      Order ID: {order.id}
+                      {order?.totalPrice} EGP
                     </p>
-                    <p className="text-sm text-gray-500">
-                      {order.items} items • {order.date}
+
+                    {/* الحالة */}
+                    <p
+                      className={`text-sm flex items-center gap-1 justify-end
+                           ${
+                             order?.isDelivered
+                               ? "text-[#16a34a]"
+                               : order?.isShipped
+                               ? "text-[#FF9800]"
+                               : order?.isPaid
+                               ? "text-[#10B981]"
+                               : order?.isConfirmed
+                               ? "text-[#2196F3]"
+                               : order?.isCanceled
+                               ? "text-[#F44336]"
+                               : "text-gray-500"
+                           }
+                    `}
+                    >
+                      <Clock size={14} />
+                      {order?.isDelivered
+                        ? "Delivered"
+                        : order?.isShipped
+                        ? "Shipped"
+                        : order?.isPaid
+                        ? "Paid"
+                        : order?.isConfirmed
+                        ? "Confirmed"
+                        : order?.isCanceled
+                        ? "Canceled"
+                        : "Processing"}
                     </p>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold text-(--color-pakistan)">
-                    {order.total}
-                  </p>
-                  <p
-                    className={`text-sm flex items-center gap-1 justify-end ${
-                      order.status === "Delivered"
-                        ? "text-green-600"
-                        : order.status === "Processing"
-                        ? "text-orange-500"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    <Clock size={14} />
-                    {order.status}
-                  </p>
-                </div>
-              </motion.div>
-            </Link>
+                </motion.div>
+              </Link>
+            </div>
           ))}
         </div>
       )}

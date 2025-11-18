@@ -91,6 +91,8 @@ export default function useSignup(onClose: () => void) {
     e.preventDefault();
     const enteredCode = code.join("");
     const numericCode = Number(enteredCode);
+    if (isNaN(numericCode) || enteredCode.length !== 6)
+      return toast.error("Invalid code");
     const emailStorage = localStorage.getItem("email");
     if (!emailStorage) return toast.error("Email not found");
 
@@ -117,6 +119,7 @@ export default function useSignup(onClose: () => void) {
         onClose();
         setCode(["", "", "", "", "", ""]);
         localStorage.removeItem("email");
+        window.location.reload();
       }
     } catch {
       toast.error("Invalid code");

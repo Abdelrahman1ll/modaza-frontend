@@ -8,11 +8,30 @@ import {
 } from "../../redux/wishlist/apiWishlist";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 export default function useProduct() {
-     const [currentImage, setCurrentImage] = useState<{ [key: number]: number }>(
+  const [currentImage, setCurrentImage] = useState<{ [key: number]: number }>(
     {}
   );
-  const { data: products, isLoading } = useGetProductsQuery({});
+  const [searchParams] = useSearchParams();
+  const name = searchParams.get("name") || "";
+
+  const secretKey = import.meta.env.VITE_SECRET_KEY;
+  const encryptedUser = Cookies.get("user");
+  let user: any = null;
+  if (encryptedUser) {
+    const decryptedUser = CryptoJS.AES.decrypt(
+      encryptedUser,
+      secretKey
+    ).toString(CryptoJS.enc.Utf8);
+
+    user = JSON.parse(decryptedUser);
+  }
+
+  const isUser = user?.user.role === "user";
+
+  const { data: products, isLoading } = useGetProductsQuery(name);
   const [isFav, setIsFav] = useState<{ [key: number]: boolean }>({});
   const [postWishlist] = usePostWishlistMutation();
   const { data, refetch } = useGetWishlistQuery({});
@@ -26,7 +45,7 @@ export default function useProduct() {
       });
       setIsFav(favStatus);
     }
-  }, [data]);
+  }, [data, isUser]);
 
   const handleToggleWishlist = async (productId: number) => {
     try {
@@ -47,21 +66,6 @@ export default function useProduct() {
       toast.error("Failed to toggle favorite");
     }
   };
-
-  // Check if user is logged in
-  const secretKey = import.meta.env.VITE_SECRET_KEY;
-
-  const encryptedUser = Cookies.get("user");
-
-  let user: { user: { role: string } } | null = null;
-  if (encryptedUser) {
-    const decryptedUser = CryptoJS.AES.decrypt(
-      encryptedUser,
-      secretKey
-    ).toString(CryptoJS.enc.Utf8);
-
-    user = JSON.parse(decryptedUser);
-  }
 
   const nextImage = (id: number, total: number) => {
     setCurrentImage((prev) => ({

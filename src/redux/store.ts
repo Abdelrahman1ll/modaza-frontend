@@ -8,6 +8,7 @@ import { ApiDelivery } from "./Delivery/apiDelivery";
 import { ApiCart } from "./Cart/apiCart";
 import { ApiEmailOrderDispatcher } from "./EmailOrderDispatcher/apiEmailOrderDispatcher";
 import { ApiEmail } from "./Email/apiEmail";
+import { ApiOrders } from "./Orders/apiOrders";
 export const store = configureStore({
   reducer: {
     [ApiUsers.reducerPath]: ApiUsers.reducer,
@@ -19,6 +20,7 @@ export const store = configureStore({
     [ApiCart.reducerPath]: ApiCart.reducer,
     [ApiEmailOrderDispatcher.reducerPath]: ApiEmailOrderDispatcher.reducer,
     [ApiEmail.reducerPath]: ApiEmail.reducer,
+    [ApiOrders.reducerPath]: ApiOrders.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -30,7 +32,8 @@ export const store = configureStore({
       ApiDelivery.middleware,
       ApiCart.middleware,
       ApiEmailOrderDispatcher.middleware,
-      ApiEmail.middleware
+      ApiEmail.middleware,
+      ApiOrders.middleware
     ),
 });
 

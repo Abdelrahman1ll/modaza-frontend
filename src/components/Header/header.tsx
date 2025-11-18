@@ -13,60 +13,35 @@ import {
   LayoutDashboard,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SearchInput from "./search";
 import Signup from "../Signup/signup";
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
-import { useGetCartQuery } from "../../redux/Cart/apiCart";
-const countries = [
-  { name: "Egypt", flag: "/eg.svg" },
-  // { name: "Saudi", flag: "https://flagcdn.com/sa.svg" },
-  // { name: "Morocco", flag: "https://flagcdn.com/ma.svg" },
-  // { name: "Jordan", flag: "https://flagcdn.com/jo.svg" },
-  // { name: "Kuwait", flag: "https://flagcdn.com/kw.svg" },
-];
+import useHeader from "./useHeader";
+
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearch, setSearch] = useState(false);
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState(countries[0]);
-  const [showSignup, setShowSignup] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
-  const { data: cart, refetch: refetchCart } = useGetCartQuery({});
-
-  const secretKey = import.meta.env.VITE_SECRET_KEY;
-
-  const encryptedUser = Cookies.get("user");
-
-  let user: any = null;
-  if (encryptedUser) {
-    const decryptedUser = CryptoJS.AES.decrypt(
-      encryptedUser,
-      secretKey
-    ).toString(CryptoJS.enc.Utf8);
-
-    user = JSON.parse(decryptedUser);
-  }
-
-  const handleLogout = () => {
-    Cookies.remove("user");
-    return (window.location.href = "/");
-  };
-
-  useEffect(() => {
-    if (user?.role === "user") {
-      refetchCart();
-    }
-  }, [refetchCart, user?.role]);
-
-  const totalItems: number = cart?.carts?.items.length || 0;
-
+  const {
+    isMenuOpen,
+    setIsMenuOpen,
+    isSearch,
+    setSearch,
+    isOpen,
+    setIsOpen,
+    selected,
+    setSelected,
+    showSignup,
+    setShowSignup,
+    openMenu,
+    setOpenMenu,
+    name,
+    setName,
+    handleLogout,
+    user,
+    totalItems,
+    countries,
+  } = useHeader();
   return (
     <>
-      <header className="shadow-md py-4 px-6 max-[1080px]:hidden">
+      <header className="shadow-md py-4 px-6 max-[1180px]:hidden">
         <div className="w-full flex items-center justify-between gap-6">
           <nav className="flex items-center gap-6 font-medium">
             <Link
@@ -91,7 +66,7 @@ export default function Header() {
                 (e.currentTarget.style.color = "var(--color-dark)")
               }
             >
-              Shop Now
+              All Products
             </Link>
             <Link
               to="/contact"
@@ -103,7 +78,7 @@ export default function Header() {
                 (e.currentTarget.style.color = "var(--color-dark)")
               }
             >
-              Contact
+              Contact Us
             </Link>
           </nav>
 
@@ -128,6 +103,8 @@ export default function Header() {
                 style={{
                   color: "var(--color-pakistan)",
                 }}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
               <Search
                 className="absolute text-(--color-pakistan) left-3 top-2.5"
@@ -383,7 +360,7 @@ export default function Header() {
         </div>
       </header>
 
-      <header className="shadow-md py-4 px-6 min-[1080px]:hidden">
+      <header className="shadow-md py-4 px-6 min-[1180px]:hidden">
         <div className="w-full flex items-center justify-between gap-6">
           <motion.div
             whileHover={{ scale: 1.2, y: -4 }}
@@ -425,7 +402,7 @@ export default function Header() {
                     (e.currentTarget.style.color = "var(--color-dark)")
                   }
                 >
-                  Shop Now
+                  All Products
                 </Link>
 
                 <Link
@@ -439,7 +416,7 @@ export default function Header() {
                     (e.currentTarget.style.color = "var(--color-dark)")
                   }
                 >
-                  Contact
+                  Contact Us
                 </Link>
               </nav>
             </div>
@@ -507,7 +484,7 @@ export default function Header() {
         className="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 
              flex items-center justify-between shadow-lg 
              border border-(--color-text) py-3 px-6 rounded-full w-[90%] 
-             backdrop-blur-md bg-opacity-90 min-[1080px]:hidden"
+             backdrop-blur-md bg-opacity-90 min-[1180px]:hidden"
       >
         <motion.div
           whileHover={{ scale: 1.2, y: -4 }}

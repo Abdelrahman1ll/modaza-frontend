@@ -107,8 +107,8 @@ export default function Product() {
                     </motion.button>
                     {/* الخصم */}
                     {product.discountPercentage !== 0 && (
-                      <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500">
-                        {product.discountPercentage.toFixed(0)}% OFF
+                      <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-2 py-0.5 rounded-full shadow-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500">
+                        {product.discountPercentage.toFixed(0)}% off
                       </span>
                     )}
                   </div>

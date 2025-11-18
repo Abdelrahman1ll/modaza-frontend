@@ -24,6 +24,7 @@ import ReturnExchangePolicyPage from "./pages/Policies/returnExchangePolicyPage"
 import SalesPaymentPolicyPage from "./pages/Policies/salesPaymentPolicyPage";
 import TermsConditionsPage from "./pages/Policies/termsConditionsPage";
 import { ToastContainer } from 'react-toastify';
+import CheckoutPage from "./pages/Orders/CheckoutPage";
 export default function App() {
   return (
     <div>
@@ -73,6 +74,7 @@ export default function App() {
         />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
       </Routes>
     </div>
   );

@@ -1,17 +1,24 @@
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 export default function SearchInput({ onClose }: { onClose: () => void }) {
+  const [name, setName] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
   useEffect(() => {
-    const handleScroll = () => {
-      onClose();
-    };
+    const handler = setTimeout(() => {
+      if (name) {
+        searchParams.set("name", name);
+      } else {
+        searchParams.delete("name");
+      }
+      setSearchParams(searchParams);
+    }, 500);
 
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [onClose]);
+    return () => clearTimeout(handler);
+  }, [name]);
 
   return createPortal(
     <div
@@ -29,6 +36,8 @@ export default function SearchInput({ onClose }: { onClose: () => void }) {
             backgroundColor: "var(--color-dark)",
             color: "#000",
           }}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           autoFocus
         />
         <Search

@@ -11,7 +11,7 @@ import type { CartItemType } from "../../types/CartType";
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { data, isLoading, refetch } = useGetCartQuery({});
+  const { data, isLoading, refetch, isError } = useGetCartQuery({});
   const [deleteCart] = useDeleteCartMutation();
   const [patchCart] = usePatchCartMutation();
   const decreaseQuantity = async ({
@@ -137,6 +137,31 @@ export default function Cart() {
             Start Shopping
           </button>
         </motion.div>
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center h-64 rounded-2xl shadow-md p-6">
+          <p className="text-2xl text-red-600 font-bold mb-2">
+            Error Loading Cart
+          </p>
+          <p className="text-sm text-red-500 text-center mb-4">
+            Something went wrong. Please try again.
+          </p>
+          <button
+            onClick={() => navigate("/")}
+            className="px-6 py-2 rounded-full font-semibold text-white shadow-md transition"
+            style={{
+              backgroundColor: "var(--color-tiger)",
+              transition: "background-color 0.3s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--color-earth)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--color-tiger)")
+            }
+          >
+            Retry
+          </button>
+        </div>
       ) : (
         <div className="flex flex-col gap-6">
           {data?.carts?.items.map((item: CartItemType) => {
@@ -274,7 +299,10 @@ export default function Cart() {
           })}
 
           {/* زر الدفع */}
-          <button className="mt-4 mb-4 w-full py-3 text-white text-xl bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer font-semibold rounded-2xl shadow-md transition">
+          <button
+            onClick={() => navigate("/checkout")}
+            className="mt-4 mb-4 w-full py-3 text-white text-xl bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer font-semibold rounded-2xl shadow-md transition"
+          >
             Checkout
           </button>
         </div>
