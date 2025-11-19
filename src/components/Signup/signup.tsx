@@ -1,7 +1,9 @@
 import { X } from "lucide-react";
 import useSignup from "./useSignup";
 import GoogleSignup from "./googleSignup";
+
 export default function Signup({ onClose }: { onClose: () => void }) {
+  
   const {
     email,
     setEmail,

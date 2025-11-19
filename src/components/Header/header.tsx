@@ -13,12 +13,14 @@ import {
   LayoutDashboard,
   Users,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SearchInput from "./search";
 import Signup from "../Signup/signup";
 import useHeader from "./useHeader";
+import { useEffect, useState } from "react";
 
 export default function Header() {
+  
   const {
     isMenuOpen,
     setIsMenuOpen,
@@ -39,6 +41,13 @@ export default function Header() {
     totalItems,
     countries,
   } = useHeader();
+  const navigate = useNavigate();
+  const [isSearchLocal, setIsSearchLocal] = useState(false);
+
+  useEffect(() => {
+    const value = localStorage.getItem("isSearch") === "true";
+    setIsSearchLocal(value);
+  }, []);
   return (
     <>
       <header className="shadow-md py-4 px-6 max-[1180px]:hidden">
@@ -105,6 +114,7 @@ export default function Header() {
                 }}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onFocus={() => navigate("/products")}
               />
               <Search
                 className="absolute text-(--color-pakistan) left-3 top-2.5"
@@ -491,12 +501,17 @@ export default function Header() {
           whileTap={{ scale: 0.9 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <div className="cursor-pointer" onClick={() => setSearch(!isSearch)}>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setSearch(!isSearch);
+              setIsSearchLocal(!isSearchLocal);
+              localStorage.removeItem("isSearch");
+            }}
+          >
             {isSearch ? <X size={22} /> : <Search size={22} />}
           </div>
         </motion.div>
-
-        {isSearch && <SearchInput onClose={() => setSearch(false)} />}
 
         <motion.div
           whileHover={{ scale: 1.2, y: -4 }}
@@ -715,6 +730,13 @@ export default function Header() {
           </Link>
         </motion.div>
       </header>
+
+      {(isSearch || isSearchLocal) && (
+        <SearchInput
+          setSearch={setSearch}
+          setIsSearchLocal={setIsSearchLocal}
+        />
+      )}
 
       {showSignup && <Signup onClose={() => setShowSignup(false)} />}
     </>

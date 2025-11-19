@@ -2,7 +2,6 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok } from "react-icons/fa6";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { useState } from "react";
 import Signup from "../Signup/signup";
-
 export default function Footer() {
   const [showSignup, setShowSignup] = useState(false);
   return (
@@ -131,8 +130,8 @@ export default function Footer() {
                 type="email"
                 placeholder="Enter your email"
                 className="p-2 text-sm rounded-l-md w-full bg-(--color-cornsilk) text-(--color-pakistan) border border-(--color-tiger) focus:outline-none"
-               onChange={() => setShowSignup(true)}
-               value={''}
+                onChange={() => setShowSignup(true)}
+                value={""}
               />
               <button
                 className="bg-(--color-tiger) cursor-pointer hover:opacity-90 text-white px-4 rounded-r-md text-sm font-medium"

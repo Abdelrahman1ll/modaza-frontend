@@ -1,4 +1,4 @@
-import { CreditCard, Wallet, Truck, Phone } from "lucide-react";
+import { CreditCard, Wallet, Truck, Smartphone } from "lucide-react";
 
 const paymentMethods = [
   {
@@ -14,12 +14,12 @@ const paymentMethods = [
 
   {
     name: "Vodafone Cash",
-    icon: <Phone size={32} className="text-gray-600" />,
+    icon: <Wallet size={32} className="text-gray-600" />,
     description: "Secure mobile payment",
   },
   {
     name: "InstaPay",
-    icon: <Wallet size={32} className="text-gray-600" />,
+    icon: <Smartphone size={32} className="text-gray-600" />,
     description: "Fast digital payment",
   },
 ];

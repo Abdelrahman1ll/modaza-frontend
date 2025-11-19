@@ -5,6 +5,9 @@ import { useGetDeliveryQuery } from "../../redux/Delivery/apiDelivery";
 import { usePostOrdersMutation } from "../../redux/Orders/apiOrders";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import ttsMP3 from "/ttsMP3.com_VoiceText_2025-11-19_2-28-51.mp3";
+const audio = new Audio(ttsMP3);
+
 export default function useCheckout() {
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -34,7 +37,12 @@ export default function useCheckout() {
   const [postUserDiscountCodes] = usePostUserDiscountCodesMutation();
   const [postOrders, { isLoading: orderLoading }] = usePostOrdersMutation();
 
-  const deliveryFee: number = delivery?.deliveries[0]?.deliveryPrice;
+  const isFirstOrder: boolean = data?.carts?.thIsIsYourFirstOrder;
+
+  const deliveryFee: number = isFirstOrder
+    ? 0
+    : delivery?.deliveries[0]?.deliveryPrice;
+
   let total: number = data?.carts?.total;
   if (discount > 0) {
     total = total - (total * discount) / 100;
@@ -131,9 +139,10 @@ export default function useCheckout() {
       setPaymentMethod("");
       setCode("");
       toast.success("Order placed successfully");
+      audio.play();
       setTimeout(() => {
         navigate("/orders");
-      }, 2000);
+      }, 200);
     } catch {
       toast.error("Error placing order");
     }
@@ -169,5 +178,6 @@ export default function useCheckout() {
     data,
     setErrors,
     navigate,
+    isFirstOrder,
   };
 }

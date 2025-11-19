@@ -11,13 +11,13 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useGetProductIdQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
+import confetti from "canvas-confetti";
 export default function useProductDetail() {
   const { id } = useParams();
   const { data: products, isLoading } = useGetProductIdQuery(id);
   const [showSignup, setShowSignup] = useState(false);
 
   const product: ProductType = products?.product;
-
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const [isFav, setIsFav] = useState(false);
   const [postWishlist] = usePostWishlistMutation();
@@ -148,6 +148,11 @@ export default function useProductDetail() {
         sizes: selectedSize,
       }).unwrap();
 
+      confetti({
+        particleCount: 120,
+        spread: 100,
+        origin: { y: 0.7 },
+      });
       toast.success("Item add to cart");
       refetchCart();
     } catch {

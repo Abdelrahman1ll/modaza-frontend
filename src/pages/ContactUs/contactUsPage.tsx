@@ -1,24 +1,21 @@
+import ContactUs from "../../components/ContactUs/contactUs";
 import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";
-import HomeProducts from "../../components/Home/homeProducts";
-import Main from "../../components/Home/main";
 
-export default function HomePage() {
+export default function ContactUsPage() {
   return (
-    <>
+    <div>
       <PromoBar />
-
+      
       <Header />
 
-      <Main />
-
-      <HomeProducts />
+      <ContactUs />
 
       <PaymentSection />
 
       <Footer />
-    </>
+    </div>
   );
 }

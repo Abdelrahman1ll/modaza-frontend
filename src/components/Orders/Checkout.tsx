@@ -43,6 +43,7 @@ export default function Checkout() {
     data,
     setErrors,
     navigate,
+    isFirstOrder,
   } = useCheckout();
   return (
     <div className="min-h-screen p-6 flex flex-col items-center">
@@ -95,6 +96,7 @@ export default function Checkout() {
                 setLastName(e.target.value);
                 setErrors((prev) => ({ ...prev, lastName: "" }));
               }}
+              required
             />
             {errors?.lastName && (
               <p className="text-red-600 text-sm mt-1">{errors?.lastName}</p>
@@ -125,6 +127,7 @@ export default function Checkout() {
               placeholder="State / City"
               className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
               value={state}
+              required
               onChange={(e) => {
                 setState(e.target.value);
                 setErrors((prev) => ({ ...prev, state: "" }));
@@ -145,6 +148,7 @@ export default function Checkout() {
             placeholder="Street, Building, etc."
             className="w-full p-3 rounded-xl border border-(--color-earth) outline-none"
             value={addressDetails}
+            required
             onChange={(e) => {
               setAddressDetails(e.target.value);
               setErrors((prev) => ({ ...prev, addressDetails: "" }));
@@ -166,6 +170,7 @@ export default function Checkout() {
               placeholder="Phone"
               className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
               value={phone1}
+              required
               onChange={(e) => {
                 setPhone1(e.target.value);
                 setErrors((prev) => ({ ...prev, phone1: "" }));
@@ -186,6 +191,7 @@ export default function Checkout() {
               placeholder="Phone"
               className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
               value={phone2}
+              required
               onChange={(e) => {
                 setPhone2(e.target.value);
                 setErrors((prev) => ({ ...prev, phone2: "" }));
@@ -338,9 +344,18 @@ export default function Checkout() {
 
           <div className="flex justify-between text-lg mb-2">
             <span className="text-(--color-dark)">Delivery Fee:</span>
-            <span className="font-bold text-(--color-pakistan)">
-              {deliveryFee} EGP
-            </span>
+            {isFirstOrder ? (
+              <span className="font-bold text-green-600 flex items-center gap-2 animate-pulse">
+                🎁 FREE
+                <span className="text-sm bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                  First Order
+                </span>
+              </span>
+            ) : (
+              <span className="font-bold text-(--color-pakistan)">
+                {deliveryFee} EGP
+              </span>
+            )}
           </div>
 
           <hr className="my-3 border-(--color-earth)" />
@@ -369,7 +384,7 @@ export default function Checkout() {
           {errorMsg && <p className="text-red-600 text-sm mb-2">{errorMsg}</p>}
 
           {discount > 0 && (
-            <p className="text-(--color-pakistan) font-semibold mb-3">
+            <p className="text-green-600 animate-pulse font-semibold mb-3">
               Discount applied: {discount}% 🎉
             </p>
           )}

@@ -23,15 +23,17 @@ import PrivacyPolicyPage from "./pages/Policies/privacyPolicyPage";
 import ReturnExchangePolicyPage from "./pages/Policies/returnExchangePolicyPage";
 import SalesPaymentPolicyPage from "./pages/Policies/salesPaymentPolicyPage";
 import TermsConditionsPage from "./pages/Policies/termsConditionsPage";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from "react-toastify";
 import CheckoutPage from "./pages/Orders/CheckoutPage";
+import ContactUsPage from "./pages/ContactUs/contactUsPage";
 export default function App() {
   return (
     <div>
       <BackgroundEffect />
       <ScrollToTop />
       <BackButton />
-       <ToastContainer
+
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -75,6 +77,7 @@ export default function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
         <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/contact" element={<ContactUsPage />} />
       </Routes>
     </div>
   );

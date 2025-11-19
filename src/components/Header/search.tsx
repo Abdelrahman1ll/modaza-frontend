@@ -1,11 +1,18 @@
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-export default function SearchInput({ onClose }: { onClose: () => void }) {
+export default function SearchInput({
+  setSearch,
+  setIsSearchLocal,
+}: {
+  setSearch: (val: boolean) => void;
+  setIsSearchLocal: (val: boolean) => void;
+}) {
   const [name, setName] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -15,7 +22,7 @@ export default function SearchInput({ onClose }: { onClose: () => void }) {
         searchParams.delete("name");
       }
       setSearchParams(searchParams);
-    }, 500);
+    }, 200);
 
     return () => clearTimeout(handler);
   }, [name]);
@@ -24,7 +31,7 @@ export default function SearchInput({ onClose }: { onClose: () => void }) {
     <div
       className="
         fixed top-24 left-0 w-full flex justify-center z-40
-        min-[1080px]:hidden
+        min-[1180px]:hidden
       "
     >
       <div className="relative w-11/12 max-w-lg">
@@ -38,7 +45,13 @@ export default function SearchInput({ onClose }: { onClose: () => void }) {
           }}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          autoFocus
+          onFocus={() => {
+            localStorage.setItem("isSearch", "true");
+            setIsSearchLocal(true);
+            setSearch(true);
+            navigate("/products");
+          }}
+          // autoFocus
         />
         <Search
           className="absolute left-4 top-1/2 -translate-y-1/2"
@@ -47,7 +60,14 @@ export default function SearchInput({ onClose }: { onClose: () => void }) {
         <X
           className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-black"
           size={22}
-          onClick={onClose}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            localStorage.removeItem("isSearch");
+            setIsSearchLocal(false);
+            setSearch(false);
+          }}
         />
       </div>
     </div>,
