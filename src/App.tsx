@@ -1,37 +1,65 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/Home/homePage";
-import BackgroundEffect from "./components/Three/three";
-import ProductsPage from "./pages/products/productPage";
-import ScrollToTop from "./components/ScrollToTop";
-import BackButton from "./components/BackButton";
-import ProductDetailsPage from "./pages/products/productDetailsPage";
-import CartPage from "./pages/Cart/cartPage";
-import WishlistPage from "./pages/Wishlist/wishlistPage";
-import ProfilePage from "./pages/Profile/profilePage";
-import OrdersPage from "./pages/Orders/ordersPage";
-import OrderDetailsPage from "./pages/Orders/orderDetailsPage";
-import AddProductPage from "./pages/products/addProductPage";
-import EditProductPage from "./pages/products/editProductPage";
-import AddDeliveryPage from "./pages/Delivery/addDeliveryPage";
-import DiscountCodesPage from "./pages/DiscountCodes/DiscountCodesPage";
-import AllUsersMessagesPage from "./pages/AllUsersMessages/allUsersMessagesPage";
-import EmailOrderDispatcherPage from "./pages/EmailOrderDispatcher/emailOrderDispatcherPage";
-import DashboardPage from "./pages/Dashboard/dashboardPage";
-import UsersPage from "./pages/Users/usersPage";
-import EditUserOwnerPage from "./pages/Users/editUserOwnerPage";
-import PrivacyPolicyPage from "./pages/Policies/privacyPolicyPage";
-import ReturnExchangePolicyPage from "./pages/Policies/returnExchangePolicyPage";
-import SalesPaymentPolicyPage from "./pages/Policies/salesPaymentPolicyPage";
-import TermsConditionsPage from "./pages/Policies/termsConditionsPage";
+import { Suspense, lazy } from "react";
+import Loading from "./components/Loading";
+
 import { ToastContainer } from "react-toastify";
-import CheckoutPage from "./pages/Orders/CheckoutPage";
-import ContactUsPage from "./pages/ContactUs/contactUsPage";
+import BackgroundEffect from "./components/Three/three";
+import NetworkStatus from "./components/NetworkStatus";
+import BackButton from "./components/BackButton";
+import ScrollToTop from "./components/ScrollToTop";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+const HomePage = lazy(() => import("./pages/Home/homePage"));
+const ProductsPage = lazy(() => import("./pages/products/productPage"));
+const ProductDetailsPage = lazy(
+  () => import("./pages/products/productDetailsPage")
+);
+const CartPage = lazy(() => import("./pages/Cart/cartPage"));
+const WishlistPage = lazy(() => import("./pages/Wishlist/wishlistPage"));
+const ProfilePage = lazy(() => import("./pages/Profile/profilePage"));
+const OrdersPage = lazy(() => import("./pages/Orders/ordersPage"));
+const OrderDetailsPage = lazy(() => import("./pages/Orders/orderDetailsPage"));
+const AddProductPage = lazy(() => import("./pages/products/addProductPage"));
+const EditProductPage = lazy(() => import("./pages/products/editProductPage"));
+const AddDeliveryPage = lazy(() => import("./pages/Delivery/addDeliveryPage"));
+const DiscountCodesPage = lazy(
+  () => import("./pages/DiscountCodes/DiscountCodesPage")
+);
+const AllUsersMessagesPage = lazy(
+  () => import("./pages/AllUsersMessages/allUsersMessagesPage")
+);
+const EmailOrderDispatcherPage = lazy(
+  () => import("./pages/EmailOrderDispatcher/emailOrderDispatcherPage")
+);
+const DashboardPage = lazy(() => import("./pages/Dashboard/dashboardPage"));
+const UsersPage = lazy(() => import("./pages/Users/usersPage"));
+const EditUserOwnerPage = lazy(() => import("./pages/Users/editUserOwnerPage"));
+const PrivacyPolicyPage = lazy(
+  () => import("./pages/Policies/privacyPolicyPage")
+);
+const ReturnExchangePolicyPage = lazy(
+  () => import("./pages/Policies/returnExchangePolicyPage")
+);
+const SalesPaymentPolicyPage = lazy(
+  () => import("./pages/Policies/salesPaymentPolicyPage")
+);
+const TermsConditionsPage = lazy(
+  () => import("./pages/Policies/termsConditionsPage")
+);
+const CheckoutPage = lazy(() => import("./pages/Orders/CheckoutPage"));
+const ContactUsPage = lazy(() => import("./pages/ContactUs/contactUsPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+
 export default function App() {
   return (
     <div>
       <BackgroundEffect />
+
       <ScrollToTop />
+
       <BackButton />
+
+      <NetworkStatus />
 
       <ToastContainer
         position="top-right"
@@ -45,40 +73,111 @@ export default function App() {
         pauseOnHover
         theme="colored"
       />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products-details/:id" element={<ProductDetailsPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/wishlist" element={<WishlistPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/orders" element={<OrdersPage />} />
-        <Route path="/orders/:id" element={<OrderDetailsPage />} />
-        <Route path="/add-product" element={<AddProductPage />} />
-        <Route path="/edit-product/:id" element={<EditProductPage />} />
-        <Route path="/add-delivery" element={<AddDeliveryPage />} />
-        <Route path="/discount-codes" element={<DiscountCodesPage />} />
-        <Route path="/all-users-messages" element={<AllUsersMessagesPage />} />
-        <Route
-          path="/email-order-dispatcher"
-          element={<EmailOrderDispatcherPage />}
-        />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/all-users" element={<UsersPage />} />
-        <Route path="/edit-user-owner/:id" element={<EditUserOwnerPage />} />
-        <Route
-          path="/sales-payment-policy"
-          element={<SalesPaymentPolicyPage />}
-        />
-        <Route
-          path="/return-exchange-policy"
-          element={<ReturnExchangePolicyPage />}
-        />
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms-conditions" element={<TermsConditionsPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/contact" element={<ContactUsPage />} />
-      </Routes>
+
+      <Suspense fallback={<Loading />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route
+            path="/products-details/:id"
+            element={<ProductDetailsPage />}
+          />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/orders/:id" element={<OrderDetailsPage />} />
+          <Route
+            path="/sales-payment-policy"
+            element={<SalesPaymentPolicyPage />}
+          />
+          <Route
+            path="/return-exchange-policy"
+            element={<ReturnExchangePolicyPage />}
+          />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/contact" element={<ContactUsPage />} />
+          <Route path="*" element={<NotFound />} />
+
+          {/* Protected Routes */}
+          <Route
+            path="/edit-product/:id"
+            element={
+              <ProtectedRoute roles={["owner", "admin"]}>
+                <EditProductPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-product"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <AddProductPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-delivery"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <AddDeliveryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/discount-codes"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <DiscountCodesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/all-users-messages"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <AllUsersMessagesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/email-order-dispatcher"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <EmailOrderDispatcherPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/all-users"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-user-owner/:id"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <EditUserOwnerPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Suspense>
     </div>
   );
 }

@@ -15,12 +15,11 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import SearchInput from "./search";
-import Signup from "../Signup/signup";
 import useHeader from "./useHeader";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { SignupContext } from "../Signup/SignupContext";
 
 export default function Header() {
-  
   const {
     isMenuOpen,
     setIsMenuOpen,
@@ -30,8 +29,6 @@ export default function Header() {
     setIsOpen,
     selected,
     setSelected,
-    showSignup,
-    setShowSignup,
     openMenu,
     setOpenMenu,
     name,
@@ -48,6 +45,7 @@ export default function Header() {
     const value = localStorage.getItem("isSearch") === "true";
     setIsSearchLocal(value);
   }, []);
+  const { openSignup } = useContext(SignupContext);
   return (
     <>
       <header className="shadow-md py-4 px-6 max-[1180px]:hidden">
@@ -209,7 +207,7 @@ export default function Header() {
                         <span>My Orders</span>
                       </Link>
 
-                      {user?.user.role !== "user" && (
+                      {user?.user.role === "owner" && (
                         <div>
                           <Link
                             to="/dashboard"
@@ -311,7 +309,7 @@ export default function Header() {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.color = "var(--color-text)")
                     }
-                    onClick={() => setShowSignup(true)}
+                    onClick={() => openSignup()}
                   >
                     <User size={24} />
                   </div>
@@ -581,7 +579,7 @@ export default function Header() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className={`absolute right-0 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90
-                  ${user?.user.role === "user" ? "-top-36" : "-top-106"}
+                  ${user?.user.role === "owner" ? "-top-106" : "-top-36"}
                   
                   `}
               >
@@ -603,7 +601,7 @@ export default function Header() {
                   <span>My Orders</span>
                 </Link>
 
-                {user?.user.role !== "user" && (
+                {user?.user.role === "owner" && (
                   <div>
                     <Link
                       to="/dashboard"
@@ -702,7 +700,7 @@ export default function Header() {
               onMouseLeave={(e) =>
                 (e.currentTarget.style.color = "var(--color-text)")
               }
-              onClick={() => setShowSignup(true)}
+              onClick={() => openSignup()}
             >
               <User size={24} />
             </div>
@@ -737,8 +735,6 @@ export default function Header() {
           setIsSearchLocal={setIsSearchLocal}
         />
       )}
-
-      {showSignup && <Signup onClose={() => setShowSignup(false)} />}
     </>
   );
 }

@@ -34,7 +34,7 @@ export default function useProductForm(mode: "add" | "edit") {
   const [postProduct, { isLoading: isLoadingPost }] = usePostProductMutation();
   const [patchProduct, { isLoading: isLoadingPatch }] =
     usePatchProductMutation();
-  const { data: products } = useGetProductsQuery({});
+  const { data: products } = useGetProductsQuery('');
   const { id } = useParams();
   const [formData, setFormData] = useState<ErrorProductType>({
     name: "",
@@ -83,7 +83,9 @@ export default function useProductForm(mode: "add" | "edit") {
           additionImages: [], // ✅ نبدأ فاضية
           removedImages: [], // ✅ نبدأ فاضية
         });
-      else console.warn("Product not found!");
+      else {
+        toast.error("Product not found.");
+      };
     }
   }, [mode, Number(id)]);
 

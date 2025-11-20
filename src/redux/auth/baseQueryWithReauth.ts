@@ -40,7 +40,6 @@ export const baseQueryWithReauth = async (
   extraOptions: any
 ) => {
   let result = await baseQuery(args, api, extraOptions);
-
   if (result.error && (result.error as FetchBaseQueryError).status === 401) {
     const encryptedUser = Cookies.get("user");
     if (!encryptedUser) return result;

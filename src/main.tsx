@@ -7,12 +7,21 @@ import { Provider } from "react-redux";
 import { store } from "./redux/store.ts";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import { SignupProvider } from "../src/components/Signup/SignupContext.tsx";
+import GlobalSignup from "../src/components/Signup/GlobalSignup.tsx";
+import { AuthProvider } from "./components/AuthContext.tsx";
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-          <App />
+          <AuthProvider>
+            <SignupProvider>
+              <App />
+              <GlobalSignup />
+            </SignupProvider>
+          </AuthProvider>
         </GoogleOAuthProvider>
       </BrowserRouter>
     </Provider>

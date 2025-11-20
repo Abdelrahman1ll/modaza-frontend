@@ -16,12 +16,14 @@ export default function DeliveryPrice() {
       return;
     }
     try {
-      await postDelivery({ deliveryPrice: Number(price) });
+      await postDelivery({
+        deliveryPrice: Number(price),
+      }).unwrap();
       refetch();
       setPrice("");
       toast.success("Delivery price added successfully");
-    } catch (error) {
-      toast.error("Error adding delivery price");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to add delivery price");
     }
   };
 
