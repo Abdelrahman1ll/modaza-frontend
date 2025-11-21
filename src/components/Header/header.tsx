@@ -13,11 +13,9 @@ import {
   LayoutDashboard,
   Users,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SearchInput from "./search";
 import useHeader from "./useHeader";
-import { useContext, useEffect, useState } from "react";
-import { SignupContext } from "../Signup/SignupContext";
 
 export default function Header() {
   const {
@@ -37,15 +35,12 @@ export default function Header() {
     user,
     totalItems,
     countries,
+    openSignup,
+    isSearchLocal,
+    navigate,
+    setIsSearchLocal,
   } = useHeader();
-  const navigate = useNavigate();
-  const [isSearchLocal, setIsSearchLocal] = useState(false);
 
-  useEffect(() => {
-    const value = localStorage.getItem("isSearch") === "true";
-    setIsSearchLocal(value);
-  }, []);
-  const { openSignup } = useContext(SignupContext);
   return (
     <>
       <header className="shadow-md py-4 px-6 max-[1180px]:hidden">

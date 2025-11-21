@@ -107,8 +107,12 @@ export default function useDiscountCodes() {
   };
 
   const handleDelete = async (id: number) => {
-    await deleteDiscountCodes(id).unwrap();
-    refetch();
+    try {
+      await deleteDiscountCodes(id).unwrap();
+      refetch();
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to delete discount code");
+    }
   };
 
   return {

@@ -1,8 +1,9 @@
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
 import { useGetCartQuery } from "../../redux/Cart/apiCart";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { SignupContext } from "../Signup/SignupContext";
 
 const countries = [
   { name: "Egypt", flag: "/eg.svg" },
@@ -19,6 +20,15 @@ export default function useHeader() {
   const [openMenu, setOpenMenu] = useState(false);
   const [name, setName] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const navigate = useNavigate();
+  const [isSearchLocal, setIsSearchLocal] = useState(false);
+
+  useEffect(() => {
+    const value = localStorage.getItem("isSearch") === "true";
+    setIsSearchLocal(value);
+  }, []);
+  const { openSignup } = useContext(SignupContext);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -81,5 +91,9 @@ export default function useHeader() {
     user,
     totalItems,
     countries,
+    openSignup,
+    isSearchLocal,
+    navigate,
+    setIsSearchLocal,
   };
 }

@@ -8,14 +8,14 @@ import {
 import { toast } from "react-toastify";
 import { useGetCartQuery, usePostCartMutation } from "../../redux/Cart/apiCart";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useGetProductIdQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
-import confetti from "canvas-confetti";
+import { SignupContext } from "../Signup/SignupContext";
 export default function useProductDetail() {
   const { id } = useParams();
   const { data: products, isLoading } = useGetProductIdQuery(id);
-  const [showSignup, setShowSignup] = useState(false);
+  const { openSignup } = useContext(SignupContext);
 
   const product: ProductType = products?.product;
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
@@ -114,15 +114,15 @@ export default function useProductDetail() {
         const user = JSON.parse(decryptedUser);
 
         if (!user) {
-          setShowSignup(true);
+          openSignup();
           return;
         }
       } catch {
-        setShowSignup(true);
+        openSignup();
         return;
       }
     } else {
-      setShowSignup(true);
+      openSignup();
       return;
     }
     let newErrors: any = {
@@ -147,16 +147,10 @@ export default function useProductDetail() {
         quantity: quantity,
         sizes: selectedSize,
       }).unwrap();
-
-      confetti({
-        particleCount: 120,
-        spread: 100,
-        origin: { y: 0.7 },
-      });
       toast.success("Item add to cart");
       refetchCart();
-    } catch {
-      toast.error("Failed to add item to cart");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to add item to cart");
     }
   };
 
@@ -176,9 +170,7 @@ export default function useProductDetail() {
     addToCart,
     selectedSize,
     setSelectedSize,
-    setShowSignup,
     isLoading,
-    showSignup,
     setCurrentIndex,
   };
 }

@@ -54,7 +54,7 @@ export default function Profile() {
             <Gift size={22} className="text-green-700 mb-1 sm:mb-0" />
             <p className="text-sm sm:text-base">
               Congratulations! You’ve unlocked a{" "}
-              <span className="font-bold">10% discount</span> on your first
+              <span className="font-bold">PROFILE10</span> on your first
               order 🎉
             </p>
           </motion.div>

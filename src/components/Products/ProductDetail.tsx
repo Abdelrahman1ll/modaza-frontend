@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Heart, PackageSearch } from "lucide-react";
 import type { ProductSizeType } from "../../types/ProductType";
 import MotionZoomImage from "./ImageZoom";
-import Signup from "../Signup/signup";
 import useProductDetail from "./useProductDetail";
+import AddToCartButton from "./AddToCartButton";
 export default function ProductDetail() {
   const {
     product,
@@ -21,9 +21,7 @@ export default function ProductDetail() {
     addToCart,
     selectedSize,
     setSelectedSize,
-    setShowSignup,
     isLoading,
-    showSignup,
     setCurrentIndex,
   } = useProductDetail();
   return (
@@ -288,15 +286,16 @@ export default function ProductDetail() {
             </div>
 
             <div className="flex items-center gap-4 mt-8">
-              <button
+              {/* <button
                 onClick={addToCart}
                 className={`flex-1 py-3 rounded-full font-semibold text-white shadow-md text-lg transition-all bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer`}
                 style={{
                   boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
                 }}
               >
-                Add to Cart
-              </button>
+               <span>Add to Cart</span>
+              </button> */}
+              <AddToCartButton addToCart={addToCart} />
 
               {/* زر القلب جنب الزر */}
               <motion.button
@@ -314,7 +313,6 @@ export default function ProductDetail() {
           </motion.div>
         </div>
       )}
-      {showSignup && <Signup onClose={() => setShowSignup(false)} />}
     </>
   );
 }

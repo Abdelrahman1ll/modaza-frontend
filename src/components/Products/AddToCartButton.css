@@ -1,0 +1,12 @@
+@keyframes slideRightSlow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.slideOverlay {
+  animation: slideRightSlow 2s linear forwards; /* مدة الحركة 2 ثانية */
+}

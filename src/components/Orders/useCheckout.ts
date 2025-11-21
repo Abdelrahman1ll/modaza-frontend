@@ -1,8 +1,11 @@
 import { useGetCartQuery } from "../../redux/Cart/apiCart";
 import { useNavigate } from "react-router-dom";
-import { usePostUserDiscountCodesMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
+import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
 import { useGetDeliveryQuery } from "../../redux/Delivery/apiDelivery";
-import { usePostOrdersMutation } from "../../redux/Orders/apiOrders";
+import {
+  useGetUserOrdersQuery,
+  usePostOrdersMutation,
+} from "../../redux/Orders/apiOrders";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import ttsMP3 from "/ttsMP3.com_VoiceText_2025-11-19_2-28-51.mp3";
@@ -34,9 +37,9 @@ export default function useCheckout() {
 
   const { data, isLoading } = useGetCartQuery({});
   const { data: delivery } = useGetDeliveryQuery({});
-  const [postUserDiscountCodes] = usePostUserDiscountCodesMutation();
+  const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
   const [postOrders, { isLoading: orderLoading }] = usePostOrdersMutation();
-
+  const { refetch } = useGetUserOrdersQuery({});
   const isFirstOrder: boolean = data?.carts?.thIsIsYourFirstOrder;
 
   const deliveryFee: number = isFirstOrder
@@ -45,17 +48,32 @@ export default function useCheckout() {
 
   let total: number = data?.carts?.total;
   if (discount > 0) {
-    total = total - (total * discount) / 100;
+    if (errorMsg) {
+      total = total;
+    } else {
+      total = total - (total * discount) / 100;
+    }
   }
   const finalTotal: number = total + deliveryFee;
 
   const applyDiscount = async () => {
     try {
-      const response = await postUserDiscountCodes({
+      const response = await validateDiscountCode({
         code: promoCode,
       }).unwrap();
+      if (response?.discountCode.code === "PROFILE10") {
+        const isUsed = localStorage.getItem("usedProfile10") === "true";
+        if (isUsed) {
+          setDiscount(0);
+          setCode("");
+          setErrorMsg("The PROFILE10 code has already been used");
+          return;
+        }
+      }
+
       setDiscount(response?.discountCode?.discount);
       setCode(response?.discountCode?.code);
+
       setErrorMsg("");
     } catch (error: any) {
       setErrorMsg(error.data.message);
@@ -130,6 +148,9 @@ export default function useCheckout() {
         },
         paymentMethod: paymentMethod,
       }).unwrap();
+      if (code && code === "PROFILE10") {
+        localStorage.setItem("usedProfile10", "true");
+      }
       setFirstName("");
       setLastName("");
       setState("");
@@ -143,8 +164,16 @@ export default function useCheckout() {
       setTimeout(() => {
         navigate("/orders");
       }, 200);
-    } catch {
-      toast.error("Error placing order");
+      refetch();
+    } catch (error: any) {
+      if (error?.data?.message === "Discount code already used for") {
+        localStorage.setItem("usedProfile10", "true");
+        setErrorMsg("The PROFILE10 code has already been used");
+        setDiscount(0);
+        setCode("");
+        return;
+      }
+      toast.error(error?.data?.message || "Error placing order");
     }
   };
 

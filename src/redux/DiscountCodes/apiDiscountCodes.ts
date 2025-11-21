@@ -11,7 +11,7 @@ export const ApiDiscountCodes = createApi({
         method: "GET",
       }),
     }),
-    PostUserDiscountCodes: builder.mutation({
+    PostValidateDiscountCode: builder.mutation({
       query: (data) => ({
         url: "/discount-codes/user",
         method: "POST",
@@ -46,5 +46,5 @@ export const {
   usePostDiscountCodesMutation,
   usePatchDiscountCodesMutation,
   useDeleteDiscountCodesMutation,
-  usePostUserDiscountCodesMutation,
+  usePostValidateDiscountCodeMutation,
 } = ApiDiscountCodes;

@@ -22,13 +22,12 @@ import {
   DollarSign,
 } from "lucide-react";
 import { useGetDashboardOrdersQuery } from "../../redux/Orders/apiOrders";
+import Loading from "../Loading";
 
 export default function Dashboard() {
   const { data: dashboardOrders, isLoading } = useGetDashboardOrdersQuery({});
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!dashboardOrders || dashboardOrders.status !== "success")
-    return <p>Error loading dashboard...</p>;
+  if (isLoading) return <Loading />;
 
   const stats = dashboardOrders.stats;
 

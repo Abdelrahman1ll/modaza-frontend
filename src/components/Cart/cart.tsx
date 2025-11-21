@@ -1,74 +1,18 @@
 import { motion } from "framer-motion";
 import { X, Plus, Minus, ShoppingCart } from "lucide-react";
-import {
-  useGetCartQuery,
-  usePatchCartMutation,
-  useDeleteCartMutation,
-} from "../../redux/Cart/apiCart";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import type { CartItemType } from "../../types/CartType";
+import UseCart from "./useCart";
 
 export default function Cart() {
-  const navigate = useNavigate();
-  const { data, isLoading, refetch, isError } = useGetCartQuery({});
-  const [deleteCart] = useDeleteCartMutation();
-  const [patchCart] = usePatchCartMutation();
-  const decreaseQuantity = async ({
-    id,
-    quantity,
-  }: {
-    id: number;
-    quantity: number;
-  }) => {
-    if (quantity <= 1) {
-      toast.info("Minimum quantity reached");
-      return;
-    }
-
-    try {
-      await patchCart({
-        id: String(id),
-        data: { quantity: quantity - 1 },
-      });
-      refetch();
-    } catch {
-      toast.error("Error decreasing quantity");
-    }
-  };
-
-  const increaseQuantity = async ({
-    id,
-    quantity,
-  }: {
-    id: number;
-    quantity: number;
-  }) => {
-    if (quantity >= 15) {
-      toast.info("Maximum quantity reached");
-      return;
-    }
-
-    try {
-      await patchCart({
-        id: String(id),
-        data: { quantity: quantity + 1 },
-      });
-      refetch();
-    } catch {
-      toast.error("Error increasing quantity");
-    }
-  };
-
-  const removeItem = async (id: number) => {
-    try {
-      await deleteCart(String(id));
-      refetch();
-    } catch {
-      toast.error("Error removing item");
-    }
-  };
-
+  const {
+    data,
+    isLoading,
+    isError,
+    decreaseQuantity,
+    increaseQuantity,
+    removeItem,
+    navigate,
+  } = UseCart();
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h2

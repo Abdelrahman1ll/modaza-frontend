@@ -118,7 +118,10 @@ export default function useSignup(onClose: () => void) {
         });
 
         toast.success("Signup successfully");
-        audio.play();
+        const isUsed = localStorage.getItem("usedProfile10") === "true";
+        if (!isUsed) {
+          audio.play();
+        }
         onClose();
         setCode(["", "", "", "", "", ""]);
         localStorage.removeItem("email");
