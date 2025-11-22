@@ -166,9 +166,16 @@ export default function useCheckout() {
       }, 200);
       refetch();
     } catch (error: any) {
-      if (error?.data?.message === "Discount code already used for") {
+      if (error?.data?.message === "Discount code already used for PROFILE") {
         localStorage.setItem("usedProfile", "true");
         setErrorMsg("The PROFILE code has already been used");
+        setDiscount(0);
+        setCode("");
+        return;
+      } else if (
+        error?.data?.message === "Discount code already used for BIRTHDAY"
+      ) {
+        setErrorMsg("The BIRTHDAY code has already been used");
         setDiscount(0);
         setCode("");
         return;
