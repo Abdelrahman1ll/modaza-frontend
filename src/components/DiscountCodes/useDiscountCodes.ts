@@ -84,8 +84,8 @@ export default function useDiscountCodes() {
           EndDate: newExpiry,
         }).unwrap();
       }
-    } catch {
-      toast.error("Failed to add/edit discount code");
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to add/edit discount code");
     }
     setNewCode("");
     setNewDiscount("");

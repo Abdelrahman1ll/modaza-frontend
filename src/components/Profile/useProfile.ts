@@ -3,6 +3,7 @@ import CryptoJS from "crypto-js";
 import { usePatchUsersByIdMutation } from "../../redux/users/apiUsers";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
+import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
 export default function useProfile() {
   const [userData, setUserData] = useState({
     id: "",
@@ -19,9 +20,14 @@ export default function useProfile() {
     phone: "",
     birthday: "",
   });
+  const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
 
   const [progress, setProgress] = useState(20);
   const [rewardVisible, setRewardVisible] = useState(false);
+  const [reward, setReward] = useState({
+    code: "",
+    discount: 0,
+  });
 
   const secretKey = import.meta.env.VITE_SECRET_KEY;
 
@@ -147,13 +153,22 @@ export default function useProfile() {
         userData.phone &&
         userData.birthday
       ) {
+        const response = await validateDiscountCode({
+          code: "PROFILE",
+        }).unwrap();
+        setReward({
+          code: response?.discountCode.code,
+          discount: response?.discountCode.discount,
+        });
         setRewardVisible(true);
         setProgress(100);
       }
-    } catch {
-      toast.error("Error saving profile");
+    } catch (error: any) {
+      toast.error(error?.data.message || "Error saving profile");
     }
   };
+
+  const isUsed = localStorage.getItem("usedProfile") === "true";
 
   return {
     userData,
@@ -163,5 +178,7 @@ export default function useProfile() {
     errors,
     isLoading,
     rewardVisible,
+    isUsed,
+    reward,
   };
 }

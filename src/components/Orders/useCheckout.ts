@@ -61,12 +61,12 @@ export default function useCheckout() {
       const response = await validateDiscountCode({
         code: promoCode,
       }).unwrap();
-      if (response?.discountCode.code === "PROFILE10") {
-        const isUsed = localStorage.getItem("usedProfile10") === "true";
+      if (response?.discountCode.code === "PROFILE") {
+        const isUsed = localStorage.getItem("usedProfile") === "true";
         if (isUsed) {
           setDiscount(0);
           setCode("");
-          setErrorMsg("The PROFILE10 code has already been used");
+          setErrorMsg("The PROFILE code has already been used");
           return;
         }
       }
@@ -148,8 +148,8 @@ export default function useCheckout() {
         },
         paymentMethod: paymentMethod,
       }).unwrap();
-      if (code && code === "PROFILE10") {
-        localStorage.setItem("usedProfile10", "true");
+      if (code && code === "PROFILE") {
+        localStorage.setItem("usedProfile", "true");
       }
       setFirstName("");
       setLastName("");
@@ -167,8 +167,8 @@ export default function useCheckout() {
       refetch();
     } catch (error: any) {
       if (error?.data?.message === "Discount code already used for") {
-        localStorage.setItem("usedProfile10", "true");
-        setErrorMsg("The PROFILE10 code has already been used");
+        localStorage.setItem("usedProfile", "true");
+        setErrorMsg("The PROFILE code has already been used");
         setDiscount(0);
         setCode("");
         return;

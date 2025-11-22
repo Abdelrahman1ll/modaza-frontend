@@ -11,6 +11,8 @@ export default function Profile() {
     errors,
     isLoading,
     rewardVisible,
+    isUsed,
+    reward,
   } = useProfile();
 
   return (
@@ -39,23 +41,25 @@ export default function Profile() {
         </p>
 
         {/* عرض مكافأة الخصم */}
-        {rewardVisible && (
+        {rewardVisible && !isUsed && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="
-      flex flex-col sm:flex-row items-center justify-center 
-      text-center sm:text-left flex-wrap
-      bg-green-100 text-green-700 font-medium 
-      py-3 px-4 rounded-lg mb-4
-      gap-1 sm:gap-2 leading-snug
-    "
+                    flex flex-col sm:flex-row items-center justify-center 
+                       text-center sm:text-left flex-wrap
+                     bg-green-100 text-green-700 font-medium 
+                         py-3 px-4 rounded-lg mb-4
+                            gap-1 sm:gap-2 leading-snug
+                       "
           >
             <Gift size={22} className="text-green-700 mb-1 sm:mb-0" />
             <p className="text-sm sm:text-base">
               Congratulations! You’ve unlocked a{" "}
-              <span className="font-bold">PROFILE10</span> on your first
-              order 🎉
+              <span className="font-bold">{reward?.discount}% discount</span>{" "}
+              with the code{" "}
+              <span className="font-bold underline">{reward?.code}</span> on
+              your first order 🎉
             </p>
           </motion.div>
         )}

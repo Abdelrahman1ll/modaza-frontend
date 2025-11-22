@@ -57,7 +57,10 @@ export default function useHeader() {
 
   const handleLogout = () => {
     Cookies.remove("user");
-    return (window.location.href = "/");
+    localStorage.removeItem("usedProfile10");
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 100);
   };
 
   const isUser = user?.user.role === "user";

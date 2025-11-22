@@ -52,6 +52,9 @@ export default function ContactUs() {
               field="email"
               errors={state.errors}
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Please enter your valid email address so we can contact you.
+            </p>
             <textarea
               name="message"
               placeholder="Your Message"

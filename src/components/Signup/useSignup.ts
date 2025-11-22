@@ -6,9 +6,7 @@ import {
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
-import ttsMP3 from "../../../public/ttsMP3.com_VoiceText_2025-11-19_3-39-49.mp3";
 
-const audio = new Audio(ttsMP3);
 export default function useSignup(onClose: () => void) {
   const [email, setEmail] = useState<string>("");
   const [showCodeInput, setShowCodeInput] = useState<boolean>(false);
@@ -118,10 +116,6 @@ export default function useSignup(onClose: () => void) {
         });
 
         toast.success("Signup successfully");
-        const isUsed = localStorage.getItem("usedProfile10") === "true";
-        if (!isUsed) {
-          audio.play();
-        }
         onClose();
         setCode(["", "", "", "", "", ""]);
         localStorage.removeItem("email");
