@@ -2,6 +2,8 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok } from "react-icons/fa6";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { useContext } from "react";
 import { SignupContext } from "../Signup/SignupContext";
+import { Link } from "react-router-dom";
+import { BRAND_EMAIL, BRAND_NAME, BRAND_PHONE } from "../../BrandText";
 export default function Footer() {
   const { openSignup } = useContext(SignupContext);
   return (
@@ -9,57 +11,56 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-4 max-[1100px]:grid-cols-2 max-[800px]:grid-cols-1 gap-10">
         <div>
           <h2 className="text-2xl font-bold text-(--color-cornsilk) mb-3">
-            ModaZone
+            {BRAND_NAME}
           </h2>
           <p className="text-sm leading-relaxed text-(--color-earth)">
-            ModaZone is your go-to men’s fashion store, offering the latest
-            styles with premium quality and affordable prices.
+            We are a contemporary clothing brand blending comfort and premium
+            quality. Our designs offer a calm, confident style for every
+            occasion, combining practicality with refined taste to reflect your
+            unique identity.
           </p>
+          <Link to="/products">
+            <h3 className="text-lg text-(--color-cornsilk) mt-4 underline">
+              Discover Products
+            </h3>
+          </Link>
         </div>
 
         <div>
           <h3 className="text-lg font-semibold text-(--color-cornsilk) mb-4">
-            Categories
+            Quick Links
           </h3>
           <ul className="space-y-2 text-sm">
             <li>
               <a
-                href="#"
+                href="/about-us"
                 className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
               >
-                T-Shirts
+                About Us
               </a>
             </li>
             <li>
               <a
-                href="#"
+                href="/contact-us"
                 className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
               >
-                Pants
+                Contact Us
               </a>
             </li>
             <li>
               <a
-                href="#"
+                href="/faqs"
                 className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
               >
-                Jackets
+                FAQs
               </a>
             </li>
             <li>
               <a
-                href="#"
+                href="/shipping-delivery"
                 className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
               >
-                Shoes
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="text-(--color-earth) hover:text-(--color-cornsilk) transition"
-              >
-                Accessories
+                Shipping & Delivery
               </a>
             </li>
           </ul>
@@ -111,19 +112,19 @@ export default function Footer() {
           </h3>
           <ul className="space-y-3 text-sm">
             <li className="flex items-center gap-2 text-(--color-earth)">
-              <MdLocationOn size={18} /> Fayoum, Egypt
+              <MdLocationOn size={18} /> Egypt
             </li>
             <li className="flex items-center gap-2 text-(--color-earth)">
-              <MdPhone size={18} /> +20 100 234 5678
+              <MdPhone size={18} /> +20 {BRAND_PHONE}
             </li>
             <li className="flex items-center gap-2 text-(--color-earth)">
-              <MdEmail size={18} /> support@modazone.com
+              <MdEmail size={18} /> {BRAND_EMAIL}
             </li>
           </ul>
 
           <div className="mt-6">
             <p className="text-sm mb-2 text-(--color-earth)">
-              Subscribe to our newsletter:
+              Enter your email to receive the latest offers and new products.
             </p>
             <div className="flex ">
               <input
@@ -160,7 +161,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t  border-(--color-earth) mt-10 pt-4 text-center text-sm text-(--color-earth)">
-        © {new Date().getFullYear()} ModaZone | All Rights Reserved.
+        © {new Date().getFullYear()} {BRAND_NAME} | All Rights Reserved.
       </div>
     </footer>
   );

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok } from "react-icons/fa6";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { useForm, ValidationError } from "@formspree/react";
+import { BRAND_EMAIL, BRAND_PHONE } from "../../BrandText";
 
 export default function ContactUs() {
   const [name, setName] = useState("");
@@ -88,17 +89,17 @@ export default function ContactUs() {
           <p className="flex items-center gap-2">
             <MdLocationOn className="text-(--color-pakistan)" size={20} />
             <span className="font-bold text-(--color-pakistan)">Address:</span>
-            Cairo, Egypt
+            Egypt
           </p>
           <p className="flex items-center gap-2">
             <MdPhone className="text-(--color-pakistan)" size={20} />
             <span className="font-bold text-(--color-pakistan)">Phone:</span>
-            +20 100 000 0000
+            +20 {BRAND_PHONE}
           </p>
           <p className="flex items-center gap-2">
             <MdEmail className="text-(--color-pakistan)" size={20} />
             <span className="font-bold text-(--color-pakistan)">Email:</span>
-            support@example.com
+            {BRAND_EMAIL}
           </p>
 
           {/* Social Media Icons */}

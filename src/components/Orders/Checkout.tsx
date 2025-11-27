@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
-
 export default function Checkout() {
   const {
     discount,
@@ -44,7 +43,15 @@ export default function Checkout() {
     setErrors,
     navigate,
     isFirstOrder,
+    filteredStates,
+    setSearch,
+    setOpen,
+    open,
+    search,
+    saveAddress,
+    setSaveAddress,
   } = useCheckout();
+
   return (
     <div className="min-h-screen p-6 flex flex-col items-center">
       <motion.h1
@@ -56,157 +63,9 @@ export default function Checkout() {
       </motion.h1>
 
       {/* Address Section */}
-      <div className="p-4 rounded-2xl shadow bg-(--color-cornsilk) mb-6 w-full">
-        <h2 className="text-xl font-bold text-(--color-dark) mb-4">
-          Shipping Address
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {/* الاسم الأول للعميل */}
-          <div className="flex flex-col">
-            <label className="mb-1 font-semibold text-(--color-dark)">
-              First Name
-            </label>
-            <input
-              type="text"
-              placeholder="First Name"
-              className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                setErrors((prev) => ({ ...prev, firstName: "" }));
-              }}
-            />
-            {errors?.firstName && (
-              <p className="text-red-600 text-sm mt-1">{errors?.firstName}</p>
-            )}
-          </div>
-
-          {/* الاسم الثاني للعميل */}
-          <div className="flex flex-col">
-            <label className="mb-1 font-semibold text-(--color-dark)">
-              Last Name
-            </label>
-            <input
-              type="text"
-              placeholder="Last Name"
-              className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
-              value={lastName}
-              onChange={(e) => {
-                setLastName(e.target.value);
-                setErrors((prev) => ({ ...prev, lastName: "" }));
-              }}
-              required
-            />
-            {errors?.lastName && (
-              <p className="text-red-600 text-sm mt-1">{errors?.lastName}</p>
-            )}
-          </div>
-
-          {/* الدولة */}
-          <div className="flex flex-col">
-            <label className="mb-1 font-semibold text-(--color-dark)">
-              Country
-            </label>
-            <input
-              type="text"
-              placeholder="Country"
-              className="p-3 rounded-xl border border-(--color-earth) outline-none w-full "
-              value="Egypt"
-              readOnly
-            />
-          </div>
-
-          {/* المحافظة أو الولاية */}
-          <div className="flex flex-col">
-            <label className="mb-1 font-semibold text-(--color-dark)">
-              State / City
-            </label>
-            <input
-              type="text"
-              placeholder="State / City"
-              className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
-              value={state}
-              required
-              onChange={(e) => {
-                setState(e.target.value);
-                setErrors((prev) => ({ ...prev, state: "" }));
-              }}
-            />
-            {errors.state && (
-              <p className="text-red-600 text-sm mt-1">{errors.state}</p>
-            )}
-          </div>
-        </div>
-
-        {/* تفاصيل العنوان بالكامل */}
-        <div className="flex flex-col mt-3">
-          <label className="mb-1 font-semibold text-(--color-dark)">
-            Address Details
-          </label>
-          <textarea
-            placeholder="Street, Building, etc."
-            className="w-full p-3 rounded-xl border border-(--color-earth) outline-none"
-            value={addressDetails}
-            required
-            onChange={(e) => {
-              setAddressDetails(e.target.value);
-              setErrors((prev) => ({ ...prev, addressDetails: "" }));
-            }}
-          />
-          {errors.addressDetails && (
-            <p className="text-red-600 text-sm mt-1">{errors.addressDetails}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-          {/* الرقم الأول للتواصل */}
-          <div className="flex flex-col">
-            <label className="mb-1 font-semibold text-(--color-dark)">
-              Phone
-            </label>
-            <input
-              type="text"
-              placeholder="Phone"
-              className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
-              value={phone1}
-              required
-              onChange={(e) => {
-                setPhone1(e.target.value);
-                setErrors((prev) => ({ ...prev, phone1: "" }));
-              }}
-            />
-            {errors.phone1 && (
-              <p className="text-red-600 text-sm mt-1">{errors.phone1}</p>
-            )}
-          </div>
-
-          {/* الرقم الثاني للتواصل */}
-          <div className="flex flex-col">
-            <label className="mb-1 font-semibold text-(--color-dark)">
-              Phone (Optional)
-            </label>
-            <input
-              type="text"
-              placeholder="Phone"
-              className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
-              value={phone2}
-              required
-              onChange={(e) => {
-                setPhone2(e.target.value);
-                setErrors((prev) => ({ ...prev, phone2: "" }));
-              }}
-            />
-            {errors.phone2 && (
-              <p className="text-red-600 text-sm mt-1">{errors.phone2}</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Products Column */}
-        <div className="lg:col-span-2 p-4 rounded-2xl shadow bg-(--color-cornsilk)">
+        <div className="lg:col-span-1 p-4 rounded-2xl shadow bg-(--color-cornsilk)">
           <h2 className="text-xl font-bold text-(--color-dark) mb-4">
             Your Items
           </h2>
@@ -332,18 +191,206 @@ export default function Checkout() {
         {/* Summary Column */}
         <div className="p-4 rounded-2xl shadow bg-(--color-cornsilk)">
           <h2 className="text-xl font-bold text-(--color-dark) mb-4">
+            Shipping Address
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* الاسم الأول للعميل */}
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-(--color-dark)">
+                First Name
+              </label>
+              <input
+                type="text"
+                placeholder="First Name"
+                className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
+                value={firstName}
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                  setErrors((prev) => ({ ...prev, firstName: "" }));
+                }}
+              />
+              {errors?.firstName && (
+                <p className="text-red-600 text-sm mt-1">{errors?.firstName}</p>
+              )}
+            </div>
+
+            {/* الاسم الثاني للعميل */}
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-(--color-dark)">
+                Last Name
+              </label>
+              <input
+                type="text"
+                placeholder="Last Name"
+                className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
+                value={lastName}
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                  setErrors((prev) => ({ ...prev, lastName: "" }));
+                }}
+                required
+              />
+              {errors?.lastName && (
+                <p className="text-red-600 text-sm mt-1">{errors?.lastName}</p>
+              )}
+            </div>
+
+            {/* الدولة */}
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-(--color-dark)">
+                Country
+              </label>
+              <input
+                type="text"
+                placeholder="Country"
+                className="p-3 rounded-xl border border-(--color-earth) outline-none w-full "
+                value="Egypt"
+                readOnly
+              />
+            </div>
+
+            {/* المحافظة أو الولاية */}
+
+            <div className="flex flex-col relative">
+              <label className="mb-1 font-semibold text-(--color-dark)">
+                State / City
+              </label>
+
+              <div
+                className="p-3 rounded-xl border border-(--color-earth) cursor-pointer bg-white"
+                onClick={() => setOpen(!open)}
+              >
+                {state || "Select State"}
+              </div>
+
+              {open && (
+                <div className="absolute top-full mt-2 w-full bg-white border rounded-xl shadow-lg z-50 p-2">
+                  <input
+                    type="text"
+                    placeholder="Search state..."
+                    className="p-2 mb-2 w-full border rounded-lg outline-none"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+
+                  <div className="max-h-52 overflow-y-auto">
+                    {filteredStates.map((gov) => (
+                      <div
+                        key={gov}
+                        className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                        onClick={() => {
+                          setState(gov);
+                          setOpen(false);
+                          setSearch("");
+                          setErrors((prev: any) => ({ ...prev, state: "" }));
+                        }}
+                      >
+                        {gov}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {errors.state && (
+                <p className="text-red-600 text-sm mt-1">{errors.state}</p>
+              )}
+            </div>
+          </div>
+
+          {/* تفاصيل العنوان بالكامل */}
+          <div className="flex flex-col mt-3">
+            <label className="mb-1 font-semibold text-(--color-dark)">
+              Address Details
+            </label>
+            <textarea
+              placeholder="Street, Building, etc."
+              className="w-full p-3 rounded-xl border border-(--color-earth) outline-none"
+              value={addressDetails}
+              required
+              onChange={(e) => {
+                setAddressDetails(e.target.value);
+                setErrors((prev) => ({ ...prev, addressDetails: "" }));
+              }}
+            />
+            {errors.addressDetails && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors.addressDetails}
+              </p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+            {/* الرقم الأول للتواصل */}
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-(--color-dark)">
+                Phone
+              </label>
+              <input
+                type="text"
+                placeholder="Phone"
+                className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
+                value={phone1}
+                required
+                onChange={(e) => {
+                  setPhone1(e.target.value);
+                  setErrors((prev) => ({ ...prev, phone1: "" }));
+                }}
+              />
+              {errors.phone1 && (
+                <p className="text-red-600 text-sm mt-1">{errors.phone1}</p>
+              )}
+            </div>
+
+            {/* الرقم الثاني للتواصل */}
+            <div className="flex flex-col">
+              <label className="mb-1 font-semibold text-(--color-dark)">
+                Phone (Optional)
+              </label>
+              <input
+                type="text"
+                placeholder="Phone"
+                className="p-3 rounded-xl border border-(--color-earth) outline-none w-full"
+                value={phone2}
+                required
+                onChange={(e) => {
+                  setPhone2(e.target.value);
+                  setErrors((prev) => ({ ...prev, phone2: "" }));
+                }}
+              />
+              {errors.phone2 && (
+                <p className="text-red-600 text-sm mt-1">{errors.phone2}</p>
+              )}
+            </div>
+          </div>
+
+          {/* لي حفظ البيانات العنوان */}
+          <div className="flex items-center gap-2 mt-3">
+            <input
+              type="checkbox"
+              checked={saveAddress}
+              onChange={(e) => setSaveAddress(e.target.checked)}
+              className="w-5 h-5 accent-(--color-tiger) cursor-pointer"
+            />
+            <label className="font-semibold text-(--color-dark)">
+              Save this address for next time
+            </label>
+          </div>
+
+          <h2 className="text-xl font-bold text-(--color-dark) mb-4 mt-6">
             Order Summary
           </h2>
 
           <div className="flex justify-between text-lg mb-2">
-            <span className="text-(--color-dark)">Subtotal:</span>
+            <span className="text-(--color-dark)">Subtotal</span>
             <span className="font-bold text-(--color-pakistan)">
-              {data?.carts?.total} EGP
+              {data?.carts?.total || 0} EGP
             </span>
           </div>
 
           <div className="flex justify-between text-lg mb-2">
-            <span className="text-(--color-dark)">Delivery Fee:</span>
+            <span className="text-(--color-dark)">Delivery Fee</span>
             {isFirstOrder ? (
               <span className="font-bold text-green-600 flex items-center gap-2 animate-pulse">
                 🎁 FREE
@@ -353,7 +400,7 @@ export default function Checkout() {
               </span>
             ) : (
               <span className="font-bold text-(--color-pakistan)">
-                {deliveryFee} EGP
+                ({state}) {deliveryFee} EGP
               </span>
             )}
           </div>
@@ -392,8 +439,8 @@ export default function Checkout() {
           <hr className="my-3 border-(--color-earth)" />
 
           <div className="flex justify-between text-xl font-bold mb-4">
-            <span className="text-(--color-dark)">Total:</span>
-            <span className="text-(--color-tiger)">{finalTotal} EGP</span>
+            <span className="text-(--color-dark)">Total</span>
+            <span className="text-(--color-tiger)">{finalTotal || 0} EGP</span>
           </div>
           <hr className="my-3 border-(--color-earth)" />
 

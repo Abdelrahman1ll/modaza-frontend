@@ -35,8 +35,8 @@ export default function Dashboard() {
     stats;
 
   const COLORS = [
-    "var(--color-earth)",
     "var(--color-tiger)",
+    "var(--color-earth)",
     "var(--color-dark)",
     "var(--color-pakistan)",
   ];
@@ -110,7 +110,7 @@ export default function Dashboard() {
             className="text-xl font-bold mb-3 flex items-center gap-2"
             style={{ color: "var(--color-earth)" }}
           >
-            Discounts Overview
+            Discounts Overview <PieIcon />
           </h3>
 
           <ResponsiveContainer width="100%" height={280}>

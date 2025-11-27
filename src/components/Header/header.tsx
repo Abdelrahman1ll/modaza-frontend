@@ -16,6 +16,7 @@ import {
 import { Link } from "react-router-dom";
 import SearchInput from "./search";
 import useHeader from "./useHeader";
+import { BRAND_NAME } from "../../BrandText";
 
 export default function Header() {
   const {
@@ -71,7 +72,7 @@ export default function Header() {
               All Products
             </Link>
             <Link
-              to="/contact"
+              to="/contact-us"
               className="font-bold transition"
               onMouseEnter={(e) =>
                 (e.currentTarget.style.color = "var(--color-tiger)")
@@ -92,7 +93,7 @@ export default function Header() {
                 letterSpacing: "1px",
               }}
             >
-              ModaZone
+              {BRAND_NAME}
             </h1>
           </Link>
 
@@ -409,7 +410,7 @@ export default function Header() {
                 </Link>
 
                 <Link
-                  to="/contact"
+                  to="/contact-us"
                   className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
                   onClick={() => setIsMenuOpen(false)}
                   onMouseEnter={(e) =>
@@ -433,7 +434,7 @@ export default function Header() {
                 letterSpacing: "1px",
               }}
             >
-              ModaZone
+              {BRAND_NAME}
             </h1>
           </Link>
 

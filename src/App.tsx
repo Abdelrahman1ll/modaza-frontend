@@ -8,6 +8,9 @@ import NetworkStatus from "./components/NetworkStatus";
 import BackButton from "./components/BackButton";
 import ScrollToTop from "./components/ScrollToTop";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AboutUsPage from "./pages/QuickLinks/aboutUsPage";
+import FAQsPage from "./pages/QuickLinks/FAQsPage";
+import ShippingDeliveryPage from "./pages/QuickLinks/ShippingDeliveryPage";
 
 const HomePage = lazy(() => import("./pages/Home/homePage"));
 const ProductsPage = lazy(() => import("./pages/products/productPage"));
@@ -47,7 +50,7 @@ const TermsConditionsPage = lazy(
   () => import("./pages/Policies/termsConditionsPage")
 );
 const CheckoutPage = lazy(() => import("./pages/Orders/CheckoutPage"));
-const ContactUsPage = lazy(() => import("./pages/ContactUs/contactUsPage"));
+const ContactUsPage = lazy(() => import("./pages/QuickLinks/contactUsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
@@ -98,7 +101,11 @@ export default function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/terms-conditions" element={<TermsConditionsPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/contact" element={<ContactUsPage />} />
+
+          <Route path="/contact-us" element={<ContactUsPage />} />
+          <Route path="/about-us" element={<AboutUsPage />} />
+          <Route path="/faqs" element={<FAQsPage />} />
+          <Route path="/shipping-delivery" element={<ShippingDeliveryPage />} />
           <Route path="*" element={<NotFound />} />
 
           {/* Protected Routes */}
