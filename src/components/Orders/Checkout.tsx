@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
+import PaymobCheckout from "./paymobCheckout";
 export default function Checkout() {
   const {
     discount,
@@ -544,6 +545,10 @@ export default function Checkout() {
                     </div>
                   </div>
                 )}
+
+              {openSection === m.id && m.id === "credit_card" && (
+                <PaymobCheckout amount={finalTotal} />
+              )}
             </div>
           ))}
 
