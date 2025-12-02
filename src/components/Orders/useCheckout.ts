@@ -9,6 +9,8 @@ import {
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import egyptGovernorates from "../../data/egyptGovernorates.json";
+import Cookies from "js-cookie";
+import CryptoJS from "crypto-js";
 import ttsMP3 from "/ttsMP3.com_VoiceText_2025-11-19_2-28-51.mp3";
 const audio = new Audio(ttsMP3);
 const close = [
@@ -51,6 +53,7 @@ export default function useCheckout() {
   const [addressDetails, setAddressDetails] = useState("");
   const [phone1, setPhone1] = useState("");
   const [phone2, setPhone2] = useState("");
+  const [email, setEmail] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [code, setCode] = useState("");
@@ -66,6 +69,20 @@ export default function useCheckout() {
     phone2: "",
     paymentMethod: "",
   });
+  const secretKey = import.meta.env.VITE_SECRET_KEY;
+  useEffect(() => {
+    const encryptedUser = Cookies.get("user");
+    if (encryptedUser) {
+      const decryptedUser = CryptoJS.AES.decrypt(
+        encryptedUser,
+        secretKey
+      ).toString(CryptoJS.enc.Utf8);
+
+      const user = JSON.parse(decryptedUser);
+      setEmail(user?.user?.email);
+    }
+  }, [secretKey]);
+
   const { data, isLoading } = useGetCartQuery({});
   const { data: delivery } = useGetDeliveryQuery({});
   const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
@@ -213,6 +230,14 @@ export default function useCheckout() {
       setErrors({ ...errors, paymentMethod: "Please select a payment method" });
       return;
     }
+    let paymentId;
+    if (paymentMethod === "credit_card") {
+      paymentId = localStorage.getItem("paymentId");
+      if (!paymentId) {
+        toast.error("Please complete the payment first");
+        return;
+      }
+    }
 
     if (data?.carts?.items.length === 0) {
       toast.error("Your cart is empty");
@@ -233,9 +258,13 @@ export default function useCheckout() {
           phoneOptional: phone2,
         },
         paymentMethod: paymentMethod,
+        paymentId: paymentMethod === "credit_card" ? paymentId : null,
       }).unwrap();
       if (code && code === "PROFILE") {
         localStorage.setItem("usedProfile", "true");
+      }
+      if (paymentMethod === "credit_card") {
+        localStorage.removeItem("paymentId");
       }
       setFirstName("");
       setLastName("");
@@ -308,5 +337,6 @@ export default function useCheckout() {
     search,
     saveAddress,
     setSaveAddress,
+    email,
   };
 }

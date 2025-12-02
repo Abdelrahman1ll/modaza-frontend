@@ -51,10 +51,10 @@ export default function Checkout() {
     search,
     saveAddress,
     setSaveAddress,
+    email,
   } = useCheckout();
-
   return (
-    <div className="min-h-screen p-6 flex flex-col items-center">
+    <div className="min-h-screen  p-4 sm:p-6 flex flex-col items-center">
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -547,13 +547,32 @@ export default function Checkout() {
                 )}
 
               {openSection === m.id && m.id === "credit_card" && (
-                <PaymobCheckout amount={finalTotal} />
+                <>
+                  {!firstName || !lastName || !email || !phone1 || !state ? (
+                    <div className="p-4 bg-red-100 border border-red-300 rounded-xl mb-3 text-red-700">
+                      Please enter your address.
+                    </div>
+                  ) : (
+                    <PaymobCheckout
+                      paymentData={{
+                        amount: finalTotal,
+                        first_name: firstName,
+                        last_name: lastName,
+                        email: email,
+                        phone_number: phone1,
+                        city: state,
+                      }}
+                    />
+                  )}
+                </>
               )}
             </div>
           ))}
 
           {errors.paymentMethod && (
-            <p className="text-red-600 text-sm mt-1">{errors.paymentMethod}</p>
+            <div className="p-4 bg-red-100 border border-red-300 rounded-xl mb-3 text-red-700">
+              {errors.paymentMethod}
+            </div>
           )}
 
           <button

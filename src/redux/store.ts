@@ -9,6 +9,7 @@ import { ApiCart } from "./Cart/apiCart";
 import { ApiEmailOrderDispatcher } from "./EmailOrderDispatcher/apiEmailOrderDispatcher";
 import { ApiEmail } from "./Email/apiEmail";
 import { ApiOrders } from "./Orders/apiOrders";
+import { paymentApi } from "./Payment/apiPayment";
 export const store = configureStore({
   reducer: {
     [ApiUsers.reducerPath]: ApiUsers.reducer,
@@ -21,6 +22,7 @@ export const store = configureStore({
     [ApiEmailOrderDispatcher.reducerPath]: ApiEmailOrderDispatcher.reducer,
     [ApiEmail.reducerPath]: ApiEmail.reducer,
     [ApiOrders.reducerPath]: ApiOrders.reducer,
+    [paymentApi.reducerPath]: paymentApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -33,7 +35,8 @@ export const store = configureStore({
       ApiCart.middleware,
       ApiEmailOrderDispatcher.middleware,
       ApiEmail.middleware,
-      ApiOrders.middleware
+      ApiOrders.middleware,
+      paymentApi.middleware
     ),
 });
 

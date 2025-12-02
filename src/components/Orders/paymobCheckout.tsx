@@ -1,72 +1,54 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import URL from "../../api/baseUrl";
+import { usePostPaymentMutation } from "../../redux/Payment/apiPayment";
 
-function PaymobCheckout({ amount }: { amount: number }) {
-  const [paymobToken, setPaymobToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+function PaymobCheckout({ paymentData }: any) {
+  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // iframe ID من Paymob Dashboard
-  const IFRAME_ID = import.meta.env.VITE_IFRAME_ID;
-
+  const [postPayment, { isLoading }] = usePostPaymentMutation();
   useEffect(() => {
     async function initPayment() {
       try {
-        setLoading(true);
-        const resp = await axios.post(
-          `${URL}/payment/create-session`,
-          { amount }
-        );
-        console.log("Payment token received:", resp.data.token);
-        setPaymobToken(resp.data.token);
-        setLoading(false);
+        const res = await postPayment({ ...paymentData }).unwrap();
+        setPaymentUrl(res.clientSecret);
+        localStorage.setItem("paymentId", res.paymentId);
       } catch (err) {
         if (axios.isAxiosError(err)) {
-          console.error("Payment Error:", err.response?.data);
-          setError("فشل في إنشاء جلسة الدفع");
+          setError("There were communication errors");
+        } else {
+          setError("An unexpected error occurred.");
         }
-        setLoading(false);
       }
     }
 
-    if (amount > 0) {
-      initPayment();
-    }
-  }, [amount]);
+    if (paymentData.amount > 0) initPayment();
+  }, [paymentData]);
 
-  if (loading) {
+  if (isLoading)
     return (
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <p>جاري تحميل صفحة الدفع...</p>
+      <div className="flex items-center justify-center h-64">
+        <div className="w-18 h-18 border-6 border-gray-300 border-t-(--color-tiger) rounded-full animate-spin"></div>
       </div>
     );
-  }
 
-  if (error) {
-    return (
-      <div style={{ color: "red", textAlign: "center", padding: "20px" }}>
-        {error}
-      </div>
-    );
-  }
+  if (error) return <p className="text-red-500 text-center p-5">{error}</p>;
 
-  if (!paymobToken) {
-    return <div>لا يوجد token للدفع</div>;
-  }
+  if (!paymentUrl)
+    return <p className="text-center p-5">No payment link available</p>;
 
   return (
-    <div style={{ width: "100%", minHeight: "350px" }}>
-      <h3 style={{ textAlign: "center" }}>إتمام الدفع - {amount} جنيه</h3>
+    <div className="w-full min-h-[400px] mb-2.5">
       <iframe
-        src={`https://accept.paymob.com/api/acceptance/iframes/${IFRAME_ID}?payment_token=${paymobToken}`}
-        width="100%"
-        height="350px"
-        style={{ border: "none" }}
+        src={paymentUrl}
+        className="w-full h-[400px] border-none rounded-2xl"
         title="Paymob Payment"
+        allowFullScreen
       />
     </div>
   );
 }
 
 export default PaymobCheckout;
+
+
+
