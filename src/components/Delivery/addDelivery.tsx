@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   useGetDeliveryQuery,
   usePostDeliveryMutation,
+  usePostFreeDeliveryMutation,
 } from "../../redux/Delivery/apiDelivery";
 import { toast } from "react-toastify";
 
@@ -38,6 +39,19 @@ export default function DeliveryPrice() {
       toast.success("Delivery prices updated successfully");
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to update delivery prices");
+    }
+  };
+
+  const [postFreeDelivery] = usePostFreeDeliveryMutation({});
+  const [openPanel, setOpenPanel] = useState(false);
+
+  const handleFreeDelivery = async () => {
+    try {
+      await postFreeDelivery({}).unwrap();
+      toast.success("Free Delivery Activated!");
+      refetch();
+    } catch (err) {
+      toast.error("Failed to activate free delivery");
     }
   };
 
@@ -102,6 +116,94 @@ export default function DeliveryPrice() {
         >
           {isLoading ? "Saving..." : "Save Prices"}
         </motion.button>
+
+        <div className="mt-10">
+          {/* زرار فتح قسم الخيارات */}
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setOpenPanel(!openPanel)}
+            className="
+      w-full py-3 rounded-xl font-semibold
+      bg-(--color-tiger) text-white shadow-lg
+      flex items-center justify-center gap-2
+      transition-colors duration-300
+    "
+          >
+            {openPanel ? "Hide Delivery Options" : "More Delivery Settings"}
+
+            {/* السهم المتحرك */}
+            <motion.span
+              animate={{ rotate: openPanel ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="inline-block"
+            >
+              ▼
+            </motion.span>
+          </motion.button>
+
+          {/* القسم المنزلق */}
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{
+              height: openPanel ? "auto" : 0,
+              opacity: openPanel ? 1 : 0,
+            }}
+            transition={{ duration: 0.4 }}
+            className="overflow-hidden"
+          >
+            <div
+              className="
+      mt-4 p-6 rounded-2xl shadow-xl border
+      bg-(--color-cornsilk)
+      flex flex-col items-center gap-4
+    "
+            >
+              <h3 className="text-xl font-bold text-(--color-dark) text-center">
+                Free Delivery Option
+              </h3>
+
+              {/* حالة FreeDelivery */}
+              {delivery?.freeDelivery ? (
+                <div className="text-center p-4 bg-green-50 rounded-xl w-full">
+                  <p className="text-green-700 font-bold text-lg flex items-center justify-center gap-2">
+                    ✓ Free Delivery is Enabled
+                  </p>
+                  <p className="text-(--color-pakistan) mt-1 text-sm">
+                    All customers now get free shipping on all orders.
+                  </p>
+                </div>
+              ) : (
+                <div className="text-center p-4 bg-red-50 rounded-xl w-full">
+                  <p className="text-red-600 font-bold text-lg flex items-center justify-center gap-2">
+                    ✕ Free Delivery is Disabled
+                  </p>
+                  <p className="text-(--color-dark) mt-1 text-sm">
+                    Customers will be charged normal delivery fees.
+                  </p>
+                </div>
+              )}
+
+              {/* زرار التفعيل */}
+
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 0 15px rgba(188,108,37,0.6)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleFreeDelivery}
+                className="
+            w-full py-3 rounded-xl font-bold text-white
+            bg-linear-to-r from-(--color-earth) to-(--color-tiger)
+            shadow-lg mt-2 transition-all
+          "
+              >
+                Activate Free Delivery
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );

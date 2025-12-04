@@ -110,16 +110,16 @@ export default function useCheckout() {
 
     setErrors(newErrors);
 
-    if (
+    const isValid = !(
       newErrors.firstName ||
       newErrors.lastName ||
       newErrors.state ||
       newErrors.addressDetails ||
       newErrors.phone1 ||
       newErrors.phone2
-    ) {
-      return;
-    }
+    );
+
+    return isValid;
   };
   useEffect(() => {
     const saved = localStorage.getItem("checkoutAddress");
@@ -137,7 +137,8 @@ export default function useCheckout() {
 
   useEffect(() => {
     if (saveAddress) {
-      Validate();
+      const isValid = Validate();
+      if (!isValid) return;
       localStorage.setItem(
         "checkoutAddress",
         JSON.stringify({
@@ -149,6 +150,8 @@ export default function useCheckout() {
           phone2,
         })
       );
+    } else {
+      localStorage.removeItem("checkoutAddress");
     }
   }, [saveAddress, firstName, lastName, state, addressDetails, phone1, phone2]);
 
@@ -157,9 +160,9 @@ export default function useCheckout() {
   );
   const deliveryData = delivery?.deliveries?.find((d: any) => d.id === 1);
   const isFirstOrder: boolean = data?.carts?.thIsIsYourFirstOrder;
-
+  const freeDelivery: boolean = deliveryData?.freeDelivery;
   useEffect(() => {
-    if (isFirstOrder) {
+    if (isFirstOrder || freeDelivery) {
       setDeliveryFee(0);
       return;
     }
@@ -225,18 +228,11 @@ export default function useCheckout() {
   };
 
   const handlePayment = async () => {
-    Validate();
+    const isValid = Validate();
+    if (!isValid) return;
     if (!paymentMethod) {
       setErrors({ ...errors, paymentMethod: "Please select a payment method" });
       return;
-    }
-    let paymentId;
-    if (paymentMethod === "credit_card") {
-      paymentId = localStorage.getItem("paymentId");
-      if (!paymentId) {
-        toast.error("Please complete the payment first");
-        return;
-      }
     }
 
     if (data?.carts?.items.length === 0) {
@@ -258,20 +254,11 @@ export default function useCheckout() {
           phoneOptional: phone2,
         },
         paymentMethod: paymentMethod,
-        paymentId: paymentMethod === "credit_card" ? paymentId : null,
       }).unwrap();
       if (code && code === "PROFILE") {
         localStorage.setItem("usedProfile", "true");
       }
-      if (paymentMethod === "credit_card") {
-        localStorage.removeItem("paymentId");
-      }
-      setFirstName("");
-      setLastName("");
-      setState("");
-      setAddressDetails("");
-      setPhone1("");
-      setPhone2("");
+
       setPaymentMethod("");
       setCode("");
       toast.success("Order placed successfully");

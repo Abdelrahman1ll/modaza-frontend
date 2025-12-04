@@ -561,7 +561,9 @@ export default function Checkout() {
                         email: email,
                         phone_number: phone1,
                         city: state,
+                        paymentId: data?.carts?.paymentId,
                       }}
+                      handlePayment={handlePayment}
                     />
                   )}
                 </>
@@ -575,17 +577,34 @@ export default function Checkout() {
             </div>
           )}
 
-          <button
-            disabled={orderLoading}
-            onClick={handlePayment}
-            className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {orderLoading ? (
-              <Loader2 className="animate-spin w-5 h-5 mx-auto" />
-            ) : (
-              "Confirm Purchase"
-            )}
-          </button>
+          {paymentMethod === "credit_card" ? (
+            <button
+              disabled={orderLoading}
+              onClick={() => {
+                window.dispatchEvent(new Event("payFromOutside"));
+
+              }}
+              className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {orderLoading ? (
+                <Loader2 className="animate-spin w-5 h-5 mx-auto" />
+              ) : (
+                "Pay now"
+              )}
+            </button>
+          ) : (
+            <button
+              disabled={orderLoading}
+              onClick={handlePayment}
+              className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {orderLoading ? (
+                <Loader2 className="animate-spin w-5 h-5 mx-auto" />
+              ) : (
+                "Complete Order"
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -15,7 +15,17 @@ export const ApiDelivery = createApi({
         body: data,
       }),
     }),
+    postFreeDelivery: builder.mutation({
+      query: () => ({
+        url: "/delivery/free-delivery",
+        method: "POST",
+      }),
+    }),
   }),
 });
 
-export const { useGetDeliveryQuery, usePostDeliveryMutation } = ApiDelivery;
+export const {
+  useGetDeliveryQuery,
+  usePostDeliveryMutation,
+  usePostFreeDeliveryMutation,
+} = ApiDelivery;

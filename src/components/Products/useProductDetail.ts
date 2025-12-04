@@ -147,7 +147,6 @@ export default function useProductDetail() {
         quantity: quantity,
         sizes: selectedSize,
       }).unwrap();
-      toast.success("Item add to cart");
       refetchCart();
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to add item to cart");
