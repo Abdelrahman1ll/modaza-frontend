@@ -12,6 +12,7 @@ import {
 import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
 import PaymobCheckout from "./paymobCheckout";
+import { BRAND_PHONE } from "../../BrandText";
 export default function Checkout() {
   const {
     discount,
@@ -504,7 +505,7 @@ export default function Checkout() {
                     </p>
 
                     <p className="p-3 bg-white border-2 border-(--color-tiger) rounded-xl font-bold text-(--color-dark) text-center text-lg tracking-wider">
-                      01065217980
+                      {BRAND_PHONE}
                     </p>
 
                     {/* ملاحظات مهمة */}
@@ -563,7 +564,6 @@ export default function Checkout() {
                         city: state,
                         paymentId: data?.carts?.paymentId,
                       }}
-                      handlePayment={handlePayment}
                     />
                   )}
                 </>
@@ -582,7 +582,6 @@ export default function Checkout() {
               disabled={orderLoading}
               onClick={() => {
                 window.dispatchEvent(new Event("payFromOutside"));
-
               }}
               className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
             >

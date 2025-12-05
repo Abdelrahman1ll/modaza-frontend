@@ -115,7 +115,7 @@ export default function Footer() {
               <MdLocationOn size={18} /> Egypt
             </li>
             <li className="flex items-center gap-2 text-(--color-earth)">
-              <MdPhone size={18} /> +20{BRAND_PHONE}
+              <MdPhone size={18} /> +2{BRAND_PHONE}
             </li>
             <li className="flex items-center gap-2 text-(--color-earth)">
               <MdEmail size={18} /> {BRAND_EMAIL}

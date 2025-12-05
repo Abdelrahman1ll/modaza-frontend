@@ -94,7 +94,7 @@ export default function ContactUs() {
           <p className="flex items-center gap-2">
             <MdPhone className="text-(--color-pakistan)" size={20} />
             <span className="font-bold text-(--color-pakistan)">Phone:</span>
-            +20 {BRAND_PHONE}
+            +2{BRAND_PHONE}
           </p>
           <p className="flex items-center gap-2">
             <MdEmail className="text-(--color-pakistan)" size={20} />
