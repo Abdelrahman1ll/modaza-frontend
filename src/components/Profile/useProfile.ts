@@ -12,6 +12,7 @@ export default function useProfile() {
     email: "",
     phone: "",
     birthday: "",
+    PROFILE: false,
   });
 
   const [errors, setErrors] = useState({
@@ -46,19 +47,55 @@ export default function useProfile() {
         email: user.user.email || "",
         phone: user.user.phone || "",
         birthday: user.user.birthday || "",
+        PROFILE: user.user.PROFILE || false,
       });
     }
   }, []);
 
   useEffect(() => {
-    let filled = 0;
-    if (userData.firstName) filled += 1;
-    if (userData.lastName) filled += 1;
-    if (userData.phone) filled += 1;
-    if (userData.birthday) filled += 1;
-
-    const completion = 20 + filled * 20;
+    // حساب نسبة إكمال البروفايل
+    const fields = ["firstName", "lastName", "phone", "birthday"] as const;
+    const filledCount = fields.reduce(
+      (count, field) => (userData[field] ? count + 1 : count),
+      0
+    );
+    const completion = 20 + filledCount * 20;
     setProgress(completion);
+
+    // تحقق من المكافأة إذا البروفايل مكتمل
+    const checkReward = async () => {
+      const isProfileComplete =
+        userData.firstName &&
+        userData.lastName &&
+        userData.phone &&
+        userData.birthday &&
+        userData.PROFILE === true;
+
+      if (!isProfileComplete) {
+        setRewardVisible(false);
+        return;
+      }
+
+      try {
+        const response = await validateDiscountCode({
+          code: "PROFILE",
+        }).unwrap();
+
+        if (response?.discountCode) {
+          setReward({
+            code: response.discountCode.code,
+            discount: response.discountCode.discount,
+          });
+          setRewardVisible(true);
+          setProgress(100);
+        }
+      } catch (err) {
+        setRewardVisible(false);
+        console.error("Failed to fetch reward:", err);
+      }
+    };
+
+    checkReward();
   }, [userData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,9 +131,30 @@ export default function useProfile() {
       isValid = false;
     }
 
-    if (userData.birthday && new Date(userData.birthday) > new Date()) {
-      newErrors.birthday = "Birthday must be a valid past date";
-      isValid = false;
+    if (userData.birthday) {
+      const birthday = new Date(userData.birthday);
+      const today = new Date();
+
+      // رفض التواريخ المستقبلية
+      if (birthday >= today) {
+        newErrors.birthday = "Birthday must be a valid past date";
+        isValid = false;
+      } else {
+        // حساب العمر
+        let age = today.getFullYear() - birthday.getFullYear();
+        const monthDiff = today.getMonth() - birthday.getMonth();
+        const dayDiff = today.getDate() - birthday.getDate();
+
+        // لو لسه عيد ميلاده السنة دي ما جهش
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+          age--;
+        }
+
+        if (age < 10) {
+          newErrors.birthday = "Birthday indicates an age below the allowed minimum";
+          isValid = false;
+        }
+      }
     }
 
     setErrors(newErrors);
@@ -145,30 +203,10 @@ export default function useProfile() {
           path: "/",
         });
       }
-
-      // ✅ تحقق أن جميع الحقول ممتلئة بعد الحفظ بنجاح
-      if (
-        userData.firstName &&
-        userData.lastName &&
-        userData.phone &&
-        userData.birthday
-      ) {
-        const response = await validateDiscountCode({
-          code: "PROFILE",
-        }).unwrap();
-        setReward({
-          code: response?.discountCode.code,
-          discount: response?.discountCode.discount,
-        });
-        setRewardVisible(true);
-        setProgress(100);
-      }
     } catch (error: any) {
       toast.error(error?.data.message || "Error saving profile");
     }
   };
-
-  const isUsed = localStorage.getItem("usedProfile") === "true";
 
   return {
     userData,
@@ -178,7 +216,6 @@ export default function useProfile() {
     errors,
     isLoading,
     rewardVisible,
-    isUsed,
     reward,
   };
 }

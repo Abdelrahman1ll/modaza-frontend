@@ -11,7 +11,6 @@ export default function Profile() {
     errors,
     isLoading,
     rewardVisible,
-    isUsed,
     reward,
   } = useProfile();
 
@@ -41,26 +40,32 @@ export default function Profile() {
         </p>
 
         {/* عرض مكافأة الخصم */}
-        {rewardVisible && !isUsed && (
+        {rewardVisible && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="
-                    flex flex-col sm:flex-row items-center justify-center 
-                       text-center sm:text-left flex-wrap
-                     bg-green-100 text-green-700 font-medium 
-                         py-3 px-4 rounded-lg mb-4
-                            gap-1 sm:gap-2 leading-snug
-                       "
+      flex flex-col sm:flex-row items-center justify-center
+      text-center sm:text-left flex-wrap
+      bg-green-100 text-green-700 font-medium
+      py-3 px-4 rounded-lg mb-4
+      gap-1 sm:gap-2 leading-snug
+    "
           >
             <Gift size={22} className="text-green-700 mb-1 sm:mb-0" />
-            <p className="text-sm sm:text-base">
-              Congratulations! You’ve unlocked a{" "}
-              <span className="font-bold">{reward?.discount}% discount</span>{" "}
-              with the code{" "}
-              <span className="font-bold underline">{reward?.code}</span> on
-              your first order 🎉
-            </p>
+            <div className="flex flex-col">
+              <p className="text-sm sm:text-base">
+                Congratulations! You’ve unlocked a{" "}
+                <span className="font-bold">{reward?.discount}% discount</span>{" "}
+                with the code{" "}
+                <span className="font-bold underline">{reward?.code}</span> on
+                your first order 🎉
+              </p>
+              <p className="text-xs text-gray-600 mt-1">
+                * Please complete all your profile information to claim this
+                discount.
+              </p>
+            </div>
           </motion.div>
         )}
 

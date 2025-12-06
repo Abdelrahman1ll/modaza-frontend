@@ -35,7 +35,6 @@ function PaymobCheckout({ paymentData }: any) {
   }, [paymentData]);
 
   useEffect(() => {
-    // لا نبدأ إلا بعد ما يكون لدينا كلا المفاتيح
     if (!publicKey || !clientSecret) return;
 
     const script = document.createElement("script");
@@ -44,7 +43,6 @@ function PaymobCheckout({ paymentData }: any) {
     script.async = true;
 
     script.onload = () => {
-      // نستخدم ref للاحتفاظ بالـ interval id حتى نقدر ننظفه لاحقًا
       intervalRef.current = window.setInterval(() => {
         if (!window.Pixel) return;
 
@@ -63,8 +61,8 @@ function PaymobCheckout({ paymentData }: any) {
             elementId: "paymob-elements",
             forceIframe: true,
             iframeMode: true,
-            redirect: false, // منع redirect خارجي
-            openInNewTab: false, // عدم فتح تبويبة جديدة
+            redirect: false,
+            openInNewTab: false,
             resizeObserver: true,
             displayMode: "embedded",
             enableSpinner: true,

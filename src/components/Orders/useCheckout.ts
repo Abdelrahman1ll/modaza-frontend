@@ -161,6 +161,8 @@ export default function useCheckout() {
   const deliveryData = delivery?.deliveries?.find((d: any) => d.id === 1);
   const isFirstOrder: boolean = data?.carts?.thIsIsYourFirstOrder;
   const freeDelivery: boolean = deliveryData?.freeDelivery;
+  const PROFILE: boolean = data?.carts?.user.PROFILE;
+  const BIRTHDAY: boolean = data?.carts?.user.BIRTHDAY;
   useEffect(() => {
     if (isFirstOrder || freeDelivery) {
       setDeliveryFee(0);
@@ -193,11 +195,17 @@ export default function useCheckout() {
         code: promoCode,
       }).unwrap();
       if (response?.discountCode.code === "PROFILE") {
-        const isUsed = localStorage.getItem("usedProfile") === "true";
-        if (isUsed) {
+        if (PROFILE === false) {
           setDiscount(0);
-          setCode("");
           setErrorMsg("The PROFILE code has already been used");
+          return;
+        }
+      }
+
+      if (response?.discountCode.code === "BIRTHDAY") {
+        if (BIRTHDAY === false) {
+          setDiscount(0);
+          setErrorMsg("The BIRTHDAY code has already been used");
           return;
         }
       }
@@ -255,10 +263,6 @@ export default function useCheckout() {
         },
         paymentMethod: paymentMethod,
       }).unwrap();
-      if (code && code === "PROFILE") {
-        localStorage.setItem("usedProfile", "true");
-      }
-
       setPaymentMethod("");
       setCode("");
       toast.success("Order placed successfully");
@@ -269,7 +273,6 @@ export default function useCheckout() {
       refetch();
     } catch (error: any) {
       if (error?.data?.message === "Discount code already used for PROFILE") {
-        localStorage.setItem("usedProfile", "true");
         setErrorMsg("The PROFILE code has already been used");
         setDiscount(0);
         setCode("");
