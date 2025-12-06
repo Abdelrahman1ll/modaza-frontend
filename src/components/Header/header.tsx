@@ -40,6 +40,7 @@ export default function Header() {
     isSearchLocal,
     navigate,
     setIsSearchLocal,
+    menuRef,
   } = useHeader();
 
   return (
@@ -181,6 +182,7 @@ export default function Header() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
                       className="absolute right-0 mt-6 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90"
+                      ref={menuRef}
                     >
                       <Link
                         to="/profile"
@@ -578,6 +580,7 @@ export default function Header() {
                   ${user?.user.role === "owner" ? "-top-106" : "-top-36"}
                   
                   `}
+                ref={menuRef}
               >
                 <Link
                   to="/profile"

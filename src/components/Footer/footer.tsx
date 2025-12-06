@@ -161,7 +161,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t  border-(--color-earth) mt-10 pt-4 text-center text-sm text-(--color-earth)">
-        © {new Date().getFullYear()} {BRAND_NAME} | All Rights Reserved.
+        © {new Date().getFullYear()} RIGHTS RESERVED TO <span className="font-bold">{BRAND_NAME.toUpperCase()}</span>
       </div>
     </footer>
   );
