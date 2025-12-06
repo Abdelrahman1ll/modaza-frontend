@@ -6,6 +6,11 @@ declare global {
   }
 }
 
+const paymentCache = new Map<
+  string,
+  { clientSecret: string; publicKey: string }
+>();
+
 function PaymobCheckout({ paymentData }: any) {
   const effectRan = useRef(false);
   const [postPayment, { isError: apiError }] = usePostPaymentMutation();
@@ -20,9 +25,25 @@ function PaymobCheckout({ paymentData }: any) {
     if (effectRan.current) return;
     async function initPayment() {
       try {
+        const cacheKey = JSON.stringify(paymentData);
+
+        // 🔥 1) CHECK CACHE FIRST
+        if (paymentCache.has(cacheKey)) {
+          const cached = paymentCache.get(cacheKey)!;
+          setClientSecret(cached.clientSecret);
+          setPublicKey(cached.publicKey);
+          setIsLoading(false);
+          return;
+        }
+
         const res = await postPayment({ ...paymentData }).unwrap();
         setClientSecret(res.clientSecret);
         setPublicKey(res.publicKey);
+
+        paymentCache.set(cacheKey, {
+          clientSecret: res.clientSecret,
+          publicKey: res.publicKey,
+        });
       } catch (err) {
         setError("An error occurred. Please try again.");
         setIsLoading(false);
