@@ -11,7 +11,15 @@ const paymentCache = new Map<
   { clientSecret: string; publicKey: string }
 >();
 
-function PaymobCheckout({ paymentData }: any) {
+function PaymobCheckout({
+  paymentData,
+  onPaymentStart,
+  onPaymentEnd,
+}: {
+  paymentData: any;
+  onPaymentStart: () => void;
+  onPaymentEnd: () => void;
+}) {
   const effectRan = useRef(false);
   const [postPayment, { isError: apiError }] = usePostPaymentMutation();
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +69,7 @@ function PaymobCheckout({ paymentData }: any) {
     const script = document.createElement("script");
     script.src = "https://cdn.jsdelivr.net/npm/paymob-pixel@latest/main.js";
     script.type = "module";
-    script.async = true;
+    script.defer = true;
 
     script.onload = () => {
       intervalRef.current = window.setInterval(() => {
@@ -87,11 +95,48 @@ function PaymobCheckout({ paymentData }: any) {
             resizeObserver: true,
             displayMode: "embedded",
             enableSpinner: true,
-            onLoadingStart: () => setIsLoading(true),
-            onLoadingEnd: () => setIsLoading(false),
+
+            // عند بدء الدفع
+            onLoadingStart: () => {
+              setIsLoading(true);
+              onPaymentStart?.();
+            },
+
+            // عند انتهاء الدفع
+            onLoadingEnd: () => {
+              setIsLoading(false);
+              onPaymentEnd?.();
+            },
+
+            onRedirect: (url: string) => {
+              console.log(url);
+            },
+
+            beforePaymentComplete: async (paymentMethod: any) => {
+              console.log(paymentMethod);
+              console.log("Before payment start");
+              console.log("We are waiting for 5 seconds");
+              await new Promise((res) => setTimeout(() => res(""), 5000));
+              console.log("Before payment end");
+              return true;
+            },
+            afterPaymentComplete: async (response: any) => {
+              console.log("After Bannas payment..............");
+              console.log(response);
+            },
+            onPaymentCancel: () => {
+              console.log("Payment has been canceled");
+            },
+            cardValidationChanged: (isValid: boolean) => {
+              console.log("Is valid ? ", isValid);
+            },
+
+            onSuccess: async (response: any) => {
+              console.log("Success");
+              console.log(response);
+            },
 
             customStyle: {
-              /* ====== FONT ====== */
               Font_Family: "Cairo, sans-serif",
               Font_Size_Label: "18",
               Font_Size_Input_Fields: "18",
@@ -101,7 +146,6 @@ function PaymobCheckout({ paymentData }: any) {
               Font_Weight_Input_Fields: 500,
               Font_Weight_Payment_Button: 300,
 
-              /* ===== COLORS ===== */
               Color_Text: "#283618",
               Color_Text_Headings: "#283618",
               Color_Text_Payment_Button: "#FEFAE0",
@@ -111,8 +155,11 @@ function PaymobCheckout({ paymentData }: any) {
               Color_Background_Payment_Button: "#BC6C25",
               Color_Primary: "#BC6C25",
 
-              /* ===== BORDER ===== */
               Radius_Border: "12",
+              Color_Input_Fields: "#FEFAE0",
+              Color_Border_Payment_Button: "#BC6C25",
+
+              Gap_Between_Fields: "16px",
             },
           });
 
@@ -124,11 +171,6 @@ function PaymobCheckout({ paymentData }: any) {
           setIsLoading(false);
         }
       }, 50);
-    };
-
-    script.onerror = () => {
-      setError("Payment script failed to load");
-      setIsLoading(false);
     };
 
     document.body.appendChild(script);

@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
-import PaymobCheckout from "./paymobCheckout";
 import { BRAND_PHONE } from "../../BrandText";
+import { useRef, useState } from "react";
+import PaymobIframe from "./PaymobIframe";
 export default function Checkout() {
   const {
     discount,
@@ -54,6 +55,12 @@ export default function Checkout() {
     setSaveAddress,
     email,
   } = useCheckout();
+
+  const [isCardValid, setIsCardValid] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+
+  const payRef = useRef<() => void>(() => {});
+
   return (
     <div className="min-h-screen  p-4 sm:p-6 flex flex-col items-center">
       <motion.h1
@@ -554,7 +561,22 @@ export default function Checkout() {
                       Please enter your address.
                     </div>
                   ) : (
-                    <PaymobCheckout
+                    // <PaymobCheckout
+                    //   // ref={pixelRef}
+                    //   paymentData={{
+                    //     amount: finalTotal,
+                    //     first_name: firstName,
+                    //     last_name: lastName,
+                    //     email: email,
+                    //     phone_number: phone1,
+                    //     city: state,
+                    //     paymentId: data?.carts?.paymentId,
+                    //   }}
+                    //   onPaymentStart={() => setOrderPayLoading(true)}
+                    //   onPaymentEnd={() => setOrderPayLoading(false)}
+                    // />
+
+                    <PaymobIframe
                       paymentData={{
                         amount: finalTotal,
                         first_name: firstName,
@@ -564,6 +586,11 @@ export default function Checkout() {
                         city: state,
                         paymentId: data?.carts?.paymentId,
                       }}
+                      onPaymentEnd={() => {
+                        setIsPaying(false);
+                      }}
+                      onCardValidityChange={(v) => setIsCardValid(v)}
+                      triggerPayRef={payRef}
                     />
                   )}
                 </>
@@ -579,16 +606,17 @@ export default function Checkout() {
 
           {paymentMethod === "credit_card" ? (
             <button
-              disabled={orderLoading}
+              disabled={!isCardValid || isPaying}
               onClick={() => {
-                window.dispatchEvent(new Event("payFromOutside"));
+                setIsPaying(true);
+                payRef.current();
               }}
               className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {orderLoading ? (
+              {isPaying ? (
                 <Loader2 className="animate-spin w-5 h-5 mx-auto" />
               ) : (
-                "Pay now"
+                <span>Pay EGP {finalTotal}</span>
               )}
             </button>
           ) : (
