@@ -34,6 +34,7 @@ export type OrderType = {
   isCanceled: boolean;
   discountCode?: DiscountCodeType;
   deliveryPrice: number;
+  paymentId: string;
   createdAt: string;
 };
 

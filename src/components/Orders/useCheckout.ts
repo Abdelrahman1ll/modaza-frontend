@@ -7,7 +7,7 @@ import {
   usePostOrdersMutation,
 } from "../../redux/Orders/apiOrders";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import egyptGovernorates from "../../data/egyptGovernorates.json";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
@@ -91,6 +91,10 @@ export default function useCheckout() {
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+
+  const [isCardValid, setIsCardValid] = useState(false);
+  const [isPaying, setIsPaying] = useState(false);
+  const payRef = useRef<() => void>(() => {});
 
   const Validate = () => {
     const newErrors: typeof errors = { ...errors };
@@ -262,14 +266,22 @@ export default function useCheckout() {
           phoneOptional: phone2,
         },
         paymentMethod: paymentMethod,
+        paymentId:
+          paymentMethod === "credit_card"
+            ? Number(localStorage.getItem("orderPaymentId"))
+            : 0,
       }).unwrap();
       setPaymentMethod("");
       setCode("");
       toast.success("Order placed successfully");
       audio.play();
+      if (paymentMethod === "credit_card") {
+        localStorage.removeItem("orderPaymentId");
+      }
       setTimeout(() => {
         navigate("/orders");
       }, 200);
+
       refetch();
     } catch (error: any) {
       if (error?.data?.message === "Discount code already used for PROFILE") {
@@ -328,5 +340,10 @@ export default function useCheckout() {
     saveAddress,
     setSaveAddress,
     email,
+    isCardValid,
+    setIsCardValid,
+    setIsPaying,
+    isPaying,
+    payRef,
   };
 }

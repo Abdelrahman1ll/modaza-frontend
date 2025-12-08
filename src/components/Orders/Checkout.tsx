@@ -12,7 +12,6 @@ import {
 import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
 import { BRAND_PHONE } from "../../BrandText";
-import { useRef, useState } from "react";
 import PaymobIframe from "./PaymobIframe";
 export default function Checkout() {
   const {
@@ -54,12 +53,12 @@ export default function Checkout() {
     saveAddress,
     setSaveAddress,
     email,
+    isCardValid,
+    setIsCardValid,
+    setIsPaying,
+    isPaying,
+    payRef,
   } = useCheckout();
-
-  const [isCardValid, setIsCardValid] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
-
-  const payRef = useRef<() => void>(() => {});
 
   return (
     <div className="min-h-screen  p-4 sm:p-6 flex flex-col items-center">
@@ -487,7 +486,12 @@ export default function Checkout() {
             <div key={m.id} className="w-full">
               {/* زرار اختيار وسيلة الدفع */}
               <button
-                onClick={() => handleSelectMethod(m.id)}
+                onClick={() => {
+                  if (isPaying) {
+                    return;
+                  }
+                  handleSelectMethod(m.id);
+                }}
                 className={`w-full flex items-center justify-between p-4 rounded-xl border transition mb-2 ${
                   paymentMethod === m.id
                     ? "border-(--color-tiger) bg-(--color-tiger)/10"
@@ -561,21 +565,6 @@ export default function Checkout() {
                       Please enter your address.
                     </div>
                   ) : (
-                    // <PaymobCheckout
-                    //   // ref={pixelRef}
-                    //   paymentData={{
-                    //     amount: finalTotal,
-                    //     first_name: firstName,
-                    //     last_name: lastName,
-                    //     email: email,
-                    //     phone_number: phone1,
-                    //     city: state,
-                    //     paymentId: data?.carts?.paymentId,
-                    //   }}
-                    //   onPaymentStart={() => setOrderPayLoading(true)}
-                    //   onPaymentEnd={() => setOrderPayLoading(false)}
-                    // />
-
                     <PaymobIframe
                       paymentData={{
                         amount: finalTotal,
@@ -584,13 +573,11 @@ export default function Checkout() {
                         email: email,
                         phone_number: phone1,
                         city: state,
-                        paymentId: data?.carts?.paymentId,
                       }}
-                      onPaymentEnd={() => {
-                        setIsPaying(false);
-                      }}
+                      setIsPaying={() => setIsPaying(false)}
                       onCardValidityChange={(v) => setIsCardValid(v)}
                       triggerPayRef={payRef}
+                      handlePayment={handlePayment}
                     />
                   )}
                 </>

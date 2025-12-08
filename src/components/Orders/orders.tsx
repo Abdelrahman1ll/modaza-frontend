@@ -6,6 +6,7 @@ import useOrders from "./useOrders";
 
 export default function Orders() {
   const { orders, isLoading, formatEndDateArabic } = useOrders();
+  console.log(orders);
   return (
     <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4 ">
       <motion.h1

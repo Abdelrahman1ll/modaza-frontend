@@ -6,14 +6,16 @@ const paymentCache = new Map<
 >();
 export default function PaymobIframe({
   paymentData,
-  onPaymentEnd,
   onCardValidityChange,
   triggerPayRef,
+  setIsPaying,
+  handlePayment,
 }: {
   paymentData: any;
-  onPaymentEnd: () => void;
   onCardValidityChange: (isValid: boolean) => void;
   triggerPayRef: React.MutableRefObject<() => void>;
+  setIsPaying: () => void;
+  handlePayment: () => void;
 }) {
   const effectRan = useRef(false);
   const [postPayment, { isError: apiError }] = usePostPaymentMutation();
@@ -22,6 +24,40 @@ export default function PaymobIframe({
   const [publicKey, setPublicKey] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      let data = event.data;
+
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch {
+          return;
+        }
+      }
+
+      if (data.type === "CARD_VALID") {
+        onCardValidityChange(data.isValid);
+      }
+
+      if (data.result === "SUCCESS") {
+        handlePayment();
+        setIsPaying();
+        onCardValidityChange(false);
+      } else {
+        setIsPaying();
+        onCardValidityChange(false);
+        setError("An error occurred. Please try again.");
+      }
+    }
+
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
 
   useEffect(() => {
     if (effectRan.current) return;
@@ -46,6 +82,11 @@ export default function PaymobIframe({
           publicKey: res.publicKey,
         });
 
+        localStorage.setItem(
+          "orderPaymentId",
+          JSON.stringify(res.orderPaymentId)
+        );
+
         setIsLoading(false);
       } catch (err) {
         setError("An error occurred. Please try again.");
@@ -58,52 +99,15 @@ export default function PaymobIframe({
   }, [paymentData]);
 
   useEffect(() => {
-    function handleMessage(event: MessageEvent) {
-      const data = event.data;
-      if (!data || typeof data !== "object") return;
-      console.log("Received message from iframe:", data);
-
-      if (data.type === "CARD_VALID") {
-        onCardValidityChange(data.isValid);
-      }
-
-      if (data.type === "PAYMENT_PROCESSING") {
-        console.log("⏳ Payment is being processed...");
-      }
-
-      if (data.type === "PAYMENT_SUCCESS") {
-        console.log("✅ Payment completed successfully!", data.data);
-        onPaymentEnd?.();
-        // هنا تعمل اللي انت عايزه:
-        // - تعرض رسالة نجاح
-        // - تحدث الـ state
-        // - توجه المستخدم لصفحة تانية
-        alert("تم الدفع بنجاح!");
-      }
-
-      if (data.type === "PAYMENT_FAILED") {
-        console.error("❌ Payment failed:", data.error);
-        onPaymentEnd?.();
-        alert("فشل الدفع. حاول تاني.");
-      }
-    }
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, []);
-
-  useEffect(() => {
     triggerPayRef.current = () => {
-      if (iframeRef.current?.contentWindow) {
-        iframeRef.current.contentWindow.dispatchEvent(
-          new Event("payFromOutside")
-        );
-      }
+      if (!iframeRef.current) return;
+
+      const iframeWindow = iframeRef.current.contentWindow;
+      if (!iframeWindow) return;
+
+      iframeWindow.dispatchEvent(new Event("payFromOutside"));
     };
   }, [triggerPayRef]);
-
-
-
 
   return (
     <div className="w-full h-full mb-4 relative">
@@ -162,43 +166,27 @@ export default function PaymobIframe({
                       cardValidationChanged: (isValid) => {
                         window.parent.postMessage({ type: "CARD_VALID", isValid }, "*");
                       },
-
-                        onSuccess: (data) => {
-    window.parent.postMessage({ 
-      type: "PAYMENT_SUCCESS", 
-      data: data,
-    redirectUrl: data.redirectUrl || data.redirect_url
-    }, "*");
-  },
-  onFailure: (error) => {
-                console.log("Payment Failed:", error);
-                window.parent.postMessage({ 
-                  type: "PAYMENT_FAILED", 
-                  error: error 
-                }, "*");
-              },
-              onProcessing: () => {
-                console.log("Payment Processing");
-                window.parent.postMessage({ 
-                  type: "PAYMENT_PROCESSING" 
-                }, "*");
-              },
-
-              onPaymentSuccess: () => {
-                console.log("Payment Success");
-                window.parent.postMessage({ 
-                  type: "PAYMENT_SUCCESS" 
-                }, "*");
-              },
-
-
+                      onSuccess: (data) => {
+                        window.parent.postMessage({
+                          type: "PAYMENT_SUCCESS",
+                          redirectUrl: data.redirectUrl || data.redirect_url,
+                          orderId: data.order_id || data.orderId,
+                          raw: data
+                        }, "*");
+                      },
+                      onFailure: (error) => {
+                        window.parent.postMessage({
+                          type: "PAYMENT_FAILED",
+                          error
+                        }, "*");
+                      }
                     });
-
-
 
                     window.addEventListener("payFromOutside", () => {
-                      pixel.pay();
+                      const payButton = document.querySelector("#paymob-elements button");
+                      if (payButton) payButton.click();
                     });
+
                   </script>
                 </body>
               </html>
