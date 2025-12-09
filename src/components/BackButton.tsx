@@ -27,7 +27,9 @@ export default function BackButton() {
   return (
     <button
       onClick={goBack}
-      className="fixed top-30 left-4.5 transform -translate-y-1/2 text-(--color-text) p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform z-40 cursor-pointer"
+      className={`fixed top-30 left-4.5 transform -translate-y-1/2 text-(--color-text) p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform z-40 cursor-pointer ${
+        !isVisible ? "invisible" : "visible"
+      }`}
       title="الرجوع للصفحة السابقة"
     >
       <ArrowLeft size={20} />

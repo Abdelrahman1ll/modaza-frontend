@@ -26,7 +26,7 @@ export default function PaymobIframe({
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
-    function handleMessage(event: MessageEvent) {
+    async function handleMessage(event: MessageEvent) {
       let data = event.data;
 
       if (typeof data === "string") {
@@ -42,10 +42,11 @@ export default function PaymobIframe({
       }
 
       if (data.result === "SUCCESS") {
-        handlePayment();
+        await new Promise((resolve) => setTimeout(resolve, 1000 * 5));
+        await handlePayment();
         setIsPaying();
         onCardValidityChange(false);
-      } else {
+      } else if (data.result === "ERROR") {
         setIsPaying();
         onCardValidityChange(false);
         setError("An error occurred. Please try again.");

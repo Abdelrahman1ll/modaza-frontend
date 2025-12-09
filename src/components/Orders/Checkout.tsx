@@ -487,7 +487,7 @@ export default function Checkout() {
               {/* زرار اختيار وسيلة الدفع */}
               <button
                 onClick={() => {
-                  if (isPaying) {
+                  if (isPaying || data?.carts?.items.length === 0) {
                     return;
                   }
                   handleSelectMethod(m.id);

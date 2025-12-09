@@ -6,7 +6,6 @@ import useOrders from "./useOrders";
 
 export default function Orders() {
   const { orders, isLoading, formatEndDateArabic } = useOrders();
-  console.log(orders);
   return (
     <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4 ">
       <motion.h1
@@ -93,17 +92,18 @@ export default function Orders() {
                       className={`text-sm flex items-center gap-1 justify-end
                            ${
                              order?.isDelivered
-                               ? "text-[#16a34a]"
+                               ? "text-green-600" // سعادة / راحة
                                : order?.isShipped
-                               ? "text-[#FF9800]"
+                               ? "text-orange-500" // انتظار / توقع
                                : order?.isPaid
-                               ? "text-[#10B981]"
+                               ? "text-green-400" // اطمئنان
                                : order?.isConfirmed
-                               ? "text-[#2196F3]"
+                               ? "text-blue-500" // ثقة
                                : order?.isCanceled
-                               ? "text-[#F44336]"
-                               : "text-gray-500"
+                               ? "text-red-500" // خيبة أمل
+                               : "text-gray-400" // محايد
                            }
+
                     `}
                     >
                       <Clock size={14} />

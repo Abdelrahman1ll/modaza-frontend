@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
 import { useGetCartQuery } from "../../redux/Cart/apiCart";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { SignupContext } from "../Signup/SignupContext";
 
@@ -24,18 +24,7 @@ export default function useHeader() {
   const navigate = useNavigate();
   const [isSearchLocal, setIsSearchLocal] = useState(false);
 
-  const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpenMenu(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     const value = localStorage.getItem("isSearch") === "true";
@@ -111,6 +100,5 @@ export default function useHeader() {
     isSearchLocal,
     navigate,
     setIsSearchLocal,
-    menuRef,
   };
 }

@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import {
   Truck,
-  CreditCard,
   User,
   MapPin,
   CheckCircle2,
@@ -68,12 +67,12 @@ export default function OrderDetails() {
     `}
         >
           {order?.isPaid && (
-            <div className="inline-flex items-center gap-2 mb-3 mr-1 text-green-600 font-bold rounded">
+            <div className="inline-flex items-center gap-2 mb-3 mr-1 text-green-400 font-bold rounded">
               <CheckCircle2 size={16} /> Paid
             </div>
           )}
           {order?.isCanceled && (
-            <div className="inline-flex items-center gap-2 mb-3 mr-1 text-red-600 font-bold rounded">
+            <div className="inline-flex items-center gap-2 mb-3 mr-1 text-red-500 font-bold rounded">
               <XCircle size={16} /> Canceled
             </div>
           )}
@@ -108,23 +107,23 @@ export default function OrderDetails() {
                 >
                   <User size={18} /> Customer Information
                 </h3>
-                <p className="text-gray-700">
-                  <span className="font-medium">Full Name:</span>{" "}
+                <p className="text-gray-700 mb-4">
+                  <span className="font-bold">Full Name:</span>{" "}
                   {order?.user?.firstName || "N/A"}{" "}
                   {order?.user.lastName || "N/A"}
                 </p>
-                <p className="text-gray-700">
-                  <span className="font-medium">Email:</span>{" "}
+                <p className="text-gray-700 mb-4">
+                  <span className="font-bold">Email:</span>{" "}
                   {order?.user.email || "N/A"}
                 </p>
 
-                <p className="text-gray-700">
-                  <span className="font-medium">Phone:</span>{" "}
+                <p className="text-gray-700 mb-4">
+                  <span className="font-bold">Phone:</span>{" "}
                   {order?.user.phone || "N/A"}
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium">Birthday:</span>{" "}
-                  {order?.user.birthday || "N/A"}
+                  <span className="font-bold">Birthday:</span>{" "}
+                  {formatEndDateArabic(order?.user.birthday || "") || "N/A"}
                 </p>
               </div>
 
@@ -137,47 +136,44 @@ export default function OrderDetails() {
                 }}
               >
                 <h3
-                  className="text-lg font-semibold mb-3"
+                  className="text-lg font-semibold mb-3 flex items-center gap-2"
                   style={{ color: "var(--color-pakistan)" }}
                 >
+                  <MapPin size={16} />
                   Order Information
                 </h3>
                 <p className="text-gray-700">
-                  <span className="font-medium">Date:</span>{" "}
+                  <span className="font-bold">Date:</span>{" "}
                   {formatEndDateArabic(order?.createdAt || "")}
                 </p>
-                <p className="text-gray-700 flex items-center gap-2">
-                  <CreditCard size={16} />
-                  <span className="font-medium">Payment Method:</span>{" "}
-                  {order?.paymentMethod}
-                </p>
+
                 <hr className="my-3 border-(--color-earth)" />
 
                 <p className="text-gray-700">
-                  <span className="font-medium">Full Name:</span>{" "}
+                  <span className="font-bold">Full Name:</span>{" "}
                   {order?.addresses?.fullName || "N/A"}{" "}
                   {order?.addresses?.lastName || "N/A"}
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium">Country:</span>{" "}
+                  <span className="font-bold">Country:</span>{" "}
                   {order?.addresses.country || "N/A"}
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium">City:</span>{" "}
+                  <span className="font-bold">City:</span>{" "}
                   {order?.addresses.city || "N/A"}
                 </p>
-                <p className="text-gray-700 flex items-center gap-2">
-                  <MapPin size={16} />
-                  <span className="font-medium">Address:</span>{" "}
-                  {order?.addresses.address || "N/A"}
-                </p>
+
                 <p className="text-gray-700">
-                  <span className="font-medium">Phone:</span>{" "}
+                  <span className="font-bold">Phone:</span>
                   {order?.addresses.phone || "N/A"}
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium">PhoneOptional:</span>{" "}
+                  <span className="font-bold">PhoneOptional:</span>
                   {order?.addresses.phoneOptional || "N/A"}
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-bold">Address:</span>{" "}
+                  {order?.addresses.address || "N/A"}
                 </p>
               </div>
             </div>
@@ -193,6 +189,7 @@ export default function OrderDetails() {
           >
             Items in this Order
           </h3>
+
           <div className="lg:col-span-2 p-4 rounded-2xl">
             {order?.items.length === 0 ? (
               <div className="flex flex-col items-center py-6">
