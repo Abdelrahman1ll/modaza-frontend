@@ -29,6 +29,9 @@ export default function ContactUs() {
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <p className="text-xs text-gray-500 mt-1">
+              Please enter your valid email address so we can contact you.
+            </p>
             <input
               type="text"
               name="name"
@@ -39,6 +42,7 @@ export default function ContactUs() {
               value={name}
             />
             <ValidationError prefix="Name" field="name" errors={state.errors} />
+
             <input
               type="email"
               name="email"
@@ -53,9 +57,7 @@ export default function ContactUs() {
               field="email"
               errors={state.errors}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Please enter your valid email address so we can contact you.
-            </p>
+
             <textarea
               name="message"
               placeholder="Your Message"
