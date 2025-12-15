@@ -267,9 +267,6 @@ export default function ProductDetail() {
             <div className="mt-4 w-full">
               <div className="flex justify-between mb-1 text-sm font-semibold text-[--color-dark]">
                 <span>Available Stock</span>
-                <span>
-                  {product?.stock} / {product?.total_stock}
-                </span>
               </div>
 
               <div className="w-full h-3 bg-(--color-earth) rounded-full overflow-hidden">
@@ -286,15 +283,6 @@ export default function ProductDetail() {
             </div>
 
             <div className="flex items-center gap-4 mt-8">
-              {/* <button
-                onClick={addToCart}
-                className={`flex-1 py-3 rounded-full font-semibold text-white shadow-md text-lg transition-all bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer`}
-                style={{
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-                }}
-              >
-               <span>Add to Cart</span>
-              </button> */}
               <AddToCartButton addToCart={addToCart} />
 
               {/* زر القلب جنب الزر */}

@@ -164,9 +164,6 @@ export default function Cart() {
                   <div className="mt-1 w-full">
                     <div className="flex justify-between mb-1 text-sm font-semibold text-[--color-dark]">
                       <span>Available Stock</span>
-                      <span>
-                        {item?.product?.stock}/{item?.product?.total_stock}
-                      </span>
                     </div>
 
                     <div className="w-full h-3 bg-(--color-earth) rounded-full overflow-hidden">
