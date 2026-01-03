@@ -16,7 +16,7 @@ export default function Product() {
   } = useProduct();
   return (
     <div className="m-4">
-      <section className="max-w-7xl mx-auto">
+      <section className="w-full mx-auto px-4">
         {/* شبكة المنتجات */}
         <div className="grid grid-cols-1 min-[600px]:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading ? (
