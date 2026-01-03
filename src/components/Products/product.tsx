@@ -1,8 +1,6 @@
 import { motion } from "framer-motion";
-import { ChevronRight, ChevronLeft, PackageSearch, Heart } from "lucide-react";
-
+import { PackageSearch, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
-
 import type { ProductType } from "../../types/ProductType";
 import useProduct from "./useProduct";
 
@@ -12,16 +10,15 @@ export default function Product() {
     isLoading,
     isFav,
     handleToggleWishlist,
-    currentImage,
-    nextImage,
-    prevImage,
+    hoveredIds,
+    setHoveredIds,
     user,
   } = useProduct();
   return (
-    <div className="py-14 m-4">
+    <div className="m-4">
       <section className="max-w-7xl mx-auto">
         {/* شبكة المنتجات */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 min-[600px]:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading ? (
             Array.from({ length: 6 }).map((_, index) => (
               <div
@@ -43,7 +40,7 @@ export default function Product() {
             ))
           ) : products?.products?.length ? (
             products?.products.map((product: ProductType, index: number) => {
-              const imgIndex = currentImage[product?.id] || 0;
+              const isHovered = hoveredIds[product.id] || false;
               return (
                 <motion.div
                   key={index}
@@ -51,42 +48,51 @@ export default function Product() {
                   whileHover={{ y: -5 }}
                 >
                   {/* الصورة */}
+
                   <div className="relative rounded-3xl overflow-hidden group">
                     {/* سلايدر الصور */}
-                    <motion.img
-                      key={imgIndex}
-                      src={product?.images[imgIndex]}
-                      alt={product?.name}
-                      className="w-full h-[460px] rounded-3xl object-cover transition-transform duration-500"
-                      whileHover={{ scale: 1.05 }}
-                    />
+                    <Link
+                      to={`/products-details/${product?.id}`}
+                      onMouseEnter={() =>
+                        setHoveredIds((prev) => ({
+                          ...prev,
+                          [product.id]: true,
+                        }))
+                      }
+                      onMouseLeave={() =>
+                        setHoveredIds((prev) => ({
+                          ...prev,
+                          [product.id]: false,
+                        }))
+                      }
+                    >
+                      <div className="relative w-full h-[560px] max-[1090px]:h-[480px] overflow-hidden rounded-3xl">
+                        {/* الصورة الأولى */}
+                        <motion.img
+                          src={product.images[0]}
+                          alt={product?.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          animate={{
+                            opacity: isHovered ? 0 : 1,
+                            scale: isHovered ? 1.05 : 1,
+                          }}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        />
 
-                    {/* أزرار السلايدر */}
-                    {product.images.length > 1 && (
-                      <>
-                        <button
-                          onClick={() =>
-                            prevImage(product?.id, product.images.length)
-                          }
-                          className="absolute left-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                        >
-                          <ChevronLeft
-                            size={20}
-                            className="text-(-color-tiger)"
-                          />
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            nextImage(product?.id, product.images.length)
-                          }
-                          className="absolute right-3 text-(--color-tiger) top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                        >
-                          <ChevronRight size={20} />
-                        </button>
-                      </>
-                    )}
-
+                        {/* الصورة الثانية */}
+                        <motion.img
+                          src={product.images[1]}
+                          alt={product?.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          animate={{
+                            opacity: isHovered ? 1 : 0,
+                            scale: isHovered ? 1.15 : 1,
+                            z: isHovered ? 10 : 0,
+                          }}
+                          transition={{ duration: 0.5, ease: "easeOut" }}
+                        />
+                      </div>
+                    </Link>
                     {/* زرار القلب */}
                     <motion.button
                       onClick={() => handleToggleWishlist(product?.id)}
@@ -114,9 +120,9 @@ export default function Product() {
                   </div>
 
                   {/* التفاصيل */}
-                  <div className="p-2 flex flex-col gap-4 grow">
+                  <div className="p-1 flex flex-col gap-4 grow">
                     {/* الاسم والسعر */}
-                    <div className="flex items-center justify-between">
+                    <div className="">
                       <h3
                         className="text-lg font-semibold"
                         style={{ color: "var(--color-dark)" }}
@@ -124,15 +130,15 @@ export default function Product() {
                         {product.name}
                       </h3>
 
-                      <div className="flex flex-col items-end">
+                      <div>
                         {product.discountPercentage !== 0 ? (
-                          <span className="text-gray-400 line-through text-sm">
+                          <span className="text-gray-400 line-through text-lg">
                             {product.promotionalPrice.toFixed(2)} EGP
                           </span>
                         ) : null}
 
                         <span
-                          className="text-lg font-bold"
+                          className="text-lg font-bold ml-2"
                           style={{ color: "var(--color-pakistan)" }}
                         >
                           {product.price.toFixed(2)} EGP
@@ -141,21 +147,7 @@ export default function Product() {
                     </div>
 
                     {/* الأزرار */}
-                    <div className="flex gap-4 w-full">
-                      {/* زر عرض التفاصيل */}
-                      <Link
-                        to={`/products-details/${product.id}`}
-                        className="flex-2"
-                      >
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="w-full py-2 px-4 rounded-full font-semibold bg-(--color-tiger) hover:bg-(--color-earth) text-white shadow-md transition-all"
-                        >
-                          View Details
-                        </motion.button>
-                      </Link>
-
+                    <div className="w-full">
                       {/* زر التعديل (يظهر فقط لو المستخدم مش "user") */}
                       {user && user.user.role !== "user" && (
                         <Link

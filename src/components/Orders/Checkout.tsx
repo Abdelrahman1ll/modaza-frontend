@@ -13,6 +13,7 @@ import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
 import { BRAND_PHONE } from "../../BrandText";
 import PaymobIframe from "./PaymobIframe";
+import { Link } from "react-router-dom";
 export default function Checkout() {
   const {
     discount,
@@ -61,7 +62,8 @@ export default function Checkout() {
   } = useCheckout();
 
   return (
-    <div className="min-h-screen  p-4 sm:p-6 flex flex-col items-center">
+    <div className="min-h-screen p-4 sm:p-6 flex flex-col items-center">
+      
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -70,139 +72,14 @@ export default function Checkout() {
         Checkout
       </motion.h1>
 
-      {/* Address Section */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Products Column */}
-        <div className="lg:col-span-1 p-4 rounded-2xl shadow bg-(--color-cornsilk)">
-          <h2 className="text-xl font-bold text-(--color-dark) mb-4">
-            Your Items
-          </h2>
-
-          {isLoading ? (
-            <div className="flex flex-col gap-6">
-              {[1, 2].map((_, idx) => (
-                <div
-                  key={idx}
-                  className="flex max-[490px]:flex-col md:flex-row items-center gap-4 p-4 rounded-xl shadow animate-pulse bg-(--color-earth)/20"
-                >
-                  <div className="relative w-32 h-32 bg-(--color-earth)/40 rounded-xl" />
-
-                  <div className="flex-1 flex flex-col gap-2">
-                    <div className="flex justify-between">
-                      <div className="w-1/3 h-4 bg-(--color-earth)/40 rounded" />
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-(--color-earth)/40 rounded-full" />
-                        <div className="w-6 h-4 bg-(--color-earth)/40 rounded" />
-                        <div className="w-6 h-6 bg-(--color-earth)/40 rounded-full" />
-                      </div>
-                    </div>
-
-                    <div className="w-1/4 h-4 bg-(--color-earth)/40 rounded mt-2" />
-
-                    <div className="p-2 bg-(--color-earth)/30 rounded-xl border border-(--color-earth)/40 w-full max-[470px]:w-full mt-2">
-                      <div className="w-1/2 h-3 bg-(--color-earth)/40 rounded mb-1" />
-                      <div className="w-1/3 h-3 bg-(--color-earth)/40 rounded" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : data?.carts?.items.length === 0 ? (
-            <div className="flex flex-col items-center py-10">
-              <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
-              <p className="text-xl font-bold text-(--color-dark)">
-                Your cart is empty
-              </p>
-              <button
-                onClick={() => navigate("/products")}
-                className="mt-4 px-6 py-2 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-earth) transition"
-              >
-                Start Shopping
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {data?.carts?.items.map((item: CartItemType) => (
-                <div
-                  key={item.id}
-                  className="flex max-[490px]:flex-col md:flex-row items-center gap-4 p-4 rounded-xl shadow bg-(--color-cornsilk)/10"
-                >
-                  <div className="relative w-32 h-32">
-                    {/* صورة المنتج */}
-                    <img
-                      src={item.product.images[0]}
-                      alt={item.product.name}
-                      className="w-full h-full object-cover rounded-xl"
-                    />
-
-                    {/* نسبة الخصم */}
-                    {item.product.discountPercentage && (
-                      <span className="absolute -top-1 -left-1 bg-(--color-tiger) text-white text-xs font-bold px-1 py-1 rounded-lg shadow-lg">
-                        {item.product.discountPercentage}%
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex-1 flex flex-col gap-2">
-                    <div className="flex justify-between">
-                      <h3 className="text-lg font-bold text-(--color-dark)">
-                        {item.product.name}
-                      </h3>
-                      <div className="flex items-center p-0.5 gap-2 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30">
-                        <button
-                          className="w-6 h-6 flex items-center justify-center text-white rounded-full transition"
-                          style={{ backgroundColor: "var(--color-tiger)" }}
-                        >
-                          <Minus size={14} />
-                        </button>
-                        <span
-                          className="text-lg font-semibold"
-                          style={{ color: "var(--color-dark)" }}
-                        >
-                          {item?.quantity}
-                        </span>
-                        <button className="w-6 h-6 flex items-center justify-center text-white rounded-full transition bg-(--color-tiger)">
-                          <Plus size={14} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <p className="text-(--color-pakistan) font-bold text-md mb-2">
-                      {item.product.price} EGP
-                    </p>
-
-                    <div className="p-2 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit max-[470px]:w-full">
-                      <p className="text-sm text-(--color-pakistan)">
-                        <span className="font-semibold text-(--color-tiger)">
-                          Size: {item?.sizes?.size}
-                        </span>
-                        <span className="ml-2 text-(--color-dark)">
-                          (
-                          <span className="font-medium text-(--color-pakistan)">
-                            Length:
-                          </span>{" "}
-                          {item?.sizes.length} cm —{" "}
-                          <span className="font-medium text-(--color-pakistan)">
-                            Width:
-                          </span>{" "}
-                          {item?.sizes.width} cm)
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
         {/* Summary Column */}
-        <div className="p-4 rounded-2xl shadow bg-(--color-cornsilk)">
+        <div className="p-4 rounded-xl shadow bg-(--color-cornsilk)">
           <h2 className="text-xl font-bold text-(--color-dark) mb-4">
             Shipping Address
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             {/* الاسم الأول للعميل */}
             <div className="flex flex-col">
               <label className="mb-1 font-semibold text-(--color-dark)">
@@ -264,16 +141,32 @@ export default function Checkout() {
               <label className="mb-1 font-semibold text-(--color-dark)">
                 State / City
               </label>
-
               <div
-                className="p-3 rounded-xl border border-(--color-earth) cursor-pointer bg-white"
+                className="p-3 rounded-xl border border-(--color-earth) cursor-pointer 
+             bg-(--color-cornsilk) flex items-center justify-between"
                 onClick={() => setOpen(!open)}
               >
-                {state || "Select State"}
+                <span>{state || "Select State"}</span>
+
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    open ? "rotate-180" : ""
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
               </div>
 
               {open && (
-                <div className="absolute top-full mt-2 w-full bg-white border rounded-xl shadow-lg z-50 p-2">
+                <div className="absolute top-full mt-2 w-full bg-(--color-cornsilk) border rounded-xl shadow-lg z-50 p-2">
                   <input
                     type="text"
                     placeholder="Search state..."
@@ -329,7 +222,7 @@ export default function Checkout() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <div className="grid grid-cols-2 gap-3 mt-3">
             {/* الرقم الأول للتواصل */}
             <div className="flex flex-col">
               <label className="mb-1 font-semibold text-(--color-dark)">
@@ -386,70 +279,6 @@ export default function Checkout() {
             </label>
           </div>
 
-          <h2 className="text-xl font-bold text-(--color-dark) mb-4 mt-6">
-            Order Summary
-          </h2>
-
-          <div className="flex justify-between text-lg mb-2">
-            <span className="text-(--color-dark)">Subtotal</span>
-            <span className="font-bold text-(--color-pakistan)">
-              {data?.carts?.total || 0} EGP
-            </span>
-          </div>
-
-          <div className="flex justify-between text-lg mb-2">
-            <span className="text-(--color-dark)">Delivery Fee</span>
-            {isFirstOrder ? (
-              <span className="font-bold text-green-600 flex items-center gap-2 animate-pulse">
-                🎁 FREE
-                <span className="text-sm bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                  First Order
-                </span>
-              </span>
-            ) : (
-              <span className="font-bold text-(--color-pakistan)">
-                ({state}) {deliveryFee} EGP
-              </span>
-            )}
-          </div>
-
-          <hr className="my-3 border-(--color-earth)" />
-
-          {/* Promo Code */}
-          <h3 className="text-lg font-bold text-(--color-dark) mb-2">
-            Discount Code
-          </h3>
-
-          <div className="flex flex-col sm:flex-row gap-2 mb-3 w-full">
-            <input
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value)}
-              placeholder="Enter promo code"
-              className="flex-1 p-3 rounded-xl border border-(--color-earth) outline-none w-full"
-            />
-
-            <button
-              onClick={applyDiscount}
-              className="px-4 py-3 rounded-xl bg-(--color-tiger) text-white font-semibold hover:bg-(--color-tiger)/80 transition w-full sm:w-auto"
-            >
-              Apply
-            </button>
-          </div>
-
-          {errorMsg && <p className="text-red-600 text-sm mb-2">{errorMsg}</p>}
-
-          {discount > 0 && (
-            <p className="text-green-600 animate-pulse font-semibold mb-3">
-              Discount applied: {discount}% 🎉
-            </p>
-          )}
-
-          <hr className="my-3 border-(--color-earth)" />
-
-          <div className="flex justify-between text-xl font-bold mb-4">
-            <span className="text-(--color-dark)">Total</span>
-            <span className="text-(--color-tiger)">{finalTotal || 0} EGP</span>
-          </div>
           <hr className="my-3 border-(--color-earth)" />
 
           {/* Payment */}
@@ -590,37 +419,288 @@ export default function Checkout() {
               {errors.paymentMethod}
             </div>
           )}
+          <div className="hidden lg:block">
+            {paymentMethod === "credit_card" ? (
+              <button
+                disabled={!isCardValid || isPaying}
+                onClick={() => {
+                  setIsPaying(true);
+                  payRef.current();
+                }}
+                className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isPaying ? (
+                  <Loader2 className="animate-spin w-5 h-5 mx-auto" />
+                ) : (
+                  <span>Pay EGP {finalTotal}</span>
+                )}
+              </button>
+            ) : (
+              <button
+                onClick={handlePayment}
+                className="mt-4 w-full h-12 bg-(--color-tiger) text-white rounded-xl text-lg shadow-md transition hover:opacity-80"
+              >
+                {orderLoading ? (
+                  <Loader2 className="animate-spin w-5 h-5 mx-auto" />
+                ) : (
+                  "Complete Order"
+                )}
+              </button>
+            )}
+          </div>
+        </div>
 
-          {paymentMethod === "credit_card" ? (
-            <button
-              disabled={!isCardValid || isPaying}
-              onClick={() => {
-                setIsPaying(true);
-                payRef.current();
-              }}
-              className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isPaying ? (
-                <Loader2 className="animate-spin w-5 h-5 mx-auto" />
-              ) : (
-                <span>Pay EGP {finalTotal}</span>
-              )}
-            </button>
+        {/* Products Column */}
+        <div className="lg:col-span-1 p-4 rounded-xl shadow bg-(--color-cornsilk)">
+          <h2 className="text-xl font-bold text-(--color-dark) mb-4">
+            Your Items
+          </h2>
+
+          {isLoading ? (
+            <div className="flex flex-col gap-6">
+              {[1, 2].map((_, idx) => (
+                <div
+                  key={idx}
+                  className="flex max-[490px]:flex-col md:flex-row items-center gap-4 p-4 rounded-xl shadow animate-pulse bg-(--color-earth)/20"
+                >
+                  <div className="relative w-32 h-32 bg-(--color-earth)/40 rounded-xl" />
+
+                  <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex justify-between">
+                      <div className="w-1/3 h-4 bg-(--color-earth)/40 rounded" />
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-(--color-earth)/40 rounded-full" />
+                        <div className="w-6 h-4 bg-(--color-earth)/40 rounded" />
+                        <div className="w-6 h-6 bg-(--color-earth)/40 rounded-full" />
+                      </div>
+                    </div>
+
+                    <div className="w-1/4 h-4 bg-(--color-earth)/40 rounded mt-2" />
+
+                    <div className="p-2 bg-(--color-earth)/30 rounded-xl border border-(--color-earth)/40 w-full max-[470px]:w-full mt-2">
+                      <div className="w-1/2 h-3 bg-(--color-earth)/40 rounded mb-1" />
+                      <div className="w-1/3 h-3 bg-(--color-earth)/40 rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : data?.carts?.items.length === 0 ? (
+            <div className="flex flex-col items-center py-10">
+              <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
+              <p className="text-xl font-bold text-(--color-dark)">
+                Your cart is empty
+              </p>
+              <button
+                onClick={() => navigate("/products")}
+                className="mt-4 px-6 py-2 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-earth) transition"
+              >
+                Start Shopping
+              </button>
+            </div>
           ) : (
-            <button
-              disabled={orderLoading}
-              onClick={handlePayment}
-              className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {orderLoading ? (
-                <Loader2 className="animate-spin w-5 h-5 mx-auto" />
-              ) : (
-                "Complete Order"
-              )}
-            </button>
+            <div className="flex flex-col gap-4">
+              {data?.carts?.items.map((item: CartItemType) => (
+                <div
+                  key={item.id}
+                  className="flex max-[490px]:flex-col md:flex-row items-center gap-4 p-4 rounded-xl shadow bg-(--color-cornsilk)/10"
+                >
+                  <div className="relative w-32 h-32">
+                    {/* صورة المنتج */}
+                    <img
+                      src={item.product.images[0]}
+                      alt={item.product.name}
+                      className="w-full h-full object-cover rounded-xl"
+                    />
+
+                    {/* نسبة الخصم */}
+                    {item.product.discountPercentage && (
+                      <span className="absolute -top-1 -left-1 bg-(--color-tiger) text-white text-xs font-bold px-1 py-1 rounded-lg shadow-lg">
+                        {item.product.discountPercentage}%
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex justify-between">
+                      <h3 className="text-lg font-bold text-(--color-dark)">
+                        {item.product.name}
+                      </h3>
+                      <div className="flex items-center p-0.5 gap-2 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30">
+                        <button
+                          className="w-6 h-6 flex items-center justify-center text-white rounded-full transition opacity-50"
+                          style={{ backgroundColor: "var(--color-tiger)" }}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span
+                          className="text-lg font-semibold"
+                          style={{ color: "var(--color-dark)" }}
+                        >
+                          {item?.quantity}
+                        </span>
+                        <button className="w-6 h-6 flex items-center justify-center text-white rounded-full transition bg-(--color-tiger) opacity-50">
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <p className="text-(--color-pakistan) font-bold text-md mb-2">
+                      {item.product.price} EGP
+                    </p>
+
+                    <div className="p-2 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit max-[470px]:w-full">
+                      <p className="text-sm text-(--color-pakistan)">
+                        <span className="font-semibold text-(--color-tiger)">
+                          Size: {item?.sizes?.size}
+                        </span>
+                        <span className="ml-2 text-(--color-dark)">
+                          (
+                          <span className="font-medium text-(--color-pakistan)">
+                            Length:
+                          </span>{" "}
+                          {item?.sizes.length} cm —{" "}
+                          <span className="font-medium text-(--color-pakistan)">
+                            Width:
+                          </span>{" "}
+                          {item?.sizes.width} cm)
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
+
+          <div className="mt-6">
+            <div>
+              <div className="flex flex-col sm:flex-row gap-2 mb-3 w-full">
+                <input
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  placeholder="Discount Code"
+                  className="flex-1 p-3 rounded-xl border border-(--color-earth) outline-none w-full"
+                />
+
+                <button
+                  onClick={applyDiscount}
+                  className="px-4 py-3 rounded-xl bg-(--color-tiger) text-white font-semibold hover:bg-(--color-tiger)/80 transition w-full sm:w-auto"
+                >
+                  Apply
+                </button>
+              </div>
+
+              {errorMsg && (
+                <p className="text-red-600 text-sm mb-2">{errorMsg}</p>
+              )}
+
+              {discount > 0 && (
+                <p className="text-green-600 animate-pulse font-semibold mb-3">
+                  Discount applied: {discount}% 🎉
+                </p>
+              )}
+            </div>
+
+            <hr className="my-3 border-(--color-earth)" />
+
+            <div className="flex justify-between text-lg mb-2">
+              <span className="text-(--color-dark)">Subtotal</span>
+              <span className="font-bold text-(--color-pakistan)">
+                {data?.carts?.total || 0} EGP
+              </span>
+            </div>
+
+            <div className="flex justify-between text-lg mb-2">
+              <span className="text-(--color-dark)">Delivery Fee</span>
+              {isFirstOrder ? (
+                <span className="font-bold text-green-600 flex items-center gap-2 animate-pulse">
+                  🎁 FREE
+                  <span className="text-sm bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                    First Order
+                  </span>
+                </span>
+              ) : (
+                <span className="font-bold text-(--color-pakistan)">
+                  ({state}) {deliveryFee} EGP
+                </span>
+              )}
+            </div>
+
+            <div className="flex justify-between text-xl font-bold mb-4">
+              <span className="text-(--color-dark)">Total</span>
+              <span className="text-(--color-tiger)">
+                {finalTotal || 0} EGP
+              </span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* الزرار الثابت أسفل الشاشة على الموبايل فقط */}
+      <div className="lg:hidden w-full">
+        {paymentMethod === "credit_card" ? (
+          <button
+            disabled={!isCardValid || isPaying}
+            onClick={() => {
+              setIsPaying(true);
+              payRef.current();
+            }}
+            className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isPaying ? (
+              <Loader2 className="animate-spin w-5 h-5 mx-auto" />
+            ) : (
+              <span>Pay EGP {finalTotal}</span>
+            )}
+          </button>
+        ) : (
+          <button
+            onClick={handlePayment}
+            className="mt-4 w-full h-12 bg-(--color-tiger) text-white rounded-xl text-lg shadow-md transition hover:opacity-80"
+          >
+            {orderLoading ? (
+              <Loader2 className="animate-spin w-5 h-5 mx-auto" />
+            ) : (
+              "Complete Order"
+            )}
+          </button>
+        )}
+      </div>
+
+      <div className="w-full">
+        <hr className="lg:hidden w-full border-(--color-tiger) my-4 mb-4" />
+        <div className=" lg:mt-4 text-sm text-(--color-pakistan) text-center flex flex-wrap justify-center gap-6">
+          <Link
+            to="/shipping-delivery"
+            className="underline hover:text-(--color-tiger)"
+          >
+            Shipping & Delivery
+          </Link>
+
+          <Link
+            to="/return-exchange-policy"
+            className="underline hover:text-(--color-tiger)"
+          >
+            Return Policy
+          </Link>
+
+          <Link
+            to="/privacy-policy"
+            className="underline hover:text-(--color-tiger)"
+          >
+            Privacy Policy
+          </Link>
+
+          <Link
+            to="/terms-conditions"
+            className="underline hover:text-(--color-tiger)"
+          >
+            Terms & Conditions
+          </Link>
+        </div>
+      </div>
+
     </div>
   );
 }

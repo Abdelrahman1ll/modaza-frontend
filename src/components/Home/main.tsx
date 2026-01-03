@@ -84,70 +84,41 @@ export default function Main() {
                   transition: { duration: 0.6 },
                 }}
               />
-            </motion.div>
-          </motion.section>
-        </div>
-
-        <div>
-          <motion.section
-            className="flex flex-col md:flex-row items-center justify-between gap-24 px-4 md:px-14"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <motion.div
-              className="w-full md:w-1/2 overflow-hidden rounded-3xl shadow-2xl"
-              variants={{
-                hidden: { opacity: 0, x: -150 },
-                show: {
-                  opacity: 1,
-                  x: 0,
-                  transition: { duration: 1.2, ease: "easeOut" },
-                },
-              }}
-              whileHover={{
-                scale: 1.03,
-                rotate: 1.5,
-                transition: { type: "spring", stiffness: 200 },
-              }}
-            >
-              <motion.img
-                src={model1}
-                alt="Men's Fashion"
-                className="w-full h-[60vh]  object-cover"
-                whileHover={{
-                  scale: 1.08,
-                  transition: { duration: 0.6 },
-                }}
-              />
-            </motion.div>
-
-            <motion.div
-              className="md:w-1/2 text-left space-y-6"
-              variants={{
-                hidden: { opacity: 0, x: 150 },
-                show: {
-                  opacity: 1,
-                  x: 0,
-                  transition: { duration: 1.2, ease: "easeOut", delay: 0.2 },
-                },
-              }}
-            >
-              <h2 className="text-4xl md:text-5xl font-extrabold text-(--color-text) leading-tight">
-                Style That Defines You
-              </h2>
-              <p className="text-lg md:text-xl text-(--color-dark) max-w-lg">
-                Discover the latest urban fashion made for modern guys. Bold
-                looks, everyday comfort, and effortless confidence — all in one
-                collection.
-              </p>
               <Link to="/products">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-3 bg-(--color-tiger) text-white rounded-full shadow-md text-lg font-medium hover:bg-(--color-earth) transition-all cursor-pointer"
+                  className="
+    absolute bottom-8 left-1/2 -translate-x-1/2
+    px-10 py-4
+    bg-(--color-tiger)
+    border-2 border-(--color-cornsilk)
+    text-lg text-white
+    shadow-md font-medium
+    hover:bg-(--color-earth)
+    transition-all
+    flex items-center gap-2
+    rounded-full
+    cursor-pointer
+  "
                 >
                   Shop Now
+                  <motion.svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 12h14m0 0l-6-6m6 6l-6 6"
+                    />
+                  </motion.svg>
                 </motion.button>
               </Link>
             </motion.div>
@@ -189,8 +160,6 @@ export default function Main() {
             </motion.section>
           ))}
         </div>
-
-
       </main>
     </>
   );

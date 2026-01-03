@@ -5,14 +5,22 @@ import { Link } from "react-router-dom";
 import { PackageSearch } from "lucide-react";
 
 export default function HomeProducts() {
-  const { data: products, isLoading } = useGetProductsQuery('');
+  const { data: products, isLoading } = useGetProductsQuery("");
   return (
     <div>
-      <h2 className="text-3xl md:text-4xl py-2 font-bold mb-3 mt-24 text-center">
+      <h2 className="text-3xl md:text-4xl py-2 font-bold mb-8 mt-8 text-center">
         Latest Products
       </h2>
       <section className="max-w-7xl mx-auto px-6 py-2 bg-transparent">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div
+          className="
+  grid
+  grid-cols-3
+  max-[1069px]:grid-cols-2
+  max-[639px]:grid-cols-1
+  gap-8
+"
+        >
           {isLoading ? (
             Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="animate-pulse">
@@ -33,7 +41,7 @@ export default function HomeProducts() {
               </p>
             </div>
           ) : (
-            products?.products.slice(0, 3).map((product: ProductType) => {
+            products?.products.map((product: ProductType) => {
               return (
                 <div key={product?.id}>
                   <Link to={`/products-details/${product?.id}`}>
@@ -45,7 +53,7 @@ export default function HomeProducts() {
                       <img
                         src={product?.images[0]}
                         alt={product?.name}
-                        className="w-full h-[450px] object-cover rounded-3xl"
+                        className="w-full h-[480px] object-cover rounded-3xl"
                       />
 
                       {product?.discountPercentage && (

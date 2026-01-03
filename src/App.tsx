@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import Loading from "./components/Loading";
 
@@ -54,13 +54,17 @@ const ContactUsPage = lazy(() => import("./pages/QuickLinks/contactUsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
+  const location = useLocation();
+
+  // هتكون true لو الصفحة الحالية هي checkout
+  const isCheckout = location.pathname === "/checkout";
   return (
     <div>
       <BackgroundEffect />
 
       <ScrollToTop />
 
-      <BackButton />
+      {!isCheckout && <BackButton />}
 
       <NetworkStatus />
 

@@ -194,7 +194,7 @@ export default function PaymobIframe({
             `}
             style={{
               width: "100%",
-              height: "280px",
+              height: "298px",
               border: "none",
               borderRadius: "12px",
             }}

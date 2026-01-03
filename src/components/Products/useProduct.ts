@@ -11,11 +11,9 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export default function useProduct() {
-  const [currentImage, setCurrentImage] = useState<{ [key: number]: number }>(
-    {}
-  );
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name") || "";
+  const [hoveredIds, setHoveredIds] = useState<{ [key: string]: boolean }>({});
 
   const secretKey = import.meta.env.VITE_SECRET_KEY;
   const encryptedUser = Cookies.get("user");
@@ -67,28 +65,13 @@ export default function useProduct() {
     }
   };
 
-  const nextImage = (id: number, total: number) => {
-    setCurrentImage((prev) => ({
-      ...prev,
-      [id]: ((prev[id] || 0) + 1) % total,
-    }));
-  };
-
-  const prevImage = (id: number, total: number) => {
-    setCurrentImage((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 0) === 0 ? total - 1 : (prev[id] || 0) - 1,
-    }));
-  };
-
   return {
     products,
     isLoading,
     isFav,
     handleToggleWishlist,
-    currentImage,
-    nextImage,
-    prevImage,
+    hoveredIds,
+    setHoveredIds,
     user,
   };
 }
