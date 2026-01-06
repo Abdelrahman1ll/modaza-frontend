@@ -5,10 +5,9 @@ export const ApiProducts = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     GetProducts: builder.query({
-      query: (name) => ({
-        url: "/products",
+      query: (url) => ({
+        url,
         method: "GET",
-        params: { name },
       }),
     }),
     GetProductId: builder.query({

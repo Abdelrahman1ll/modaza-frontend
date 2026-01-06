@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { PackageSearch } from "lucide-react";
 
 export default function HomeProducts() {
-  const { data: products, isLoading } = useGetProductsQuery("");
+  const { data: products, isLoading } = useGetProductsQuery("/products");
   return (
     <div>
       <h2 className="text-3xl md:text-4xl py-2 font-bold mb-8 mt-8 text-center">

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProductSlider() {
   const navigate = useNavigate();
 
-  const { data: products, isLoading } = useGetProductsQuery('');
+  const { data: products, isLoading } = useGetProductsQuery('/products');
   const [index, setIndex] = useState(0);
   const [isGrabbing, setIsGrabbing] = useState(false);
 

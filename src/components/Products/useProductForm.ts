@@ -34,7 +34,7 @@ export default function useProductForm(mode: "add" | "edit") {
   const [postProduct, { isLoading: isLoadingPost }] = usePostProductMutation();
   const [patchProduct, { isLoading: isLoadingPatch }] =
     usePatchProductMutation();
-  const { data: products } = useGetProductsQuery('');
+  const { data: products } = useGetProductsQuery('/products');
   const { id } = useParams();
   const [formData, setFormData] = useState<ErrorProductType>({
     name: "",

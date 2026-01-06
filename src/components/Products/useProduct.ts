@@ -13,6 +13,11 @@ import { useSearchParams } from "react-router-dom";
 export default function useProduct() {
   const [searchParams] = useSearchParams();
   const name = searchParams.get("name") || "";
+  const category = searchParams.get("category") || "";
+  const color = searchParams.get("color") || "";
+  const minPrice = searchParams.get("minPrice") || "";
+  const maxPrice = searchParams.get("maxPrice") || "";
+  const sortPrice = searchParams.get("sortPrice") || "";
   const [hoveredIds, setHoveredIds] = useState<{ [key: string]: boolean }>({});
 
   const secretKey = import.meta.env.VITE_SECRET_KEY;
@@ -29,7 +34,23 @@ export default function useProduct() {
 
   const isUser = user?.user.role === "user";
 
-  const { data: products, isLoading } = useGetProductsQuery(name);
+  // ✅ بناء الـ query string مع كل الـ parameters
+  const buildQueryString = () => {
+    const params = new URLSearchParams();
+
+    if (name) params.append("name", name);
+    if (category) params.append("category", category);
+    if (color) params.append("color", color);
+    if (minPrice) params.append("minPrice", minPrice);
+    if (maxPrice) params.append("maxPrice", maxPrice);
+    if (sortPrice) params.append("sortPrice", sortPrice);
+
+    return params.toString() ? `?${params.toString()}` : "";
+  };
+
+  const { data: products, isLoading } = useGetProductsQuery(
+    `/products${buildQueryString()}`
+  );
   const [isFav, setIsFav] = useState<{ [key: number]: boolean }>({});
   const [postWishlist] = usePostWishlistMutation();
   const { data, refetch } = useGetWishlistQuery({});

@@ -1,27 +1,15 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useGetCategoryQuery } from "../../redux/category/apiCategory";
+import { useGetColorsQuery } from "../../redux/color/apiColor";
+import { useSearchParams } from "react-router-dom";
+import { useGetProductsQuery } from "../../redux/products/apiProducts";
 
-// --- Types ---
-export interface ColorOption {
-  name: string;
-  class: string;
-  value: string;
-}
-
-interface FilterDrawerProps {
-  categories: string[];
-  colors: ColorOption[];
-  minPrice: number;
-  maxPrice: number;
-
-  // State
-  selectedCats: string[];
-  setSelectedCats: (cats: string[]) => void;
-  selectedColors: string[];
-  setSelectedColors: (colors: string[]) => void;
-  priceRange: [number, number];
-  setPriceRange: (range: [number, number]) => void;
-  onClearAll: () => void;
-}
+const sortOptions = [
+  { label: "Featured", value: "featured" },
+  { label: "Best Selling", value: "best-selling" },
+  { label: "Price: High to Low", value: "price-high" },
+  { label: "Price: Low to High", value: "price-low" },
+];
 
 // --- Icons (Internal) ---
 const IconChevronDown = () => (
@@ -114,21 +102,103 @@ const Accordion = ({
   );
 };
 
-export default function FilterSidebar({
-  categories,
-  colors,
-  minPrice,
-  maxPrice,
-  selectedCats,
-  setSelectedCats,
-  selectedColors,
-  setSelectedColors,
-  priceRange,
-  setPriceRange,
-  onClearAll,
-}: FilterDrawerProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function FilterSidebar() {
+  const MIN_PRICE = 0;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialized = useRef(false);
+
+  const [sortOpen, setSortOpen] = useState(false);
+  const [selectedSort, setSelectedSort] = useState("Featured");
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCats, setSelectedCats] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
+  const [maxPrice, setMaxPrice] = useState(0);
+
+  /* ================= API ================= */
+  const { data } = useGetCategoryQuery({});
+  const category = data?.categories || [];
+
+  const { data: colorData } = useGetColorsQuery({});
+  const colorsList = colorData?.colors || [];
+
+  const { data: productsData } = useGetProductsQuery("/products");
+  const products = productsData?.products || [];
+
+  /* ================= Compute max price ================= */
+  useEffect(() => {
+    if (!products.length || maxPrice) return;
+
+    const computed = Math.max(...products.map((p: any) => Number(p.price)));
+    setMaxPrice(computed);
+    if (priceRange[1] === 0) {
+      setPriceRange([MIN_PRICE, computed]);
+    }
+  }, [products, maxPrice]);
+
+  /* ================= Read from URL ================= */
+  useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    const colorParam = searchParams.get("color");
+    const minPriceParam = searchParams.get("minPrice");
+    const maxPriceParam = searchParams.get("maxPrice");
+    const sortParam = searchParams.get("sortPrice");
+
+    if (categoryParam) {
+      setSelectedCats(categoryParam.split(","));
+    }
+
+    if (colorParam) {
+      setSelectedColors(colorParam.split(","));
+    }
+
+    if (minPriceParam || maxPriceParam) {
+      setPriceRange([
+        minPriceParam ? Number(minPriceParam) : MIN_PRICE,
+        maxPriceParam ? Number(maxPriceParam) : maxPrice,
+      ]);
+    }
+
+    if (sortParam) {
+      if (sortParam === "asc") {
+        setSelectedSort("Price: Low to High");
+      } else if (sortParam === "desc") {
+        setSelectedSort("Price: High to Low");
+      }
+    }
+
+    initialized.current = true;
+  }, []);
+
+  /* ================= Write to URL ================= */
+  useEffect(() => {
+    if (!initialized.current) return;
+    const params: any = {};
+
+    if (selectedCats.length > 0) {
+      params.category = selectedCats.join(",");
+    }
+
+    if (selectedColors.length > 0) {
+      params.color = selectedColors.join(",");
+    }
+
+    if (priceRange[0] !== 0 || priceRange[1] !== maxPrice) {
+      params.minPrice = priceRange[0];
+      params.maxPrice = priceRange[1];
+    }
+
+    if (selectedSort === "Price: High to Low") {
+      params.sortPrice = "desc";
+    } else if (selectedSort === "Price: Low to High") {
+      params.sortPrice = "asc";
+    }
+
+    setSearchParams(params);
+  }, [selectedCats, selectedColors, priceRange, selectedSort, setSearchParams]);
+
+  /* ================= Helpers ================= */
   const toggleList = (
     item: string,
     list: string[],
@@ -139,17 +209,13 @@ export default function FilterSidebar({
     );
   };
 
-  const [sortOpen, setSortOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState("Best Selling");
+  const handleClearAll = () => {
+    setSelectedCats([]);
+    setSelectedColors([]);
+    setPriceRange([MIN_PRICE, maxPrice]);
+  };
 
-  const sortOptions = [
-    { label: "Best Selling", value: "best-selling" },
-    { label: "Price: High to Low", value: "price-high" },
-    { label: "Price: Low to High", value: "price-low" },
-    { label: "Newest Products", value: "newest" },
-    { label: "Featured Products", value: "featured" },
-  ];
-
+  /* ================= UI ================= */
   return (
     <div className="m-4 mb-8">
       {/* Trigger Button */}
@@ -210,8 +276,6 @@ export default function FilterSidebar({
                 onClick={() => {
                   setSelectedSort(option.label);
                   setSortOpen(false);
-                  // هنا تقدر تعمل الـ sorting logic
-                  console.log("Sort by:", option.value);
                 }}
                 className={`w-full text-left px-4 py-3 text-sm transition-colors
               ${
@@ -259,14 +323,18 @@ export default function FilterSidebar({
           <div className="space-y-6">
             <Accordion title="Category">
               <div className="space-y-2">
-                {categories.map((cat) => (
-                  <div key={cat} className="flex items-center">
+                {category.map((cat: { id: string; name: string }) => (
+                  <div key={cat.id} className="flex items-center">
                     <input
                       type="checkbox"
-                      id={cat}
-                      checked={selectedCats.includes(cat)}
+                      id={cat.id}
+                      checked={selectedCats.includes(String(cat.id))}
                       onChange={() =>
-                        toggleList(cat, selectedCats, setSelectedCats)
+                        toggleList(
+                          String(cat.id),
+                          selectedCats,
+                          setSelectedCats
+                        )
                       }
                       className="h-4 w-4 rounded border-gray-300"
                       style={{
@@ -275,10 +343,10 @@ export default function FilterSidebar({
                     />
 
                     <label
-                      htmlFor={cat}
+                      htmlFor={cat.id}
                       className="ml-3 text-sm text-gray-600 cursor-pointer hover:text-(--color-tiger)"
                     >
-                      {cat}
+                      {cat.name}
                     </label>
                   </div>
                 ))}
@@ -296,12 +364,12 @@ export default function FilterSidebar({
                     className="absolute h-1 bg-(--color-tiger) rounded-full pointer-events-none top-1/2 -translate-y-1/2"
                     style={{
                       left: `${
-                        ((priceRange[0] - minPrice) / (maxPrice - minPrice)) *
+                        ((priceRange[0] - MIN_PRICE) / (maxPrice - MIN_PRICE)) *
                         100
                       }%`,
                       right: `${
                         100 -
-                        ((priceRange[1] - minPrice) / (maxPrice - minPrice)) *
+                        ((priceRange[1] - MIN_PRICE) / (maxPrice - MIN_PRICE)) *
                           100
                       }%`,
                     }}
@@ -310,7 +378,7 @@ export default function FilterSidebar({
                   {/* Min Slider */}
                   <input
                     type="range"
-                    min={minPrice}
+                    min={MIN_PRICE}
                     max={maxPrice}
                     value={priceRange[0]}
                     onChange={(e) =>
@@ -349,7 +417,7 @@ export default function FilterSidebar({
                   {/* Max Slider */}
                   <input
                     type="range"
-                    min={minPrice}
+                    min={MIN_PRICE}
                     max={maxPrice}
                     value={priceRange[1]}
                     onChange={(e) =>
@@ -398,45 +466,54 @@ export default function FilterSidebar({
 
             <Accordion title="Color">
               <div className="flex flex-col gap-4">
-                {colors.map((c) => (
-                  <div
-                    key={c.value}
-                    onClick={() =>
-                      toggleList(c.value, selectedColors, setSelectedColors)
-                    }
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    {/* دائرة اللون */}
-                    <span
-                      className={`w-6 h-6 rounded-full ${c.class} relative flex items-center justify-center`}
-                      title={c.name}
+                {colorsList.map(
+                  (c: { name: string; color: string; id: string }) => (
+                    <div
+                      key={c.id}
+                      onClick={() =>
+                        toggleList(
+                          String(c.id),
+                          selectedColors,
+                          setSelectedColors
+                        )
+                      }
+                      className="flex items-center gap-2 cursor-pointer"
                     >
-                      {/* علامة الصح */}
-                      {selectedColors.includes(c.value) && (
-                        <svg
-                          className="w-4 h-4 text-white drop-shadow-lg"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                    </span>
-                    {/* اسم اللون */}
-                    <span className="text-sm text-gray-700">{c.name}(0)</span>
-                  </div>
-                ))}
+                      {/* دائرة اللون */}
+                      <span
+                        className={`w-6 h-6 rounded-full relative flex items-center justify-center`}
+                        style={{ backgroundColor: c.color }}
+                        title={c.name}
+                      >
+                        {/* علامة الصح */}
+                        {selectedColors.includes(String(c.id)) && (
+                          <svg
+                            className="w-4 h-4 text-white drop-shadow-lg"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </span>
+                      {/* اسم اللون */}
+                      <span className="text-sm text-gray-700 hover:text-(--color-tiger)">
+                        {c.name}
+                      </span>
+                    </div>
+                  )
+                )}
               </div>
             </Accordion>
 
             <button
-              onClick={onClearAll}
+              onClick={handleClearAll}
               className="w-full mt-6 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-(--color-tiger) hover:text-(--color-cornsilk) transition-colors cursor-pointer"
             >
               Clear All

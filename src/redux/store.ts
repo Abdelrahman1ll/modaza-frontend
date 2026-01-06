@@ -10,6 +10,8 @@ import { ApiEmailOrderDispatcher } from "./EmailOrderDispatcher/apiEmailOrderDis
 import { ApiEmail } from "./Email/apiEmail";
 import { ApiOrders } from "./Orders/apiOrders";
 import { paymentApi } from "./Payment/apiPayment";
+import { ApiCategory } from "./category/apiCategory";
+import { ApiColor } from "./color/apiColor";
 export const store = configureStore({
   reducer: {
     [ApiUsers.reducerPath]: ApiUsers.reducer,
@@ -23,6 +25,8 @@ export const store = configureStore({
     [ApiEmail.reducerPath]: ApiEmail.reducer,
     [ApiOrders.reducerPath]: ApiOrders.reducer,
     [paymentApi.reducerPath]: paymentApi.reducer,
+    [ApiCategory.reducerPath]: ApiCategory.reducer,
+    [ApiColor.reducerPath]: ApiColor.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -36,7 +40,9 @@ export const store = configureStore({
       ApiEmailOrderDispatcher.middleware,
       ApiEmail.middleware,
       ApiOrders.middleware,
-      paymentApi.middleware
+      paymentApi.middleware,
+      ApiCategory.middleware,
+      ApiColor.middleware
     ),
 });
 
