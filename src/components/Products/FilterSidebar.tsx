@@ -144,6 +144,7 @@ export default function FilterSidebar() {
     const minPriceParam = searchParams.get("minPrice");
     const maxPriceParam = searchParams.get("maxPrice");
     const sortParam = searchParams.get("sortPrice");
+    const bestSelling = searchParams.get("bestSelling");
 
     if (categoryParam) {
       setSelectedCats(categoryParam.split(","));
@@ -168,6 +169,10 @@ export default function FilterSidebar() {
       }
     }
 
+    if (bestSelling) {
+      setSelectedSort("Best Selling");
+    }
+
     initialized.current = true;
   }, []);
 
@@ -187,6 +192,10 @@ export default function FilterSidebar() {
     if (priceRange[0] !== 0 || priceRange[1] !== maxPrice) {
       params.minPrice = priceRange[0];
       params.maxPrice = priceRange[1];
+    }
+
+    if (selectedSort === "Best Selling") {
+      params.bestSelling = true;
     }
 
     if (selectedSort === "Price: High to Low") {
@@ -213,6 +222,7 @@ export default function FilterSidebar() {
     setSelectedCats([]);
     setSelectedColors([]);
     setPriceRange([MIN_PRICE, maxPrice]);
+    setSelectedSort("Featured");
   };
 
   /* ================= UI ================= */

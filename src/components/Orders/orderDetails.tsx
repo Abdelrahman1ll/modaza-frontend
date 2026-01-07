@@ -213,6 +213,9 @@ export default function OrderDetails() {
                       <img
                         src={item.product.images[0]}
                         alt={item.product.name}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
                         className="w-full h-full object-cover rounded-xl"
                       />
 

@@ -69,20 +69,23 @@ export default function Product() {
                       <div className="relative w-full h-[560px] max-[1090px]:h-[480px] overflow-hidden rounded-3xl">
                         {/* الصورة الأولى */}
                         <motion.img
+                          loading="lazy"
                           src={product.images[0]}
-                          alt={product?.name}
+                          srcSet={`
+                             ${product.images[0]} 400w,
+                              ${product.images[0]} 800w,
+                             ${product.images[0]} 1200w
+                            `}
+                          sizes="(max-width: 640px) 400px, (max-width: 768px) 800px, 1200px"
+                          alt={product.name}
                           className="absolute inset-0 w-full h-full object-cover"
-                          animate={{
-                            opacity: isHovered ? 0 : 1,
-                            scale: isHovered ? 1.05 : 1,
-                          }}
-                          transition={{ duration: 0.5, ease: "easeInOut" }}
                         />
 
                         {/* الصورة الثانية */}
                         <motion.img
                           src={product.images[1]}
                           alt={product?.name}
+                          loading="lazy"
                           className="absolute inset-0 w-full h-full object-cover"
                           animate={{
                             opacity: isHovered ? 1 : 0,

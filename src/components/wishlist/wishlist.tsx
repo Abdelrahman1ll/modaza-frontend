@@ -56,6 +56,9 @@ export default function Wishlist() {
                         key={imgIndex}
                         src={wishl?.product?.images[imgIndex]}
                         alt={wishl?.product?.name}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="high"
                         className="w-full h-[460px] rounded-3xl object-cover transition-transform duration-500"
                         whileHover={{ scale: 1.05 }}
                       />

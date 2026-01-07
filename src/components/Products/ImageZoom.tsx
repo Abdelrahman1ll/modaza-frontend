@@ -44,6 +44,9 @@ export default function MotionZoomImage({
         key={mainImage}
         src={mainImage}
         alt={product?.name || "Product"}
+        loading="lazy"
+        decoding="async"
+        fetchPriority="high"
         className="w-full h-[700px] max-[500px]:h-[500px] md:h-[800px] object-cover rounded-2xl select-none cursor-zoom-in"
         draggable={false}
       />

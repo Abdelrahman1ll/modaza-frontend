@@ -132,7 +132,15 @@ export default function Cart() {
                 <img
                   src={item?.product?.images[0]}
                   alt={item?.product?.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-44 h-44 object-cover rounded-xl"
+                  srcSet={`
+                    ${item?.product?.images[0]}?w=200 200w,
+                   ${item?.product?.images[0]}?w=400 400w,
+                   ${item?.product?.images[0]}?w=800 800w
+                 `}
+                  sizes="(max-width: 640px) 200px, (max-width: 768px) 400px, 800px"
                 />
 
                 <div className="flex-1 flex flex-col gap-2 w-full">

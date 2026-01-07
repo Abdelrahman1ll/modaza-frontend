@@ -63,7 +63,6 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen p-4 sm:p-6 flex flex-col items-center">
-      
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -510,6 +509,8 @@ export default function Checkout() {
                     <img
                       src={item.product.images[0]}
                       alt={item.product.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover rounded-xl"
                     />
 
@@ -700,7 +701,6 @@ export default function Checkout() {
           </Link>
         </div>
       </div>
-
     </div>
   );
 }

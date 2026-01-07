@@ -18,6 +18,7 @@ export default function useProduct() {
   const minPrice = searchParams.get("minPrice") || "";
   const maxPrice = searchParams.get("maxPrice") || "";
   const sortPrice = searchParams.get("sortPrice") || "";
+  const bestSelling = searchParams.get("bestSelling") || "";
   const [hoveredIds, setHoveredIds] = useState<{ [key: string]: boolean }>({});
 
   const secretKey = import.meta.env.VITE_SECRET_KEY;
@@ -44,6 +45,7 @@ export default function useProduct() {
     if (minPrice) params.append("minPrice", minPrice);
     if (maxPrice) params.append("maxPrice", maxPrice);
     if (sortPrice) params.append("sortPrice", sortPrice);
+    if (bestSelling) params.append("bestSelling", bestSelling);
 
     return params.toString() ? `?${params.toString()}` : "";
   };

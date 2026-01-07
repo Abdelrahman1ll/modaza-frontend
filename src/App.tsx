@@ -1,16 +1,21 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import Loading from "./components/Loading";
-
 import { ToastContainer } from "react-toastify";
-import BackgroundEffect from "./components/Three/three";
-import NetworkStatus from "./components/NetworkStatus";
-import BackButton from "./components/BackButton";
-import ScrollToTop from "./components/ScrollToTop";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AboutUsPage from "./pages/QuickLinks/aboutUsPage";
-import FAQsPage from "./pages/QuickLinks/FAQsPage";
-import ShippingDeliveryPage from "./pages/QuickLinks/ShippingDeliveryPage";
+
+const Loading = lazy(() => import("./components/Loading"));
+const NetworkStatus = lazy(() => import("./components/NetworkStatus"));
+const BackButton = lazy(() => import("./components/BackButton"));
+const ScrollToTop = lazy(() => import("./components/ScrollToTop"));
+const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
+
+const AboutUsPage = lazy(() => import("./pages/QuickLinks/aboutUsPage"));
+const FAQsPage = lazy(() => import("./pages/QuickLinks/FAQsPage"));
+const ShippingDeliveryPage = lazy(
+  () => import("./pages/QuickLinks/ShippingDeliveryPage")
+);
+const BackgroundEffectPage = lazy(
+  () => import("./pages/BackgroundEffect/backgroundEffectPage")
+);
 
 const HomePage = lazy(() => import("./pages/Home/homePage"));
 const ProductsPage = lazy(() => import("./pages/products/productPage"));
@@ -60,7 +65,7 @@ export default function App() {
   const isCheckout = location.pathname === "/checkout";
   return (
     <div>
-      <BackgroundEffect />
+      <BackgroundEffectPage />
 
       <ScrollToTop />
 

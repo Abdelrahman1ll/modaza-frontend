@@ -124,6 +124,8 @@ export default function Header() {
                 <img
                   src={selected.flag}
                   alt={selected.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-4 h-4 rounded-full mr-2 object-cover"
                 />
                 {selected.name}
@@ -148,9 +150,11 @@ export default function Header() {
                         }}
                       >
                         <img
-                          src={country.flag}
-                          alt={country.name}
-                          className="w-5 h-5 rounded-full mr-2 object-cover"
+                          src={selected.flag}
+                          alt={selected.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-4 h-4 rounded-full mr-2 object-cover"
                         />
                         {country.name}
                       </li>
@@ -446,6 +450,8 @@ export default function Header() {
               <img
                 src={selected.flag}
                 alt={selected.name}
+                loading="lazy"
+                decoding="async"
                 className="w-4 h-4 rounded-full mr-2 object-cover"
               />
               {selected.name}
@@ -470,9 +476,11 @@ export default function Header() {
                       }}
                     >
                       <img
-                        src={country.flag}
-                        alt={country.name}
-                        className="w-5 h-5 rounded-full mr-2 object-cover"
+                        src={selected.flag}
+                        alt={selected.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-4 h-4 rounded-full mr-2 object-cover"
                       />
                       {country.name}
                     </li>
