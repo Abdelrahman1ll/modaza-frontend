@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { usePostPaymentMutation } from "../../redux/Payment/apiPayment";
+
+// =========================
+// 5123 4567 8901 2346
+// 12 / 25  // بس الوقت خلص
+// TEST ACCOUNT
+// =========================
+
 const paymentCache = new Map<
   string,
   { clientSecret: string; publicKey: string }
@@ -13,7 +20,7 @@ export default function PaymobIframe({
 }: {
   paymentData: any;
   onCardValidityChange: (isValid: boolean) => void;
-  triggerPayRef: React.MutableRefObject<() => void>;
+  triggerPayRef: React.MutableRefObject<(() => void) | undefined>;
   setIsPaying: () => void;
   handlePayment: () => void;
 }) {
@@ -25,10 +32,12 @@ export default function PaymobIframe({
   const [isLoading, setIsLoading] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
+  // ========================
+  // Listen for messages from iframe
+  // ========================
   useEffect(() => {
     async function handleMessage(event: MessageEvent) {
       let data = event.data;
-
       if (typeof data === "string") {
         try {
           data = JSON.parse(data);
@@ -60,6 +69,9 @@ export default function PaymobIframe({
     };
   }, []);
 
+  // ========================
+  // Initialize payment
+  // ========================
   useEffect(() => {
     if (effectRan.current) return;
     async function initPayment() {
@@ -99,6 +111,9 @@ export default function PaymobIframe({
     effectRan.current = true;
   }, [paymentData]);
 
+  // ========================
+  // Expose trigger function for external "Pay" button
+  // ========================
   useEffect(() => {
     triggerPayRef.current = () => {
       if (!iframeRef.current) return;
@@ -123,7 +138,7 @@ export default function PaymobIframe({
           </p>
         </div>
       ) : (
-        <div className="h-[250px] md:h-full w-full bg-(--color-earth)/10 rounded-lg shadow-sm border border-(--color-tiger) p-2 md:p-4 relative">
+        <div className="h-[300px] md:h-full w-full bg-(--color-earth)/10 rounded-lg shadow-sm border border-(--color-tiger) p-2 md:p-4 relative">
           <iframe
             ref={iframeRef}
             key={clientSecret + publicKey}
@@ -141,6 +156,7 @@ export default function PaymobIframe({
                       paymentMethods: ["card"],
                       elementId: "paymob-elements",
                       redirect: true,
+                      saveCard: true,
                       redirectUrl: "${window.location.origin}/orders",
                       disablePay: true,
                       enableSpinner: true,
@@ -162,9 +178,8 @@ export default function PaymobIframe({
                         Radius_Border: "12",
                         Color_Input_Fields: "#FEFAE0",
                         Color_Border_Payment_Button: "#BC6C25",
-                        Gap_Between_Fields: "16px"
                       },
-                      cardValidationChanged: (isValid) => {
+                     cardValidationChanged: (isValid) => {
                         window.parent.postMessage({ type: "CARD_VALID", isValid }, "*");
                       },
                       onSuccess: (data) => {
@@ -188,6 +203,8 @@ export default function PaymobIframe({
                       if (payButton) payButton.click();
                     });
 
+                  
+
                   </script>
                 </body>
               </html>
@@ -198,6 +215,7 @@ export default function PaymobIframe({
               border: "none",
               borderRadius: "12px",
             }}
+            onLoad={() => triggerPayRef.current?.()}
           />
         </div>
       )}

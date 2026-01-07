@@ -44,6 +44,7 @@ export default function Header() {
 
   return (
     <>
+      {/* Desktop Header */}
       <header className="shadow-md py-4 px-6 max-[1180px]:hidden">
         <div className="w-full flex items-center justify-between gap-6">
           <nav className="flex items-center gap-6 font-medium">
@@ -368,6 +369,7 @@ export default function Header() {
         </div>
       </header>
 
+      {/* Mobile Header */}
       <header className="shadow-md py-4 px-6 min-[1180px]:hidden">
         <div className="w-full flex items-center justify-between gap-6">
           <motion.div
@@ -492,6 +494,7 @@ export default function Header() {
         </div>
       </header>
 
+      {/* Mobile Header */}
       <header
         className="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 
              flex items-center justify-between shadow-lg 
