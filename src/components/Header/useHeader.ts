@@ -17,7 +17,6 @@ export default function useHeader() {
   const [isSearch, setSearch] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(countries[0]);
-  const [openMenu, setOpenMenu] = useState(false);
   const [name, setName] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -88,8 +87,6 @@ export default function useHeader() {
     setIsOpen,
     selected,
     setSelected,
-    openMenu,
-    setOpenMenu,
     name,
     setName,
     handleLogout,

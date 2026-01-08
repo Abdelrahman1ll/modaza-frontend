@@ -7,16 +7,12 @@ import {
   Menu,
   House,
   Heart,
-  LogOut,
-  ShoppingBag,
-  Plus,
-  LayoutDashboard,
-  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import SearchInput from "./search";
 import useHeader from "./useHeader";
 import { BRAND_NAME } from "../../BrandText";
+import UserMenu from "./UserMenu";
 
 export default function Header() {
   const {
@@ -28,8 +24,6 @@ export default function Header() {
     setIsOpen,
     selected,
     setSelected,
-    openMenu,
-    setOpenMenu,
     name,
     setName,
     handleLogout,
@@ -167,133 +161,7 @@ export default function Header() {
 
             <div className="flex items-center gap-8 mr-2">
               {user && user.user ? (
-                <div className="relative">
-                  <div
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={() => setOpenMenu(!openMenu)}
-                    title="حسابي"
-                  >
-                    {/* دائرة فيها أول حرف */}
-                    <div className="w-10 h-10 flex items-center text-2xl justify-center rounded-full bg-(--color-tiger) opacity-90 text-(--color-cornsilk) font-bold shadow-sm">
-                      {user.user.email.charAt(0).toUpperCase()}
-                    </div>
-                  </div>
-
-                  {/* القائمة المنسدلة */}
-                  {openMenu && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute right-0 mt-6 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90"
-                    >
-                      <Link
-                        to="/profile"
-                        className="flex items-center gap-2 px-4 py-2 transition"
-                        onClick={() => setOpenMenu(false)}
-                      >
-                        <User size={18} className="text-(--color-tiger)" />{" "}
-                        <span>Profile</span>
-                      </Link>
-
-                      <Link
-                        to="/orders"
-                        className="flex items-center gap-2 px-4 py-2 transition"
-                        onClick={() => setOpenMenu(false)}
-                      >
-                        <ShoppingBag
-                          size={18}
-                          className=" text-(--color-tiger)"
-                        />{" "}
-                        <span>My Orders</span>
-                      </Link>
-
-                      {user?.user.role === "owner" && (
-                        <div>
-                          <Link
-                            to="/dashboard"
-                            className="flex items-center gap-2 px-4 py-2 transition"
-                            onClick={() => setOpenMenu(false)}
-                          >
-                            <LayoutDashboard
-                              size={18}
-                              className=" text-(--color-tiger)"
-                            />{" "}
-                            <span>Dashboard</span>
-                          </Link>
-
-                          <Link
-                            to="/all-users"
-                            className="flex items-center gap-2 px-4 py-2 transition"
-                            onClick={() => setOpenMenu(false)}
-                          >
-                            <Users
-                              size={18}
-                              className=" text-(--color-tiger)"
-                            />{" "}
-                            <span>All Users</span>
-                          </Link>
-
-                          <Link
-                            to="/add-product"
-                            className="flex items-center gap-2 px-4 py-2 transition"
-                            onClick={() => setOpenMenu(false)}
-                          >
-                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                            <span>Add Product</span>
-                          </Link>
-
-                          <Link
-                            to="/add-delivery"
-                            className="flex items-center gap-2 px-4 py-2 transition"
-                            onClick={() => setOpenMenu(false)}
-                          >
-                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                            <span>Add Delivery</span>
-                          </Link>
-
-                          <Link
-                            to="/discount-codes"
-                            className="flex items-center gap-2 px-4 py-2 transition"
-                            onClick={() => setOpenMenu(false)}
-                          >
-                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                            <span>Discount Codes</span>
-                          </Link>
-
-                          <Link
-                            to="/all-users-messages"
-                            className="flex items-center gap-2 px-4 py-2 transition"
-                            onClick={() => setOpenMenu(false)}
-                          >
-                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                            <span>Send Message All...</span>
-                          </Link>
-
-                          <Link
-                            to="/email-order-dispatcher"
-                            className="flex items-center gap-2 px-4 py-2 transition"
-                            onClick={() => setOpenMenu(false)}
-                          >
-                            <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                            <span>Email Order</span>
-                          </Link>
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => {
-                          handleLogout();
-                          setOpenMenu(false);
-                        }}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-left transition"
-                      >
-                        <LogOut size={18} className="text-[#A80000]" />{" "}
-                        <span>Log Out</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </div>
+                <UserMenu user={user} handleLogout={handleLogout} />
               ) : (
                 <motion.div
                   whileHover={{ scale: 1.2, y: -4 }}
@@ -567,130 +435,7 @@ export default function Header() {
         </motion.div>
 
         {user && user.user ? (
-          <div className="relative">
-            <div
-              className="flex items-center gap-2 cursor-pointer"
-              onClick={() => setOpenMenu(!openMenu)}
-              title="حسابي"
-            >
-              {/* دائرة فيها أول حرف */}
-              <div className="w-10 h-10 flex items-center text-2xl justify-center rounded-full bg-(--color-tiger) opacity-90 text-(--color-cornsilk) font-bold shadow-sm">
-                {user.user.email.charAt(0).toUpperCase()}
-              </div>
-            </div>
-
-            {/* القائمة المنسدلة */}
-            {openMenu && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className={`absolute right-0 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-90
-                  ${user?.user.role === "owner" ? "-top-106" : "-top-36"}
-                  
-                  `}
-              >
-                <Link
-                  to="/profile"
-                  className="flex items-center gap-2 px-4 py-2 transition"
-                  onClick={() => setOpenMenu(false)}
-                >
-                  <User size={18} className="text-(--color-tiger)" />{" "}
-                  <span>Profile</span>
-                </Link>
-
-                <Link
-                  to="/orders"
-                  className="flex items-center gap-2 px-4 py-2 transition"
-                  onClick={() => setOpenMenu(false)}
-                >
-                  <ShoppingBag size={18} className=" text-(--color-tiger)" />{" "}
-                  <span>My Orders</span>
-                </Link>
-
-                {user?.user.role === "owner" && (
-                  <div>
-                    <Link
-                      to="/dashboard"
-                      className="flex items-center gap-2 px-4 py-2 transition"
-                      onClick={() => setOpenMenu(false)}
-                    >
-                      <LayoutDashboard
-                        size={18}
-                        className=" text-(--color-tiger)"
-                      />{" "}
-                      <span>Dashboard</span>
-                    </Link>
-
-                    <Link
-                      to="/all-users"
-                      className="flex items-center gap-2 px-4 py-2 transition"
-                      onClick={() => setOpenMenu(false)}
-                    >
-                      <Users size={18} className=" text-(--color-tiger)" />{" "}
-                      <span>All Users</span>
-                    </Link>
-
-                    <Link
-                      to="/add-product"
-                      className="flex items-center gap-2 px-4 py-2 transition"
-                      onClick={() => setOpenMenu(false)}
-                    >
-                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                      <span>Add Product</span>
-                    </Link>
-
-                    <Link
-                      to="/add-delivery"
-                      className="flex items-center gap-2 px-4 py-2 transition"
-                      onClick={() => setOpenMenu(false)}
-                    >
-                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                      <span>Add Delivery</span>
-                    </Link>
-
-                    <Link
-                      to="/discount-codes"
-                      className="flex items-center gap-2 px-4 py-2 transition"
-                      onClick={() => setOpenMenu(false)}
-                    >
-                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                      <span>Discount Codes</span>
-                    </Link>
-
-                    <Link
-                      to="/all-users-messages"
-                      className="flex items-center gap-2 px-4 py-2 transition"
-                      onClick={() => setOpenMenu(false)}
-                    >
-                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                      <span>Send Message All...</span>
-                    </Link>
-
-                    <Link
-                      to="/email-order-dispatcher"
-                      className="flex items-center gap-2 px-4 py-2 transition"
-                      onClick={() => setOpenMenu(false)}
-                    >
-                      <Plus size={18} className=" text-(--color-tiger)" />{" "}
-                      <span>Email Order</span>
-                    </Link>
-                  </div>
-                )}
-
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setOpenMenu(false);
-                  }}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-lefttransition"
-                >
-                  <LogOut size={18} className="text-[#A80000]" />{" "}
-                  <span>Log Out</span>
-                </button>
-              </motion.div>
-            )}
-          </div>
+          <UserMenu user={user} handleLogout={handleLogout} />
         ) : (
           <motion.div
             whileHover={{ scale: 1.2, y: -4 }}

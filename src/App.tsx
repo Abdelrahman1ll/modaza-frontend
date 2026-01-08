@@ -2,6 +2,10 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { ToastContainer } from "react-toastify";
 
+const CategoryPage = lazy(() => import("./pages/Category/categoryPage"));
+
+const ColorPage = lazy(() => import("./pages/Color/colorPage"));
+
 const Loading = lazy(() => import("./components/Loading"));
 const NetworkStatus = lazy(() => import("./components/NetworkStatus"));
 const BackButton = lazy(() => import("./components/BackButton"));
@@ -189,6 +193,24 @@ export default function App() {
             element={
               <ProtectedRoute roles={["owner"]}>
                 <EditUserOwnerPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/category"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <CategoryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/color"
+            element={
+              <ProtectedRoute roles={["owner"]}>
+                <ColorPage />
               </ProtectedRoute>
             }
           />
