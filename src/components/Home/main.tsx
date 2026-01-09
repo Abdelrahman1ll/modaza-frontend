@@ -47,64 +47,96 @@ export default function Main() {
             variants={cardVariants}
             whileHover={{
               scale: 1.03,
-              rotate: 2,
+              rotate: 1.5,
               transition: { type: "spring", stiffness: 150 },
             }}
-            className="overflow-hidden rounded-3xl shadow-xl w-full h-[62vh] md:h-[75vh] lg:h-[85vh] bg-transparent relative"
+            className="relative overflow-hidden rounded-3xl shadow-xl w-full h-[62vh] md:h-[75vh] lg:h-[85vh]"
           >
+            {/* Image */}
             <motion.img
-              whileHover={{ scale: 1.1, transition: { duration: 0.6 } }}
+              whileHover={{ scale: 1.08, transition: { duration: 0.6 } }}
               src={model2}
               srcSet={`
-                 ${model2}?w=400 400w,
-                  ${model2}?w=800 800w,
-                  ${model2}?w=1200 1200w
-                `}
-              alt=""
+      ${model2}?w=400 400w,
+      ${model2}?w=800 800w,
+      ${model2}?w=1200 1200w
+    `}
+              alt="Fashion Model"
               loading="eager"
               fetchPriority="high"
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover"
             />
 
-            <Link to="/products">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{
-                  backgroundColor: "var(--color-tiger)",
-                  borderColor: "var(--color-cornsilk)",
-                }}
-                className="
-        absolute bottom-4 left-1/2 -translate-x-1/2
-        px-8 py-3
-        text-lg text-white
-        shadow-md font-medium
-        hover:bg-(--color-earth)
-        transition-all
-        flex items-center gap-2
-        rounded-full
-        cursor-pointer
-      "
-              >
-                Shop Now
-                <motion.svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  initial={{ x: 0 }}
-                  whileHover={{ x: 5 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-linear-to-r from-black/60 via-black/30 to-transparent" />
+
+            {/* Text & Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="
+      absolute
+      bottom-10
+      left-6
+      sm:left-8
+      md:left-16
+      max-w-sm
+      sm:max-w-md
+      text-white
+      text-left
+    "
+            >
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-(--color-cornsilk)">
+                Discover Your
+                <br />
+                <span className="text-(--color-tiger)">Shop Now</span>
+              </h2>
+
+              <p className="mt-3 sm:mt-4 text-sm sm:text-lg text-(--color-cornsilk)/90">
+                Explore our latest fashion pieces crafted for comfort, elegance,
+                and everyday style.
+              </p>
+
+              <Link to="/products">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ backgroundColor: "var(--color-tiger)" }}
+                  className="
+          mt-5 sm:mt-6
+          px-6 sm:px-8
+          py-2.5 sm:py-3
+          rounded-full
+          text-base sm:text-lg
+          text-white
+          font-medium
+          shadow-lg
+          hover:bg-(--color-earth)
+          transition-all
+          flex items-center gap-2
+        "
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 12h14m0 0l-6-6m6 6l-6 6"
-                  />
-                </motion.svg>
-              </motion.button>
-            </Link>
+                  Shop Now
+                  <motion.svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 12h14m0 0l-6-6m6 6l-6 6"
+                    />
+                  </motion.svg>
+                </motion.button>
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
 

@@ -115,10 +115,20 @@ export default function Footer() {
               <MdLocationOn size={18} /> Egypt
             </li>
             <li className="flex items-center gap-2 text-(--color-earth)">
-              <MdPhone size={18} /> +2{BRAND_PHONE}
+              <MdPhone size={18} />{" "}
+              <a
+                href={`https://wa.me/2${BRAND_PHONE}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                +2{BRAND_PHONE}
+              </a>
             </li>
             <li className="flex items-center gap-2 text-(--color-earth)">
-              <MdEmail size={18} /> {BRAND_EMAIL}
+              <MdEmail size={18} />{" "}
+              <a href={`mailto:${BRAND_EMAIL}`} className="hover:underline">
+                {BRAND_EMAIL}
+              </a>
             </li>
           </ul>
 
@@ -161,7 +171,8 @@ export default function Footer() {
       </div>
 
       <div className="border-t  border-(--color-earth) mt-10 pt-4 text-center text-sm text-(--color-earth)">
-        © {new Date().getFullYear()} RIGHTS RESERVED TO <span className="font-bold">{BRAND_NAME.toUpperCase()}</span>
+        © {new Date().getFullYear()} RIGHTS RESERVED TO{" "}
+        <span className="font-bold">{BRAND_NAME.toUpperCase()}</span>
       </div>
     </footer>
   );
