@@ -26,8 +26,8 @@ export default function HomeProducts() {
     <section className="overflow-hidden">
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
-          {Array.from({ length: 4 }).map((_) => (
-            <motion.div className="flex gap-4 px-4 select-none">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <motion.div key={i} className="flex gap-4 px-4 select-none">
               {/* Spacer */}
               <div className="shrink-0 w-4 sm:w-8 md:w-12 lg:w-16" />
 
