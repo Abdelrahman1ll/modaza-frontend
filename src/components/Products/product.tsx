@@ -13,6 +13,7 @@ export default function Product() {
     hoveredIds,
     setHoveredIds,
     user,
+    isError,
   } = useProduct();
   return (
     <div className="m-4">
@@ -38,7 +39,17 @@ export default function Product() {
                 </div>
               </div>
             ))
-          ) : products?.products?.length ? (
+          ) : products?.products?.length === 0 || isError ? (
+            <div className="col-span-full flex flex-col items-center justify-center py-20">
+              <PackageSearch
+                size={100}
+                className="text-(--color-tiger) mb-6 animate-bounce"
+              />
+              <p className="text-gray-500 text-lg font-medium">
+                No products found
+              </p>
+            </div>
+          ) : (
             products?.products.map((product: ProductType, index: number) => {
               const isHovered = hoveredIds[product.id] || false;
               return (
@@ -171,16 +182,6 @@ export default function Product() {
                 </motion.div>
               );
             })
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-20">
-              <PackageSearch
-                size={100}
-                className="text-(--color-tiger) mb-6 animate-bounce"
-              />
-              <p className="text-gray-500 text-lg font-medium">
-                No products found
-              </p>
-            </div>
           )}
         </div>
       </section>

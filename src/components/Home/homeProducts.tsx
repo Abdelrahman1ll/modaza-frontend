@@ -5,7 +5,7 @@ import type { ProductType } from "../../types/ProductType";
 import { PackageSearch } from "lucide-react";
 
 export default function HomeProducts() {
-  const { data: products, isLoading } = useGetProductsQuery("/products");
+  const { data: products, isLoading, isError } = useGetProductsQuery("/products");
   const sliderRef = useRef<HTMLDivElement>(null);
   const [dragWidth, setDragWidth] = useState(0);
 
@@ -30,7 +30,7 @@ export default function HomeProducts() {
             </div>
           ))}
         </div>
-      ) : products?.products.length === 0 ? (
+      ) : products?.products.length === 0 || isError ? (
         <div className="flex flex-col items-center py-20">
           <PackageSearch size={80} className="text-(--color-tiger) mb-4" />
           <p className="text-gray-500 font-medium">No products found</p>

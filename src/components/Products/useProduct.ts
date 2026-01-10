@@ -50,7 +50,7 @@ export default function useProduct() {
     return params.toString() ? `?${params.toString()}` : "";
   };
 
-  const { data: products, isLoading } = useGetProductsQuery(
+  const { data: products, isLoading, isError } = useGetProductsQuery(
     `/products${buildQueryString()}`
   );
   const [isFav, setIsFav] = useState<{ [key: number]: boolean }>({});
@@ -96,5 +96,6 @@ export default function useProduct() {
     hoveredIds,
     setHoveredIds,
     user,
+    isError,
   };
 }
