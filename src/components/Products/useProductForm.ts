@@ -348,6 +348,8 @@ export default function useProductForm(mode: "add" | "edit") {
           additionImages: [],
           removedImages: [],
         });
+        setNameColors("");
+        setNameCategory("");
       } else if (mode === "edit") {
         await patchProduct({ id, data: formDataToSend }).unwrap();
 
@@ -384,6 +386,8 @@ export default function useProductForm(mode: "add" | "edit") {
           additionImages: [],
           removedImages: [],
         });
+        setNameColors("");
+        setNameCategory("");
       }
     } catch {
       toast.error("Error adding product. Please try again.");
