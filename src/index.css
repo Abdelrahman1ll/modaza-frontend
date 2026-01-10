@@ -39,3 +39,13 @@ body {
   -ms-overflow-style: none; /* IE & Edge */
   scrollbar-width: none;    /* Firefox */
 }
+
+
+@font-face {
+  font-family: "Dancing Script Local";
+  src: url("/fonts/DancingScript-VariableFont_wght.ttf") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+

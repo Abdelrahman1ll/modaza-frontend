@@ -19,26 +19,41 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
     handleChange,
     isLoadingPatch,
     isLoadingPost,
+    categories,
+    isLoadingCategory,
+    isErrorCategory,
+    openCategory,
+    setOpenCategory,
+    nameCategory,
+    setNameCategory,
+    colors,
+    isLoadingColors,
+    isErrorColors,
+    openColors,
+    setOpenColors,
+    nameColors,
+    setNameColors,
   } = useProductForm(mode);
+
   return (
     <div className="min-h-screen flex justify-center items-start py-12 px-4">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-4xl p-6 rounded-3xl shadow-xl border border-(--color-tiger)"
+        className="w-full max-w-4xl p-2 md:p-6 rounded-3xl shadow-xl border border-(--color-tiger)"
       >
         <h2 className="text-3xl font-bold text-(--color-pakistan) mb-8 text-center">
           {mode === "add" ? "Add New Product" : "Edit Product"}
         </h2>
 
-        <form className="space-y-8" onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Basic Info */}
           <section>
             <h3 className="text-lg font-semibold text-(--color-dark) mb-3">
               Basic Information
             </h3>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { label: "Product Name", name: "name", type: "text" },
                 { label: "Price", name: "price", type: "number" },
@@ -47,7 +62,6 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                   name: "promotionalPrice",
                   type: "number",
                 },
-                { label: "Category", name: "category", type: "text" },
               ].map((input) => (
                 <div key={input.name} className="flex flex-col">
                   <label className="text-sm font-medium text-(--color-dark) mb-1">
@@ -71,9 +85,78 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                   )}
                 </div>
               ))}
+
+              {/* Category للقسم */}
+              <div className="flex flex-col relative">
+                <label className="text-sm font-medium text-(--color-dark) mb-1">
+                  Category
+                </label>
+                <div
+                  className="p-2 rounded-xl border border-(--color-earth) cursor-pointer 
+             bg-(--color-cornsilk) flex items-center justify-between"
+                  onClick={() => setOpenCategory(!openCategory)}
+                >
+                  <span>{nameCategory || "Select Category"}</span>
+
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      openCategory ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+
+                {openCategory && (
+                  <div className="absolute top-full mt-2 w-full bg-(--color-cornsilk) border rounded-xl shadow-lg z-50 p-2">
+                    {isLoadingCategory ? (
+                      <p className="text-center text-sm text-(--color-dark)">
+                        Loading categories...
+                      </p>
+                    ) : isErrorCategory ? (
+                      <p className="text-center text-sm text-red-500">
+                        Failed to load categories. Please try again.
+                      </p>
+                    ) : (
+                      <div className="max-h-52 overflow-y-auto">
+                        {categories?.categories?.map((cate: any) => (
+                          <div
+                            key={cate.id}
+                            className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                            onClick={() => {
+                              handleChange({
+                                target: {
+                                  name: "category",
+                                  value: cate.id,
+                                } as any,
+                              } as any);
+                              setNameCategory(cate.name);
+                              setOpenCategory(false);
+                            }}
+                          >
+                            {cate.name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {errors.category && (
+                  <p className="text-red-600 text-sm mt-1">{errors.category}</p>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col mt-4">
+            <div className="flex flex-col mt-2 md:mt-4">
               <label className="text-sm font-medium text-(--color-dark) mb-1">
                 Description
               </label>
@@ -98,9 +181,8 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
             <h3 className="text-lg font-semibold text-(--color-dark) mb-3">
               Product Details
             </h3>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
               {[
-                { label: "Color", name: "colors" },
                 { label: "All Stock", name: "stock" },
                 { label: "Wholesale Price", name: "wholesalePrice" },
               ].map((input) => (
@@ -109,7 +191,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                     {input.label}
                   </label>
                   <input
-                    type={input.name == "colors" ? "text" : "number"}
+                    type="number"
                     name={input.name}
                     value={
                       formData[input.name as keyof ErrorProductType] as any
@@ -125,6 +207,75 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                   )}
                 </div>
               ))}
+
+              {/* Colors للقسم */}
+              <div className="flex flex-col relative md:col-span-1 col-span-2">
+                <label className="text-sm font-medium text-(--color-dark) mb-1">
+                  Colors
+                </label>
+                <div
+                  className="p-2 rounded-xl border border-(--color-earth) cursor-pointer 
+             bg-(--color-cornsilk) flex items-center justify-between"
+                  onClick={() => setOpenColors(!openColors)}
+                >
+                  <span>{nameColors || "Select Color"}</span>
+
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      openCategory ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+
+                {openColors && (
+                  <div className="absolute top-full mt-2 w-full bg-(--color-cornsilk) border rounded-xl shadow-lg z-50 p-2">
+                    {isLoadingColors ? (
+                      <p className="text-center text-sm text-(--color-dark)">
+                        Loading colors...
+                      </p>
+                    ) : isErrorColors ? (
+                      <p className="text-center text-sm text-red-500">
+                        Failed to load colors. Please try again.
+                      </p>
+                    ) : (
+                      <div className="max-h-52 overflow-y-auto">
+                        {colors?.colors?.map((cate: any) => (
+                          <div
+                            key={cate.id}
+                            className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                            onClick={() => {
+                              handleChange({
+                                target: {
+                                  name: "colors",
+                                  value: cate.id,
+                                } as any,
+                              } as any);
+                              setNameColors(cate.name);
+                              setOpenColors(false);
+                            }}
+                          >
+                            {cate.name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {errors.category && (
+                  <p className="text-red-600 text-sm mt-1">{errors.category}</p>
+                )}
+              </div>
             </div>
           </section>
 
@@ -133,7 +284,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
             <h3 className="text-lg font-semibold text-(--color-dark) mb-3">
               Additional Costs
             </h3>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { label: "Packaging Cost", name: "packagingCost" },
                 { label: "Marketing Cost", name: "marketingCosts" },
@@ -164,11 +315,11 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
           </section>
 
           {/* Images */}
-          <div className="p-4 bg-(--color-cornsilk) rounded-2xl shadow-md">
+          <div className="p-2 bg-(--color-cornsilk) rounded-2xl shadow-md">
             <h2 className="text-lg font-bold text-[--color-pakistan] mb-3">
               Upload Product Images
             </h2>
-            <label className="inline-flex items-center gap-2 bg-(--color-tiger) text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-(--color-earth) transition mb-4">
+            <label className="inline-flex items-center gap-2 bg-(--color-tiger) text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-(--color-earth) transition mb-2">
               <PlusCircle size={18} />
               Add Images
               <input
@@ -216,7 +367,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
             {formData?.sizes.map((size, index) => (
               <div
                 key={index}
-                className="grid md:grid-cols-5 gap-3 mb-2 items-end"
+                className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-2 items-end"
               >
                 {["size", "length", "width", "stock"].map((field) => (
                   <div key={field} className="flex flex-col">
@@ -247,7 +398,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                 <button
                   type="button"
                   onClick={() => removeSizeField(index)}
-                  className="text-red-500 text-sm hover:underline"
+                  className="text-red-500 text-sm border border-red-500 rounded-xl px-4 py-2 hover:underline md:col-span-1 col-span-2"
                 >
                   Remove
                 </button>

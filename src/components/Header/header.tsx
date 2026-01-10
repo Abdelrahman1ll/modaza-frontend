@@ -82,10 +82,10 @@ export default function Header() {
 
           <Link to="/">
             <h1
-              className="text-3xl font-bold drop-shadow-lg cursor-pointer"
+              className="text-4xl font-bold drop-shadow-lg cursor-pointer"
               style={{
-                fontFamily: "'Playfair Display', serif",
-                letterSpacing: "1px",
+                fontFamily: "'Dancing Script Local', 'Pacifico', cursive",
+                letterSpacing: ".8px",
               }}
             >
               {BRAND_NAME}
@@ -238,7 +238,7 @@ export default function Header() {
       </header>
 
       {/* Mobile Header */}
-      <header className="shadow-md py-4 px-6 min-[1180px]:hidden">
+      <header className="shadow-md py-4 px-1 min-[1180px]:hidden">
         <div className="w-full flex items-center justify-between gap-6">
           <motion.div
             whileHover={{ scale: 1.2, y: -4 }}
@@ -304,8 +304,8 @@ export default function Header() {
             <h1
               className="text-3xl font-bold drop-shadow-lg cursor-pointer"
               style={{
-                fontFamily: "'Playfair Display', serif",
-                letterSpacing: "1px",
+                fontFamily: "'Dancing Script Local', 'Pacifico', cursive",
+                letterSpacing: ".8px",
               }}
             >
               {BRAND_NAME}

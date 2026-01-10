@@ -5,7 +5,11 @@ import type { ProductType } from "../../types/ProductType";
 import { PackageSearch } from "lucide-react";
 
 export default function HomeProducts() {
-  const { data: products, isLoading, isError } = useGetProductsQuery("/products");
+  const {
+    data: products,
+    isLoading,
+    isError,
+  } = useGetProductsQuery("/products");
   const sliderRef = useRef<HTMLDivElement>(null);
   const [dragWidth, setDragWidth] = useState(0);
 
@@ -22,12 +26,32 @@ export default function HomeProducts() {
     <section className="overflow-hidden">
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="flex flex-col animate-pulse">
-              <div className="h-[300px] bg-gray-300 rounded-3xl mb-2" />
-              <div className="h-5 w-3/4 bg-gray-300 rounded mb-1" />
-              <div className="h-5 w-1/2 bg-gray-300 rounded" />
-            </div>
+          {Array.from({ length: 4 }).map((_) => (
+            <motion.div className="flex gap-4 px-4 select-none">
+              {/* Spacer */}
+              <div className="shrink-0 w-4 sm:w-8 md:w-12 lg:w-16" />
+
+              {Array.from({ length: 1 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="shrink-0 w-52 sm:w-[250px] md:w-[300px] lg:w-[380px] xl:w-[420px]"
+                >
+                  <div className="relative overflow-hidden rounded-3xl shadow-lg animate-pulse">
+                    {/* Image Skeleton */}
+                    <div className="w-full h-[250px] sm:h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] bg-gray-300 rounded-3xl" />
+
+                    {/* Bottom overlay skeleton */}
+                    <div className="absolute bottom-0 w-full p-4 bg-linear-to-t from-black/40 to-transparent">
+                      <div className="h-4 w-3/4 bg-gray-200 rounded mb-2" />
+                      <div className="h-4 w-1/3 bg-gray-200 rounded" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Spacer */}
+              <div className="shrink-0 w-4 sm:w-8 md:w-12 lg:w-16" />
+            </motion.div>
           ))}
         </div>
       ) : products?.products.length === 0 || isError ? (

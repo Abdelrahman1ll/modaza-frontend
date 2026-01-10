@@ -7,6 +7,8 @@ import {
 } from "../../redux/products/apiProducts";
 import { toast } from "react-toastify";
 import type { ProductSizeType } from "../../types/ProductType";
+import { useGetCategoryQuery } from "../../redux/category/apiCategory";
+import { useGetColorsQuery } from "../../redux/color/apiColor";
 
 export interface SizeErrorType {
   size: string;
@@ -31,10 +33,28 @@ export type ErrorProductType = {
   additionImages: string[]; // صور جديدة للمنتج
 };
 export default function useProductForm(mode: "add" | "edit") {
+  // Get Category
+  const {
+    data: categories,
+    isLoading: isLoadingCategory,
+    isError: isErrorCategory,
+  } = useGetCategoryQuery({});
+  const [openCategory, setOpenCategory] = useState(false);
+  const [nameCategory, setNameCategory] = useState("");
+  // Get Colors
+  const {
+    data: colors,
+    isLoading: isLoadingColors,
+    isError: isErrorColors,
+  } = useGetColorsQuery({});
+  const [openColors, setOpenColors] = useState(false);
+  const [nameColors, setNameColors] = useState("");
+
+  // Add Product
   const [postProduct, { isLoading: isLoadingPost }] = usePostProductMutation();
   const [patchProduct, { isLoading: isLoadingPatch }] =
     usePatchProductMutation();
-  const { data: products } = useGetProductsQuery('/products');
+  const { data: products } = useGetProductsQuery("/products");
   const { id } = useParams();
   const [formData, setFormData] = useState<ErrorProductType>({
     name: "",
@@ -85,7 +105,7 @@ export default function useProductForm(mode: "add" | "edit") {
         });
       else {
         toast.error("Product not found.");
-      };
+      }
     }
   }, [mode, Number(id)]);
 
@@ -177,14 +197,14 @@ export default function useProductForm(mode: "add" | "edit") {
       newErrors.description = "Description must be at least 8 characters long.";
     }
 
-    if (formData.category.trim().length < 3) {
+    if (!formData.category) {
       isValid = false;
-      newErrors.category = "Category must be at least 3 characters long.";
+      newErrors.category = "Category must be selected.";
     }
 
-    if (formData.colors.trim().length < 3) {
+    if (!formData.colors) {
       isValid = false;
-      newErrors.colors = "Color must be at least 3 characters long.";
+      newErrors.colors = "Color must be selected.";
     }
 
     if (Number(formData.price) < 1) {
@@ -260,7 +280,6 @@ export default function useProductForm(mode: "add" | "edit") {
       setErrors(newErrors);
       return;
     }
-
     const formDataToSend = new FormData();
 
     formDataToSend.append("name", formData.name);
@@ -383,5 +402,19 @@ export default function useProductForm(mode: "add" | "edit") {
     handleChange,
     isLoadingPatch,
     isLoadingPost,
+    categories,
+    isLoadingCategory,
+    isErrorCategory,
+    openCategory,
+    setOpenCategory,
+    nameCategory,
+    setNameCategory,
+    colors,
+    isLoadingColors,
+    isErrorColors,
+    openColors,
+    setOpenColors,
+    nameColors,
+    setNameColors,
   };
 }
