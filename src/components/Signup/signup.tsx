@@ -103,6 +103,8 @@ export default function Signup({ onClose }: { onClose: () => void }) {
                   key={i}
                   id={`code-${i}`}
                   type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   maxLength={1}
                   value={digit}
                   onChange={(e) => handleChange(e, i)}

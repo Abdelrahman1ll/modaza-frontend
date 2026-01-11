@@ -464,11 +464,11 @@ export default function FilterSidebar() {
                 {/* Price Display */}
                 <div className="flex items-center justify-center gap-3 text-sm">
                   <span className="font-semibold text-gray-700">
-                    EGP {priceRange[0].toLocaleString()}
+                    EGP {priceRange[0]}
                   </span>
                   <span className="text-gray-400">—</span>
                   <span className="font-semibold text-gray-700">
-                    EGP {priceRange[1].toLocaleString()}
+                    EGP {priceRange[1]}
                   </span>
                 </div>
               </div>

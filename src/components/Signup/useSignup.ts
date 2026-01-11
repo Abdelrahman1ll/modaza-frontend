@@ -34,6 +34,7 @@ export default function useSignup(onClose: () => void) {
     index: number
   ) => {
     const value = e.target.value;
+
     if (/^\d?$/.test(value)) {
       const newCode = [...code];
       newCode[index] = value;

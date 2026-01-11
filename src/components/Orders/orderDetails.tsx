@@ -21,6 +21,7 @@ export default function OrderDetails() {
     formatEndDateArabic,
     refetchOrders,
     role,
+    isLoadingOrders,
   } = useOrderDetails();
 
   const paymentMethod =
@@ -190,8 +191,12 @@ export default function OrderDetails() {
             Items in this Order
           </h3>
 
-          <div className="lg:col-span-2 p-4 rounded-2xl">
-            {order?.items.length === 0 ? (
+          <div className="lg:col-span-2 rounded-2xl">
+            {isLoadingOrders ? (
+              <div className="flex justify-center items-center py-10">
+                <div className="w-10 h-10 border-4 border-(--color-tiger) border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : order?.items.length === 0 ? (
               <div className="flex flex-col items-center py-6">
                 <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
                 <p className="text-xl font-bold text-(--color-dark)">
@@ -206,7 +211,7 @@ export default function OrderDetails() {
                 {order?.items.map((item: any) => (
                   <div
                     key={item.id}
-                    className="flex max-[580px]:flex-col md:flex-row items-center gap-4 p-4 rounded-xl shadow bg-(--color-cornsilk)"
+                    className="flex max-[580px]:flex-col md:flex-row items-center gap-4 p-2 md:p-4 rounded-xl shadow bg-(--color-cornsilk)"
                   >
                     <div className="relative w-32 h-32">
                       {/* صورة المنتج */}
@@ -227,7 +232,7 @@ export default function OrderDetails() {
                       )}
                     </div>
 
-                    <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex-1 flex flex-col gap-2 w-full px-1 sm:px-0">
                       <div className="flex justify-between">
                         <h3 className="text-lg font-bold text-(--color-dark)">
                           {item.product.name}
@@ -254,7 +259,7 @@ export default function OrderDetails() {
                       <p className="text-(--color-pakistan) font-bold text-md mb-2">
                         {item.product.price} EGP
                       </p>
-                      <div className="flex max-[685px]:flex-col justify-between ">
+                      <div className="flex max-[685px]:flex-col justify-between">
                         <div className="p-2 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit max-[470px]:w-full">
                           <p className="text-sm text-(--color-pakistan)">
                             <span className="font-semibold text-(--color-tiger)">
@@ -264,12 +269,12 @@ export default function OrderDetails() {
                               (
                               <span className="font-medium text-(--color-pakistan)">
                                 Length:
-                              </span>{" "}
-                              {item?.sizes.length} cm —{" "}
+                              </span>
+                              {item?.sizes.length}cm —{" "}
                               <span className="font-medium text-(--color-pakistan)">
                                 Width:
-                              </span>{" "}
-                              {item?.sizes.width} cm)
+                              </span>
+                              {item?.sizes.width}cm)
                             </span>
                           </p>
                         </div>

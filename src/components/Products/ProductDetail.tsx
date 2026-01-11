@@ -88,7 +88,7 @@ export default function ProductDetail() {
           </p>
         </div>
       ) : (
-        <div className="flex flex-col md:flex-row items-start justify-center gap-10 m-4 mt-12">
+        <div className="flex flex-col md:flex-row items-start justify-center gap-6 md:gap-10 m-4 mt-12">
           <motion.div
             className="relative rounded-t-3xl overflow-hidden  w-full md:w-1/2"
             initial={{ opacity: 0, x: -50 }}
@@ -144,7 +144,7 @@ export default function ProductDetail() {
             </h2>
 
             {/* السعر */}
-            <div className="flex items-baseline gap-4">
+            <div className="flex items-baseline gap-1 md:gap-4">
               <p className="text-2xl font-bold text-(--color-pakistan)">
                 EGP {product?.price.toFixed(2)}
               </p>
@@ -165,7 +165,7 @@ export default function ProductDetail() {
             </p>
 
             <div>
-              <h4 className="text-lg font-semibold mb-4 text-[--color-dark]">
+              <h4 className="text-lg font-semibold mb-2 md:mb-4 text-[--color-dark]">
                 Select Size:
               </h4>
               <div className="flex gap-3 flex-wrap">
@@ -236,7 +236,7 @@ export default function ProductDetail() {
               )}
             </div>
 
-            <div className="mt-4">
+            <div className="">
               <span className="text-lg font-semibold text-(--color-dark)">
                 Quantity:
               </span>
@@ -264,7 +264,7 @@ export default function ProductDetail() {
               )}
             </div>
 
-            <div className="mt-4 w-full">
+            <div className="w-full">
               <div className="flex justify-between mb-1 text-sm font-semibold text-[--color-dark]">
                 <span>Available Stock</span>
               </div>
@@ -282,7 +282,7 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 mt-8">
+            <div className="flex items-center gap-4 mt-4 md:mt-8">
               <AddToCartButton addToCart={addToCart} />
 
               {/* زر القلب جنب الزر */}

@@ -12,6 +12,7 @@ const secretKey = import.meta.env.VITE_SECRET_KEY;
 
 const baseQuery = fetchBaseQuery({
   baseUrl: URL,
+  credentials: "include",
   prepareHeaders: (headers) => {
     const encryptedUser = Cookies.get("user");
     if (encryptedUser) {

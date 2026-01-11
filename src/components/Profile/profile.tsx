@@ -69,52 +69,53 @@ export default function Profile() {
           </motion.div>
         )}
 
-        <form onSubmit={handleSave} className="space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <form onSubmit={handleSave} className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
             {/* قسم البيانات الشخصية */}
             <div>
               <h3 className="text-lg font-semibold text-(--color-pakistan) mb-3 border-b pb-1">
                 Personal Information
               </h3>
               <div className="space-y-5">
-                <div>
-                  <label className="block mb-1 font-medium text-(--color-pakistan)">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={userData.firstName}
-                    onChange={handleChange}
-                    placeholder="Enter your first name"
-                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.firstName}
-                    </p>
-                  )}
-                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-1 font-medium text-(--color-pakistan)">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={userData.firstName}
+                      onChange={handleChange}
+                      placeholder="Enter your first name"
+                      className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
+                    />
+                    {errors.firstName && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.firstName}
+                      </p>
+                    )}
+                  </div>
 
-                <div>
-                  <label className="block mb-1 font-medium text-(--color-pakistan)">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={userData.lastName}
-                    onChange={handleChange}
-                    placeholder="Enter your last name"
-                    className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
-                  />
-                  {errors.lastName && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.lastName}
-                    </p>
-                  )}
+                  <div>
+                    <label className="block mb-1 font-medium text-(--color-pakistan)">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={userData.lastName}
+                      onChange={handleChange}
+                      placeholder="Enter your last name"
+                      className="w-full p-2 border rounded-lg border-(--color-earth) focus:outline-none focus:ring-2 focus:ring-(--color-tiger)"
+                    />
+                    {errors.lastName && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors.lastName}
+                      </p>
+                    )}
+                  </div>
                 </div>
-
                 <div>
                   <label className="block mb-1 font-medium text-(--color-pakistan)">
                     Date of Birth

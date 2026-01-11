@@ -307,7 +307,7 @@ export default function Checkout() {
             {
               id: "cash_on_delivery",
               labelAr: "الدفع عند الاستلام",
-              labelEn: "Cash on Delivery",
+              labelEn: "Cash on...",
               icon: <Truck />,
             },
           ].map((m) => (

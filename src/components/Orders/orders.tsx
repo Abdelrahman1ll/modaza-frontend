@@ -7,7 +7,7 @@ import useOrders from "./useOrders";
 export default function Orders() {
   const { orders, isLoading, formatEndDateArabic } = useOrders();
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start py-10 px-4 ">
+    <div className="min-h-screen flex flex-col items-center justify-start py-10 px-1 md:px-4">
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -69,14 +69,14 @@ export default function Orders() {
                   transition={{ duration: 0.3 }}
                   className="rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-between hover:shadow-md transition"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 md:gap-4">
                     <Package className="text-(--color-tiger)" size={28} />
                     <div>
                       <p className="font-semibold text-(--color-pakistan)">
                         Order ID: {order?.orderNumber}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {order?.items.length} items •{" "}
+                        {order?.items.length} •{" "}
                         {formatEndDateArabic(order?.createdAt)}
                       </p>
                     </div>

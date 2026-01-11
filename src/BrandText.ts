@@ -1,4 +1,4 @@
-export const BRAND_NAME = "ModaZone";
+export const BRAND_NAME = "Modeza";
 
 export const BRAND_EMAIL = "abdomohamed2200066@gmail.com";
 

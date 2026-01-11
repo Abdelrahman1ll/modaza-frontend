@@ -21,7 +21,7 @@ export default function Reviews() {
     editingReview,
   } = useReviews();
   return (
-    <section className="py-10 px-4 ">
+    <section className="py-4 px-4">
       {/* Main toggle button */}
       <div className="w-full flex justify-center">
         <button

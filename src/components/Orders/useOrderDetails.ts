@@ -57,26 +57,38 @@ export default function useOrderDetails() {
   }
 
   // استدعاء كل الـ hooks — لازم يكون برا الشروط
-  const { data: ownerOrders, refetch: refetchOwnerOrders } =
-    useGetOwnerOrdersQuery({}, { skip: role !== "owner" });
-  const { data: userOrders, refetch: refetchUserOrders } =
-    useGetUserOrdersQuery({}, { skip: role !== "user" });
-  const { data: adminOrders, refetch: refetchAdminOrders } =
-    useGetAdminOrdersQuery({}, { skip: role !== "admin" });
+  const {
+    data: ownerOrders,
+    refetch: refetchOwnerOrders,
+    isLoading: isLoadingOwnerOrders,
+  } = useGetOwnerOrdersQuery({}, { skip: role !== "owner" });
+  const {
+    data: userOrders,
+    refetch: refetchUserOrders,
+    isLoading: isLoadingUserOrders,
+  } = useGetUserOrdersQuery({}, { skip: role !== "user" });
+  const {
+    data: adminOrders,
+    refetch: refetchAdminOrders,
+    isLoading: isLoadingAdminOrders,
+  } = useGetAdminOrdersQuery({}, { skip: role !== "admin" });
 
   // تحديد الـ orders بناء على الـ role
   let orders: OrderType[] = [];
   let refetchOrders: () => void = () => {};
-
+  let isLoadingOrders = false;
   if (role === "owner") {
     orders = ownerOrders?.orders || [];
     refetchOrders = refetchOwnerOrders;
+    isLoadingOrders = isLoadingOwnerOrders;
   } else if (role === "user") {
     orders = userOrders?.orders || [];
     refetchOrders = refetchUserOrders;
+    isLoadingOrders = isLoadingUserOrders;
   } else if (role === "admin") {
     orders = adminOrders?.orders || [];
     refetchOrders = refetchAdminOrders;
+    isLoadingOrders = isLoadingAdminOrders;
   } else if (encryptedUser) {
     toast.error("You are not authorized to view this page.");
   }
@@ -122,5 +134,6 @@ export default function useOrderDetails() {
     formatEndDateArabic,
     refetchOrders,
     role,
+    isLoadingOrders,
   };
 }
