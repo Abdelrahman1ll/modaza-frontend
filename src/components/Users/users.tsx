@@ -2,13 +2,17 @@ import { motion } from "framer-motion";
 import { User, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useGetUsersQuery } from "../../redux/users/apiUsers";
+/**
+ * AllUsers: Administrative interface for viewing and managing the list of registered users.
+ * المستخدمين: واجهة إدارية لعرض وإدارة قائمة المستخدمين المسجلين.
+ */
 export default function AllUsers() {
   const { data: getUsers } = useGetUsersQuery({});
 
   const users = Array.isArray(getUsers) ? getUsers : getUsers?.users || [];
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-10 px-4">
+    <div className="min-h-screen flex flex-col items-center py-10 px-2 md:px-4">
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -37,7 +41,7 @@ export default function AllUsers() {
                   }}
                 >
                   {/* الإيميل */}
-                  <div className="flex items-center gap-3 mb-2 sm:mb-0">
+                  <div className="flex items-center gap-2 mb-2 sm:mb-0">
                     <User
                       size={26}
                       style={{

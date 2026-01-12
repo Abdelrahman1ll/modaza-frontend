@@ -102,6 +102,10 @@ const Accordion = ({
   );
 };
 
+/**
+ * FilterSidebar: A slide-over drawer component for filtering products by category, price, and color.
+ * شريط التصفية الجانبي: مكون درج ينسحب لتصفية المنتجات حسب الفئة، السعر، واللون.
+ */
 export default function FilterSidebar() {
   const MIN_PRICE = 0;
 
@@ -204,8 +208,20 @@ export default function FilterSidebar() {
       params.sortPrice = "asc";
     }
 
+    const name = searchParams.get("name");
+    if (name) {
+      params.name = name;
+    }
+
     setSearchParams(params);
-  }, [selectedCats, selectedColors, priceRange, selectedSort, setSearchParams]);
+  }, [
+    selectedCats,
+    selectedColors,
+    priceRange,
+    selectedSort,
+    setSearchParams,
+    searchParams,
+  ]);
 
   /* ================= Helpers ================= */
   const toggleList = (

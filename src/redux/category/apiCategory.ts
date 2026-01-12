@@ -1,6 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
 
+/**
+ * ApiCategory: Category management.
+ * واجهة برمجة الفئات: إدارة الأقسام والفئات.
+ */
 export const ApiCategory = createApi({
   reducerPath: "apiCategory",
   baseQuery: baseQueryWithReauth,

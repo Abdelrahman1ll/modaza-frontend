@@ -32,6 +32,10 @@ export type ErrorProductType = {
   removedImages: string[]; // صور محذوفة من السيرفر
   additionImages: string[]; // صور جديدة للمنتج
 };
+/**
+ * useProductForm: Manages the complex state and validation for product creation and administrative updates.
+ * خطاف نموذج المنتج: يدير الحالة المعقدة والتحقق من صحة البيانات لإنشاء وتعديل المنتجات إدارياً.
+ */
 export default function useProductForm(mode: "add" | "edit") {
   // Get Category
   const {

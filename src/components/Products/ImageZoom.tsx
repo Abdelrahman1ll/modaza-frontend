@@ -1,6 +1,10 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
+/**
+ * MotionZoomImage: Interactive image component with hover-zoom and motion effects.
+ * صورة التكبير المتحركة: مكون صورة تفاعلي مع ميزة التكبير عند التمرير وتأثيرات الحركة.
+ */
 export default function MotionZoomImage({
   mainImage,
   product,

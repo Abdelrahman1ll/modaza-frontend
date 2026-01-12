@@ -2,8 +2,11 @@ import { X } from "lucide-react";
 import useSignup from "./useSignup";
 import GoogleSignup from "./googleSignup";
 
+/**
+ * Signup: User registration modal with email verification and Google login.
+ * التسجيل: نافذة تسجيل المستخدم مع التحقق من البريد الإلكتروني وتسجيل جوجل.
+ */
 export default function Signup({ onClose }: { onClose: () => void }) {
-  
   const {
     email,
     setEmail,
@@ -104,8 +107,8 @@ export default function Signup({ onClose }: { onClose: () => void }) {
                   id={`code-${i}`}
                   type="text"
                   inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={1}
+                  pattern="\d*"
+                  autoComplete="one-time-code"
                   value={digit}
                   onChange={(e) => handleChange(e, i)}
                   onKeyDown={(e) => handleKeyDown(e, i)}

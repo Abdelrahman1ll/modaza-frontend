@@ -1,65 +1,32 @@
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
-import {
-  useDeleteWishlistMutation,
-  useGetWishlistQuery,
-  usePostWishlistMutation,
-} from "../../redux/wishlist/apiWishlist";
+import { AuthContext } from "../AuthContext";
 import { toast } from "react-toastify";
 import { useGetCartQuery, usePostCartMutation } from "../../redux/Cart/apiCart";
 import { useParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useGetProductIdQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
 import { SignupContext } from "../Signup/SignupContext";
+import { useWishlistToggle } from "../../hooks/useWishlistToggle";
+
+/**
+ * useProductDetail: Orchestrates the logic for product details, including image navigation, size selection, and cart/wishlist actions.
+ * خطاف تفاصيل المنتج: يدير منطق تفاصيل المنتج، بما في ذلك التنقل بين الصور، اختيار المقاس، وإجراءات السلة/الأمنيات.
+ */
 export default function useProductDetail() {
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
   const { data: products, isLoading } = useGetProductIdQuery(id);
   const { openSignup } = useContext(SignupContext);
 
   const product: ProductType = products?.product;
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [isFav, setIsFav] = useState(false);
-  const [postWishlist] = usePostWishlistMutation();
-  const { data, refetch } = useGetWishlistQuery({});
-  const [deleteWishlist] = useDeleteWishlistMutation();
+
+  const { isFav, handleToggleWishlist: toggleWishlist } = useWishlistToggle();
+
   const [postCart] = usePostCartMutation();
   const { refetch: refetchCart } = useGetCartQuery({});
 
-  useEffect(() => {
-    if (data?.wishlist) {
-      const exist = data?.wishlist.some(
-        (item: any) => String(item.product.id) === String(id)
-      );
-      setIsFav(exist);
-    }
-  }, [data, id]);
-
-  const handleToggleWishlist = async () => {
-    try {
-      if (isFav) {
-        const wishlistItem = data?.wishlist?.find(
-          (item: any) => String(item.product.id) === String(id)
-        );
-
-        if (!wishlistItem) {
-          toast.info("Item already removed from wishlist");
-          setIsFav(false);
-          return;
-        }
-
-        await deleteWishlist(wishlistItem.id).unwrap();
-        setIsFav(false);
-        refetch();
-      } else {
-        await postWishlist({ product: Number(id) }).unwrap();
-        setIsFav(true);
-        refetch();
-      }
-    } catch {
-      toast.error("Failed to toggle favorite");
-    }
-  };
+  const handleToggleWishlist = () => toggleWishlist(Number(id));
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const mainImage =
     product?.images && product.images.length > 0
@@ -100,33 +67,14 @@ export default function useProductDetail() {
   });
 
   const addToCart = async () => {
-    const secretKey = import.meta.env.VITE_SECRET_KEY;
-    const encryptedUser = Cookies.get("user");
-
     // التحقق من تسجيل الدخول
-    if (encryptedUser) {
-      try {
-        const decryptedUser = CryptoJS.AES.decrypt(
-          encryptedUser,
-          secretKey
-        ).toString(CryptoJS.enc.Utf8);
-
-        const user = JSON.parse(decryptedUser);
-
-        if (!user) {
-          openSignup();
-          return;
-        }
-        if (user && user.user.role !== "user") {
-          toast.error("I'm not allowed to admin");
-          return;
-        }
-      } catch {
-        openSignup();
-        return;
-      }
-    } else {
+    if (!user) {
       openSignup();
+      return;
+    }
+
+    if (user.role !== "user") {
+      toast.error("I'm not allowed to admin");
       return;
     }
     let newErrors: any = {
@@ -159,7 +107,7 @@ export default function useProductDetail() {
 
   return {
     product,
-    isFav,
+    isFav: isFav[Number(id)],
     handleToggleWishlist,
     mainImage,
     handleNext,

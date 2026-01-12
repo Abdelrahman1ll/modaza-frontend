@@ -42,21 +42,31 @@ export default function AllUsersMessages() {
           Send emails to all Customers
         </h2>
 
-        <input
-          type="text"
-          placeholder="Subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className="border border-(--color-tiger) rounded-2xl px-4 py-3 focus:ring-1 focus:ring-(--color-tiger) outline-none w-full"
-        />
+        <div className="flex flex-col gap-2">
+          <label className="text-(--color-dark) font-semibold ml-2">
+            Subject
+          </label>
+          <input
+            type="text"
+            placeholder="Subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="border border-(--color-tiger) rounded-2xl px-4 py-3 focus:ring-1 focus:ring-(--color-tiger) outline-none w-full text-(--color-dark) placeholder:text-gray-500"
+          />
+        </div>
 
-        <textarea
-          placeholder="Type your message here..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          rows={6}
-          className="border border-(--color-tiger) rounded-2xl px-4 py-3 focus:ring-1 focus:ring-(--color-tiger) outline-none resize-none w-full"
-        />
+        <div className="flex flex-col gap-2">
+          <label className="text-(--color-dark) font-semibold ml-2">
+            Message
+          </label>
+          <textarea
+            placeholder="Type your message here..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={6}
+            className="border border-(--color-tiger) rounded-2xl px-4 py-3 focus:ring-1 focus:ring-(--color-tiger) outline-none resize-none w-full text-(--color-dark) placeholder:text-gray-500"
+          />
+        </div>
 
         {success && (
           <p className="text-green-600 text-center font-medium">

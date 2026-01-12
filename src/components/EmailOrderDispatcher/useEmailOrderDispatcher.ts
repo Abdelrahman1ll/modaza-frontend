@@ -6,7 +6,9 @@ import {
   useDeleteEmailOrderDispatcherMutation,
 } from "../../redux/EmailOrderDispatcher/apiEmailOrderDispatcher";
 import { toast } from "react-toastify";
+import { formatEndDateArabic } from "../../utils/formatters";
 import type { OrderEmail } from "../../types/OrderEmailType";
+import { validateEmail } from "../../utils/validators";
 
 export default function useEmailOrderDispatcher() {
   const reviewFormRef = useRef<HTMLDivElement>(null);
@@ -26,22 +28,6 @@ export default function useEmailOrderDispatcher() {
     email: "",
   });
 
-  function formatEndDateArabic(dateString: string) {
-    const date = new Date(dateString);
-
-    return (
-      date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      }) +
-      " " +
-      date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
-  }
 
   const handleSendEmail = async () => {
     setErrors({
@@ -49,10 +35,6 @@ export default function useEmailOrderDispatcher() {
       email: "",
     });
 
-    const validateEmail = (email: string) => {
-      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return regex.test(email);
-    };
 
     // ===== VALIDATE NAME =====
     if (!customerName || customerName.trim() === "") {

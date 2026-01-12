@@ -1,6 +1,10 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
 
+/**
+ * ApiColor: Product color management.
+ * واجهة برمجة الألوان: إدارة ألوان المنتجات.
+ */
 export const ApiColor = createApi({
   reducerPath: "apiColor",
   baseQuery: baseQueryWithReauth,

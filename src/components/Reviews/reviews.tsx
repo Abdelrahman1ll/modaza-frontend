@@ -3,6 +3,10 @@ import { Star } from "lucide-react";
 import type { ReviewType } from "../../types/ReviewsType";
 import useReviews from "./useReviews";
 
+/**
+ * Reviews: Interface for viewing and managing product reviews/ratings.
+ * المراجعات: واجهة لعرض وإدارة تقييمات ومراجعات المنتجات.
+ */
 export default function Reviews() {
   const {
     reviewsData,

@@ -9,6 +9,10 @@ import {
 import type { OrderType } from "../../types/OrderType";
 import useOrderProgress from "./useOrderProgress";
 
+/**
+ * OrderProgress: Visual indicator (stepper) showing the current status of an order.
+ * تتبع الطلب: مؤشر مرئي يوضح الحالة الحالية لمعالجة الطلب.
+ */
 export default function OrderProgress({
   order,
   refetch,

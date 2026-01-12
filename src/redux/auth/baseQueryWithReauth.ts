@@ -81,7 +81,7 @@ export const baseQueryWithReauth = async (
                 secretKey
               ).toString();
               Cookies.set("user", encryptedUser, {
-                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90),
+                expires: 90,
                 secure: import.meta.env.VITE_NODE_ENV === "production",
                 sameSite: "strict",
                 path: "/",

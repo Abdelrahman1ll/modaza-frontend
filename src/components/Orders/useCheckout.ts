@@ -9,8 +9,9 @@ import {
 import { toast } from "react-toastify";
 import { useEffect, useRef, useState } from "react";
 import egyptGovernorates from "../../data/egyptGovernorates.json";
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
+import { AuthContext } from "../AuthContext";
+import { useContext } from "react";
+import { EGYPTIAN_PHONE_REGEX } from "../../utils/validators";
 import ttsMP3 from "/ttsMP3.com_VoiceText_2025-11-19_2-28-51.mp3";
 const audio = new Audio(ttsMP3);
 const close = [
@@ -44,8 +45,16 @@ const farAway = [
   "Luxor",
   "Aswan",
 ];
+/**
+ * useCheckout hook manages the complex multi-step checkout process.
+ * هوك useCheckout يدير عملية الدفع المتعددة الخطوات والمعقدة.
+ */
 export default function useCheckout() {
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // state variables for form inputs and process status
+  // متغيرات الحالة لمدخلات النموذج وحالة العملية
   const [paymentMethod, setPaymentMethod] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -58,8 +67,14 @@ export default function useCheckout() {
   const [discount, setDiscount] = useState(0);
   const [code, setCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [openSection, setOpenSection] = useState("");
-  const [saveAddress, setSaveAddress] = useState(false);
+  const [openSection, setOpenSection] = useState(""); // Which checkout section is expanded | أي قسم في الدفع مفتوح حالياً
+  const [saveAddress, setSaveAddress] = useState(false); // Should address be saved locally? | هل يجب حفظ العنوان محلياً؟
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for governorate dropdown | حالة قائمة المحافظات المنسدلة
+  const [search, setSearch] = useState(""); // Search term for governorates | كلمة البحث للمحافظات
+  const [isCardValid, setIsCardValid] = useState(false); // Validation for credit card | صحة بيانات البطاقة الائتمانية
+  const [isPaying, setIsPaying] = useState(false); // Payment processing status | حالة معالجة الدفع
+  const payRef = useRef<any>(null); // Ref for triggering payment iframe | مرجع لتشغيل إطار الدفع
+
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
@@ -69,19 +84,14 @@ export default function useCheckout() {
     phone2: "",
     paymentMethod: "",
   });
-  const secretKey = import.meta.env.VITE_SECRET_KEY;
-  useEffect(() => {
-    const encryptedUser = Cookies.get("user");
-    if (encryptedUser) {
-      const decryptedUser = CryptoJS.AES.decrypt(
-        encryptedUser,
-        secretKey
-      ).toString(CryptoJS.enc.Utf8);
 
-      const user = JSON.parse(decryptedUser);
-      setEmail(user?.user?.email);
+  // Sync user email if available
+  // مزامنة البريد الإلكتروني للمستخدم إذا كان موجوداً
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email);
     }
-  }, [secretKey]);
+  }, [user]);
 
   const { data, isLoading } = useGetCartQuery({});
   const { data: delivery } = useGetDeliveryQuery({});
@@ -89,13 +99,33 @@ export default function useCheckout() {
   const [postOrders, { isLoading: orderLoading }] = usePostOrdersMutation();
   const { refetch } = useGetUserOrdersQuery({});
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
 
-  const [isCardValid, setIsCardValid] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
-  const payRef = useRef<() => void>(() => {});
+  /**
+   * Internal check for form validity without updating UI errors.
+   * تحقق داخلي من صحة النموذج دون تحديث أخطاء واجهة المستخدم.
+   */
+  const checkIsValid = () => {
+    const isFirstNameValid = !!firstName;
+    const isLastNameValid = !!lastName;
+    const isStateValid = !!state;
+    const isAddressValid = !!addressDetails;
+    const isPhone1Valid = phone1 && EGYPTIAN_PHONE_REGEX.test(phone1);
+    const isPhone2Valid = !phone2 || EGYPTIAN_PHONE_REGEX.test(phone2);
 
+    return (
+      isFirstNameValid &&
+      isLastNameValid &&
+      isStateValid &&
+      isAddressValid &&
+      isPhone1Valid &&
+      isPhone2Valid
+    );
+  };
+
+  /**
+   * Validates the checkout form fields and updates the error state.
+   * وظيفة للتحقق من صحة حقول نموذج الدفع وتحديث حالة الأخطاء.
+   */
   const Validate = () => {
     const newErrors: typeof errors = { ...errors };
     if (!firstName) newErrors.firstName = "Please enter your first name";
@@ -103,28 +133,25 @@ export default function useCheckout() {
     if (!state) newErrors.state = "Please select your state or city";
     if (!addressDetails)
       newErrors.addressDetails = "Please enter address details";
+
     if (!phone1) {
       newErrors.phone1 = "Please enter your phone number";
-    } else if (!/^01[0125][0-9]{8}$/.test(phone1)) {
+    } else if (!EGYPTIAN_PHONE_REGEX.test(phone1)) {
       newErrors.phone1 = "Please enter a valid Egyptian phone number";
     }
-    if (phone2 && !/^01[0125][0-9]{8}$/.test(phone2)) {
+
+    if (phone2 && !EGYPTIAN_PHONE_REGEX.test(phone2)) {
       newErrors.phone2 = "Please enter a valid Egyptian phone number";
     }
 
     setErrors(newErrors);
-
-    const isValid = !(
-      newErrors.firstName ||
-      newErrors.lastName ||
-      newErrors.state ||
-      newErrors.addressDetails ||
-      newErrors.phone1 ||
-      newErrors.phone2
-    );
-
-    return isValid;
+    return checkIsValid();
   };
+
+  /**
+   * Loads saved address data from localStorage on component mount.
+   * استعادة بيانات العنوان المحفوظة من التخزين المحلي عند تحميل المكون.
+   */
   useEffect(() => {
     const saved = localStorage.getItem("checkoutAddress");
     if (saved) {
@@ -135,13 +162,17 @@ export default function useCheckout() {
       setAddressDetails(data.addressDetails || "");
       setPhone1(data.phone1 || "");
       setPhone2(data.phone2 || "");
-      setSaveAddress(true); // لو فيه بيانات محفوظة → يكون مربع الاختيار مفعل
+      setSaveAddress(true);
     }
   }, []);
 
+  /**
+   * Automatically saves or removes address data in localStorage based on 'saveAddress' state.
+   * يقوم تلقائياً بحفظ أو حذف بيانات العنوان في التخزين المحلي بناءً على رغبة المستخدم.
+   */
   useEffect(() => {
     if (saveAddress) {
-      const isValid = Validate();
+      const isValid = checkIsValid();
       if (!isValid) return;
       localStorage.setItem(
         "checkoutAddress",
@@ -159,14 +190,32 @@ export default function useCheckout() {
     }
   }, [saveAddress, firstName, lastName, state, addressDetails, phone1, phone2]);
 
-  const filteredStates = egyptGovernorates.filter((gov) =>
-    gov.toLowerCase().includes(search.toLowerCase())
-  );
   const deliveryData = delivery?.deliveries?.find((d: any) => d.id === 1);
   const isFirstOrder: boolean = data?.carts?.thIsIsYourFirstOrder;
   const freeDelivery: boolean = deliveryData?.freeDelivery;
   const PROFILE: boolean = data?.carts?.user.PROFILE;
   const BIRTHDAY: boolean = data?.carts?.user.BIRTHDAY;
+
+  /**
+   * Calculates the final total amount after applying discounts and delivery fees.
+   * حساب المبلغ الإجمالي النهائي بعد تطبيق الخصومات ومصاريف التوصيل.
+   */
+  const subtotal = data?.carts?.total || 0;
+  const discountAmount = (subtotal * discount) / 100;
+  const finalTotal = subtotal - discountAmount + deliveryFee;
+
+  /**
+   * Filters the list of Egyptian governorates based on user search input.
+   * تصفية قائمة المحافظات المصرية بناءً على بحث المستخدم.
+   */
+  const filteredStates = egyptGovernorates.filter((gov) =>
+    gov.toLowerCase().includes(search.toLowerCase())
+  );
+
+  /**
+   * Calculates delivery fee based on selected state (Cairo/Giza vs Far-away).
+   * حساب مصاريف التوصيل بناءً على المحافظة المختارة (القاهرة والجيزة مقابل المحافظات البعيدة).
+   */
   useEffect(() => {
     if (isFirstOrder || freeDelivery) {
       setDeliveryFee(0);
@@ -182,77 +231,78 @@ export default function useCheckout() {
     }
   }, [state, deliveryData]);
 
-  let total: number = data?.carts?.total;
-
-  if (discount > 0) {
-    if (errorMsg) {
-      total = total;
-    } else {
-      total = total - (total * discount) / 100;
-    }
-  }
-  const finalTotal: number = total + deliveryFee;
-
+  /**
+   * Applies a promo code and handles special rules for PROFILE and BIRTHDAY codes.
+   * تطبيق كود الخصم والتعامل مع القواعد الخاصة لأكواد "PROFILE" و "BIRTHDAY".
+   */
   const applyDiscount = async () => {
     try {
-      const response = await validateDiscountCode({
-        code: promoCode,
-      }).unwrap();
-      if (response?.discountCode.code === "PROFILE") {
-        if (PROFILE === false) {
-          setDiscount(0);
-          setErrorMsg("The PROFILE code has already been used");
-          return;
-        }
+      const response = await validateDiscountCode({ code: promoCode }).unwrap();
+
+      // Check if codes are restricted based on user status
+      // التحقق من صلاحية الأكواد بناءً على حالة المستخدم (هل تم استخدامها من قبل؟)
+      if (response?.discountCode.code === "PROFILE" && PROFILE === false) {
+        setDiscount(0);
+        setErrorMsg("The PROFILE code has already been used");
+        return;
       }
 
-      if (response?.discountCode.code === "BIRTHDAY") {
-        if (BIRTHDAY === false) {
-          setDiscount(0);
-          setErrorMsg("The BIRTHDAY code has already been used");
-          return;
-        }
+      if (response?.discountCode.code === "BIRTHDAY" && BIRTHDAY === false) {
+        setDiscount(0);
+        setErrorMsg("The BIRTHDAY code has already been used");
+        return;
       }
 
       setDiscount(response?.discountCode?.discount);
       setCode(response?.discountCode?.code);
-
       setErrorMsg("");
     } catch (error: any) {
       setErrorMsg(error.data.message);
     }
   };
 
+  /**
+   * Selects a payment method and manages section animations/visibility.
+   * اختيار وسيلة الدفع وإدارة ظهور الأقسام المختلفة.
+   */
   const handleSelectMethod = (method: string) => {
     setOpenSection((prev) => {
       if (prev === method) {
-        // لو ضغط على نفس الوسيلة → يقفل ومفيش وسيلة مختارة
         setPaymentMethod("");
-        setErrors((e) => ({ ...e, paymentMethod: "" })); // امسح الخطأ
+        setErrors((e) => ({ ...e, paymentMethod: "" }));
         return "";
       } else {
-        // لو اختار وسيلة جديدة
         setPaymentMethod(method);
-        setErrors((e) => ({ ...e, paymentMethod: "" })); // امسح الخطأ
+        setErrors((e) => ({ ...e, paymentMethod: "" }));
         return method;
       }
     });
   };
 
+  /**
+   * Main function to handle order placement.
+   * Validates form, checks cart status, and posts the order to the API.
+   * وظيفة أساسية لمعالجة تأكيد الطلب.
+   * تتحقق من النموذج، حالة السلة، وترسل الطلب للواجهة البرمجية.
+   */
   const handlePayment = async () => {
     const isValid = Validate();
     if (!isValid) return;
+
+    // Check if a payment method is selected | التأكد من اختيار وسيلة دفع
     if (!paymentMethod) {
       setErrors({ ...errors, paymentMethod: "Please select a payment method" });
       return;
     }
 
+    // Ensure the cart is not empty | التأكد من أن السلة ليست فارغة
     if (data?.carts?.items.length === 0) {
       toast.error("Your cart is empty");
       return;
     }
 
     try {
+      // Create order via API | إنشاء الطلب عبر الواجهة البرمجية
       await postOrders({
         cart: data?.carts?.id,
         discountCode: code ? code : null,
@@ -271,19 +321,25 @@ export default function useCheckout() {
             ? Number(localStorage.getItem("orderPaymentId"))
             : 0,
       }).unwrap();
+
+      // Reset state and provide feedback | إعادة تعيين الحالة وتنبيه المستخدم
       setPaymentMethod("");
       setCode("");
       toast.success("Order placed successfully");
-      audio.play();
+      audio.play(); // Play success notification | تشغيل صوت التنبيه بالنجاح
+
       if (paymentMethod === "credit_card") {
         localStorage.removeItem("orderPaymentId");
       }
+
+      // Navigate to orders page after a short delay | الانتقال لصفحة الطلبات بعد تأخير بسيط
       setTimeout(() => {
         navigate("/orders");
       }, 200);
 
       refetch();
     } catch (error: any) {
+      // Handle domain-specific errors like reused codes | معالجة أخطاء محددة كالأكواد المستعملة سابقاً
       if (error?.data?.message === "Discount code already used for PROFILE") {
         setErrorMsg("The PROFILE code has already been used");
         setDiscount(0);
@@ -334,8 +390,8 @@ export default function useCheckout() {
     isFirstOrder,
     filteredStates,
     setSearch,
-    setOpen,
-    open,
+    setIsDropdownOpen,
+    isDropdownOpen,
     search,
     saveAddress,
     setSaveAddress,

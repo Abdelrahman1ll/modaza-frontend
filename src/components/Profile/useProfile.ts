@@ -1,10 +1,16 @@
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
 import { usePatchUsersByIdMutation } from "../../redux/users/apiUsers";
 import { toast } from "react-toastify";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
+import { AuthContext } from "../AuthContext";
+import { EGYPTIAN_PHONE_REGEX } from "../../utils/validators";
+/**
+ * useProfile hook manages the user's profile information, validation, and completion rewards.
+ * هوك useProfile يدير معلومات الملف الشخصي للمستخدم، عمليات التحقق، ومكافآت إكمال البيانات.
+ */
 export default function useProfile() {
+  const { user, setUser } = useContext(AuthContext);
+
   const [userData, setUserData] = useState({
     id: "",
     firstName: "",
@@ -21,39 +27,36 @@ export default function useProfile() {
     phone: "",
     birthday: "",
   });
-  const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
 
+  const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
   const [progress, setProgress] = useState(20);
   const [rewardVisible, setRewardVisible] = useState(false);
-  const [reward, setReward] = useState({
-    code: "",
-    discount: 0,
-  });
+  const [reward, setReward] = useState({ code: "", discount: 0 });
 
-  const secretKey = import.meta.env.VITE_SECRET_KEY;
-
+  /**
+   * Syncs internal state with the global user context on mount or change.
+   * يقوم بمزامنة الحالة الداخلية مع سياق المستخدم العام عند التحميل أو التغيير.
+   */
   useEffect(() => {
-    const encryptedUser = Cookies.get("user");
-    if (encryptedUser) {
-      const decryptedUser = CryptoJS.AES.decrypt(
-        encryptedUser,
-        secretKey
-      ).toString(CryptoJS.enc.Utf8);
-      const user = JSON.parse(decryptedUser);
+    if (user) {
       setUserData({
-        id: user.user.id || "",
-        firstName: user.user.firstName || "",
-        lastName: user.user.lastName || "",
-        email: user.user.email || "",
-        phone: user.user.phone || "",
-        birthday: user.user.birthday || "",
-        PROFILE: user.user.PROFILE || false,
+        id: String(user.id) || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        birthday: user.birthday || "",
+        PROFILE: (user as any).PROFILE || false,
       });
     }
-  }, []);
+  }, [user]);
 
+  /**
+   * Effect to calculate profile completion percentage and check for eligible rewards.
+   * تأثير برمجي لحساب نسبة اكتمال الملف الشخصي والتحقق من الاستحقاق للمكافأة.
+   */
   useEffect(() => {
-    // حساب نسبة إكمال البروفايل
+    // Calculate progress based on filled fields | حساب التقدم بناءً على الحقول المكتملة
     const fields = ["firstName", "lastName", "phone", "birthday"] as const;
     const filledCount = fields.reduce(
       (count, field) => (userData[field] ? count + 1 : count),
@@ -62,7 +65,10 @@ export default function useProfile() {
     const completion = 20 + filledCount * 20;
     setProgress(completion);
 
-    // تحقق من المكافأة إذا البروفايل مكتمل
+    /**
+     * Checks if the profile is fully complete to offer a "PROFILE" discount code.
+     * يتحقق مما إذا كان الملف الشخصي مكتملاً تماماً لعرض كود الخصم.
+     */
     const checkReward = async () => {
       const isProfileComplete =
         userData.firstName &&
@@ -98,18 +104,18 @@ export default function useProfile() {
     checkReward();
   }, [userData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const [patchUsers, { isLoading }] = usePatchUsersByIdMutation();
+
+  /**
+   * Handles saving the profile updates after validation.
+   * يدير عملية حفظ تحديثات الملف الشخصي بعد التحقق من صحتها.
+   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = { firstName: "", lastName: "", phone: "", birthday: "" };
     let isValid = true;
 
-    // ✅ تحقق فقط من الحقول اللي فيها بيانات (مش كلها)
+    // Validation logic for name and phone | منطق التحقق للاسم والهاتف
     if (
       userData.firstName &&
       (userData.firstName.length < 2 || userData.firstName.length > 50)
@@ -126,32 +132,26 @@ export default function useProfile() {
       isValid = false;
     }
 
-    if (userData.phone && userData.phone.trim().length !== 11) {
-      newErrors.phone = "Phone number must be 11 digits";
+    if (userData.phone && !EGYPTIAN_PHONE_REGEX.test(userData.phone)) {
+      newErrors.phone = "Phone number must be 11 valid digits";
       isValid = false;
     }
 
+    // Age validation (minimum 10 years old) | التحقق من العمر (على الأقل 10 سنوات)
     if (userData.birthday) {
       const birthday = new Date(userData.birthday);
       const today = new Date();
-
-      // رفض التواريخ المستقبلية
       if (birthday >= today) {
         newErrors.birthday = "Birthday must be a valid past date";
         isValid = false;
       } else {
-        // حساب العمر
         let age = today.getFullYear() - birthday.getFullYear();
         const monthDiff = today.getMonth() - birthday.getMonth();
         const dayDiff = today.getDate() - birthday.getDate();
-
-        // لو لسه عيد ميلاده السنة دي ما جهش
-        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
-          age--;
-        }
-
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) age--;
         if (age < 10) {
-          newErrors.birthday = "Birthday indicates an age below the allowed minimum";
+          newErrors.birthday =
+            "Birthday indicates an age below the allowed minimum";
           isValid = false;
         }
       }
@@ -162,6 +162,7 @@ export default function useProfile() {
 
     const id = Number(userData.id);
     try {
+      // Patching the user data via API | تحديث بيانات المستخدم عبر الواجهة البرمجية
       await patchUsers({
         id,
         data: {
@@ -171,41 +172,29 @@ export default function useProfile() {
           birthday: userData.birthday || null,
         },
       }).unwrap();
+
       toast.success("Profile saved successfully");
 
-      const existingUser = Cookies.get("user");
-
-      if (existingUser) {
-        const decryptedUser = CryptoJS.AES.decrypt(
-          existingUser,
-          secretKey
-        ).toString(CryptoJS.enc.Utf8);
-        const parsedUser = JSON.parse(decryptedUser);
-
-        const updatedUser = {
-          ...parsedUser,
-          user: {
-            ...parsedUser.user,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            phone: userData.phone,
-            birthday: userData.birthday,
-          },
-        };
-        const encryptedUser = CryptoJS.AES.encrypt(
-          JSON.stringify(updatedUser),
-          secretKey
-        ).toString();
-        Cookies.set("user", encryptedUser, {
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90),
-          secure: import.meta.env.NODE_ENV === "production" ? true : false,
-          sameSite: "strict",
-          path: "/",
-        });
-      }
+      // Update the global auth context with new data | تحديث السياق العالمي بالبيانات الجديدة
+      setUser({
+        ...user!,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phone: userData.phone,
+        birthday: userData.birthday,
+      });
     } catch (error: any) {
       toast.error(error?.data.message || "Error saving profile");
     }
+  };
+
+  /**
+   * Generic handler for input field changes.
+   * وظيفة عامة لمعالجة التغييرات في حقول الإدخال.
+   */
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
   return {

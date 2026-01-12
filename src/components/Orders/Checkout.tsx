@@ -14,6 +14,10 @@ import useCheckout from "./useCheckout";
 import { BRAND_PHONE } from "../../BrandText";
 import PaymobIframe from "./PaymobIframe";
 import { Link } from "react-router-dom";
+/**
+ * Checkout: Multi-step process for shipping info, payment, and order completion.
+ * الدفع: عملية متعددة الخطوات لبيانات الشحن والدفع وإتمام الطلب.
+ */
 export default function Checkout() {
   const {
     discount,
@@ -48,8 +52,8 @@ export default function Checkout() {
     isFirstOrder,
     filteredStates,
     setSearch,
-    setOpen,
-    open,
+    setIsDropdownOpen,
+    isDropdownOpen,
     search,
     saveAddress,
     setSaveAddress,
@@ -143,13 +147,13 @@ export default function Checkout() {
               <div
                 className="p-3 rounded-xl border border-(--color-earth) cursor-pointer 
              bg-(--color-cornsilk) flex items-center justify-between"
-                onClick={() => setOpen(!open)}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <span>{state || "Select State"}</span>
 
                 <svg
                   className={`w-4 h-4 transition-transform duration-200 ${
-                    open ? "rotate-180" : ""
+                    isDropdownOpen ? "rotate-180" : ""
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -164,7 +168,7 @@ export default function Checkout() {
                 </svg>
               </div>
 
-              {open && (
+              {isDropdownOpen && (
                 <div className="absolute top-full mt-2 w-full bg-(--color-cornsilk) border rounded-xl shadow-lg z-50 p-2">
                   <input
                     type="text"
@@ -175,13 +179,13 @@ export default function Checkout() {
                   />
 
                   <div className="max-h-52 overflow-y-auto">
-                    {filteredStates.map((gov) => (
+                    {filteredStates.map((gov: any) => (
                       <div
                         key={gov}
                         className="p-2 hover:bg-gray-100 cursor-pointer rounded"
                         onClick={() => {
                           setState(gov);
-                          setOpen(false);
+                          setIsDropdownOpen(false);
                           setSearch("");
                           setErrors((prev: any) => ({ ...prev, state: "" }));
                         }}

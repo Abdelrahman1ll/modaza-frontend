@@ -1,3 +1,7 @@
+/**
+ * useOrderProgress: Logic for determining the active step and coloring in the order progress bar.
+ * خطاف تتبع الطلب: منطق لتحديد الخطوة النشطة والتلوين في شريط تتبع الطلب.
+ */
 import { useEffect, useState } from "react";
 import {
   usePatchIsPaidOrdersMutation,

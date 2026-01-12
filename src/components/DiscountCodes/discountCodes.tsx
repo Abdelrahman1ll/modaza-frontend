@@ -2,6 +2,10 @@ import { motion } from "framer-motion";
 import type { DiscountCodeType } from "../../types/DiscountCodeType";
 import useDiscountCodes from "./useDiscountCodes";
 
+/**
+ * DiscountCodes: Management interface for administrative discount code operations.
+ * أكواد الخصم: واجهة إدارة عمليات أكواد الخصم الإدارية.
+ */
 export default function DiscountCodes() {
   const {
     data,
@@ -37,26 +41,42 @@ export default function DiscountCodes() {
           {editingId ? "Edit Discount Code" : "Add Discount Code"}
         </h2>
         <div className="grid sm:grid-cols-3 gap-4 mb-6">
-          <input
-            type="text"
-            placeholder="Code"
-            value={newCode}
-            onChange={(e) => setNewCode(e.target.value)}
-            className="border border-(--color-tiger) rounded-full px-4 py-3 text-center focus:ring-1 focus:ring-(--color-tiger) outline-none"
-          />
-          <input
-            type="number"
-            placeholder="Discount %"
-            value={newDiscount}
-            onChange={(e) => setNewDiscount(e.target.value)}
-            className="border border-(--color-tiger) rounded-full px-4 py-3 text-center focus:ring-1 focus:ring-(--color-tiger) outline-none"
-          />
-          <input
-            type="date"
-            value={newExpiry}
-            onChange={(e) => setNewExpiry(e.target.value)}
-            className="border border-(--color-tiger) rounded-full px-4 py-3 text-center focus:ring-1 focus:ring-(--color-tiger) outline-none"
-          />
+          <div className="flex flex-col gap-2">
+            <label className="text-(--color-dark) font-semibold ml-2">
+              Code
+            </label>
+            <input
+              type="text"
+              placeholder="Code"
+              value={newCode}
+              onChange={(e) => setNewCode(e.target.value)}
+              className="w-full text-(--color-dark) placeholder:text-gray-500 border border-(--color-tiger) rounded-full px-4 py-3 text-center focus:ring-1 focus:ring-(--color-tiger) outline-none"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-(--color-dark) font-semibold ml-2">
+              Discount Percentage
+            </label>
+            <input
+              type="number"
+              placeholder="Discount %"
+              value={newDiscount}
+              onChange={(e) => setNewDiscount(e.target.value)}
+              className="w-full text-(--color-dark) placeholder:text-gray-500 border border-(--color-tiger) rounded-full px-4 py-3 text-center focus:ring-1 focus:ring-(--color-tiger) outline-none"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label className="text-(--color-dark) font-semibold ml-2">
+              Expiry Date
+            </label>
+            <input
+              type="date"
+              value={newExpiry}
+              placeholder="Expiry Date"
+              onChange={(e) => setNewExpiry(e.target.value)}
+              className="w-full text-(--color-dark) placeholder:text-gray-500 border border-(--color-tiger) rounded-full px-4 py-3 text-center focus:ring-1 focus:ring-(--color-tiger) outline-none"
+            />
+          </div>
         </div>
         <motion.button
           whileHover={{ scale: 1.05 }}

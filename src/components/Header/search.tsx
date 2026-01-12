@@ -67,7 +67,7 @@ export default function SearchInput({
             setSearch(true);
             navigate("/products");
           }}
-        // autoFocus
+          // autoFocus
         />
         <Search
           className="absolute left-4 top-1/2 -translate-y-1/2"
@@ -79,6 +79,11 @@ export default function SearchInput({
           onMouseDown={(e) => {
             e.preventDefault();
             e.stopPropagation();
+
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete("name");
+            setSearchParams(params);
+            setName("");
 
             localStorage.removeItem("isSearch");
             setIsSearchLocal(false);

@@ -14,6 +14,10 @@ import useHeader from "./useHeader";
 import { BRAND_NAME } from "../../BrandText";
 import UserMenu from "./UserMenu";
 
+/**
+ * Header Component: Main navigation bar for desktop and mobile.
+ * مكون الترويسة: شريط التنقل الرئيسي للحاسوب والهاتف.
+ */
 export default function Header() {
   const {
     isMenuOpen,
@@ -34,12 +38,13 @@ export default function Header() {
     isSearchLocal,
     navigate,
     setIsSearchLocal,
+    dropdownRef,
   } = useHeader();
   const location = useLocation();
 
   return (
     <>
-      {/* Desktop Header */}
+      {/* Desktop Header | ترويسة الحاسوب */}
       <header className="shadow-md py-4 px-6 max-[1180px]:hidden">
         <div className="w-full flex items-center justify-between gap-6">
           <nav className="flex items-center gap-6 font-medium">
@@ -116,7 +121,7 @@ export default function Header() {
               />
             </div>
 
-            <div className="relative inline-block text-left">
+            <div className="relative inline-block text-left" ref={dropdownRef}>
               <span
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
@@ -165,8 +170,8 @@ export default function Header() {
             </div>
 
             <div className="flex items-center gap-8 mr-2">
-              {user && user.user ? (
-                <UserMenu user={user} handleLogout={handleLogout} />
+              {user ? (
+                <UserMenu handleLogout={handleLogout} />
               ) : (
                 <motion.div
                   whileHover={{ scale: 1.2, y: -4 }}
@@ -242,7 +247,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Header */}
+      {/* Top Mobile Header | ترويسة الهاتف العلوية */}
       <header className="shadow-md py-4 px-1 min-[1180px]:hidden">
         <div className="w-full flex items-center justify-between gap-6">
           <motion.div
@@ -258,51 +263,57 @@ export default function Header() {
             </button>
           </motion.div>
           {isMenuOpen && (
-            <div className="fixed top-24 left-0 h-full bg-(--color-cornsilk) w-2/3 shadow-lg z-50 flex flex-col p-6 transition-transform duration-300">
-              <nav className="flex flex-col gap-4 font-medium">
-                <Link
-                  to="/"
-                  className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
-                  onClick={() => setIsMenuOpen(false)}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-tiger)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-dark)")
-                  }
-                >
-                  Home
-                </Link>
+            <>
+              <div
+                className="fixed inset-0 z-40 w-full h-full"
+                onClick={() => setIsMenuOpen(false)}
+              />
+              <div className="fixed top-24 left-0 h-full bg-(--color-cornsilk) w-2/3 shadow-lg z-50 flex flex-col p-6 transition-transform duration-300">
+                <nav className="flex flex-col gap-4 font-medium">
+                  <Link
+                    to="/"
+                    className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
+                    onClick={() => setIsMenuOpen(false)}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "var(--color-tiger)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "var(--color-dark)")
+                    }
+                  >
+                    Home
+                  </Link>
 
-                <Link
-                  to="/products"
-                  className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
-                  onClick={() => setIsMenuOpen(false)}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-tiger)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-dark)")
-                  }
-                >
-                  All Products
-                </Link>
+                  <Link
+                    to="/products"
+                    className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
+                    onClick={() => setIsMenuOpen(false)}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "var(--color-tiger)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "var(--color-dark)")
+                    }
+                  >
+                    All Products
+                  </Link>
 
-                <Link
-                  to="/contact-us"
-                  className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
-                  onClick={() => setIsMenuOpen(false)}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-tiger)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-dark)")
-                  }
-                >
-                  Contact Us
-                </Link>
-              </nav>
-            </div>
+                  <Link
+                    to="/contact-us"
+                    className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
+                    onClick={() => setIsMenuOpen(false)}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "var(--color-tiger)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "var(--color-dark)")
+                    }
+                  >
+                    Contact Us
+                  </Link>
+                </nav>
+              </div>
+            </>
           )}
 
           <Link to="/">
@@ -317,7 +328,7 @@ export default function Header() {
             </h1>
           </Link>
 
-          <div className="relative inline-block text-left">
+          <div className="relative inline-block text-left" ref={dropdownRef}>
             <span
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
@@ -367,7 +378,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Header */}
+      {/* Floating Bottom Mobile Header | ترويسة الهاتف العائمة السفلية */}
       <header
         className="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 
              flex items-center justify-between shadow-lg 
@@ -439,8 +450,8 @@ export default function Header() {
           </Link>
         </motion.div>
 
-        {user && user.user ? (
-          <UserMenu user={user} handleLogout={handleLogout} />
+        {user ? (
+          <UserMenu handleLogout={handleLogout} />
         ) : (
           <motion.div
             whileHover={{ scale: 1.2, y: -4 }}

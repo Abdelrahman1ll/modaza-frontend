@@ -2,7 +2,15 @@ import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import "./AddToCartButton.css"; // هنضيف الكي فريمز هنا
 
-export default function AddToCartButton({ addToCart }: { addToCart: () => void }) {
+/**
+ * AddToCartButton: A reusable button component with loading state for cart operations.
+ * زر الإضافة للسلة: مكون زر قابل لإعادة الاستخدام مع حالة تحميل لعمليات السلة.
+ */
+export default function AddToCartButton({
+  addToCart,
+}: {
+  addToCart: () => void;
+}) {
   const [clicked, setClicked] = useState(false);
 
   const handleClick = () => {

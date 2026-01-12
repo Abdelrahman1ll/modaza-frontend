@@ -6,6 +6,10 @@ import useProductForm, {
   type SizeErrorType,
 } from "./useProductForm";
 
+/**
+ * ProductForm: Modal/Page for administrative product creation and editing.
+ * نموذج المنتج: واجهة إدارية لإنشاء وتعديل بيانات المنتجات.
+ */
 export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
   const {
     formData,

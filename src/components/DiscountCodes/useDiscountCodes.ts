@@ -5,8 +5,13 @@ import {
   useDeleteDiscountCodesMutation,
 } from "../../redux/DiscountCodes/apiDiscountCodes";
 import { toast } from "react-toastify";
+import { formatEndDateArabic } from "../../utils/formatters";
 import { useRef, useState } from "react";
 import type { DiscountCodeType } from "../../types/DiscountCodeType";
+/**
+ * useDiscountCodes: CRUD logic for managing discount codes and their validation.
+ * خطاف أكواد الخصم: منطق العمليات الأساسية لإدارة أكواد الخصم والتحقق منها.
+ */
 export default function useDiscountCodes() {
   const reviewFormRef = useRef<HTMLDivElement>(null);
   const [newCode, setNewCode] = useState("");
@@ -21,23 +26,6 @@ export default function useDiscountCodes() {
     usePatchDiscountCodesMutation();
   const [deleteDiscountCodes, { isLoading: isDeleting }] =
     useDeleteDiscountCodesMutation();
-
-  function formatEndDateArabic(dateString: string) {
-    const date = new Date(dateString);
-
-    return (
-      date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "numeric",
-        day: "numeric",
-      }) +
-      " " +
-      date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    );
-  }
 
   const handleAddOrSave = async () => {
     const code = newCode.trim().toUpperCase();

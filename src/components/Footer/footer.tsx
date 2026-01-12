@@ -4,6 +4,10 @@ import { useContext } from "react";
 import { SignupContext } from "../Signup/SignupContext";
 import { Link } from "react-router-dom";
 import { BRAND_EMAIL, BRAND_NAME, BRAND_PHONE } from "../../BrandText";
+/**
+ * Footer: Site footer with brand info, quick links, and social media.
+ * التذييل: ذيل الموقع يحتوي على معلومات العلامة التجارية، الروابط السريعة، ووسائل التواصل.
+ */
 export default function Footer() {
   const { openSignup } = useContext(SignupContext);
   return (

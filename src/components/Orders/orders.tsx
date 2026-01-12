@@ -3,7 +3,12 @@ import { Package, ShoppingBag, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { OrderType } from "../../types/OrderType";
 import useOrders from "./useOrders";
+import { SkeletonList } from "../Skeleton";
 
+/**
+ * Orders: List of user or admin orders showing status and details.
+ * الطلبات: قائمة طلبات المستخدم أو الأدمن توضح الحالة والتفاصيل.
+ */
 export default function Orders() {
   const { orders, isLoading, formatEndDateArabic } = useOrders();
   return (
@@ -18,32 +23,8 @@ export default function Orders() {
       </motion.h1>
 
       {isLoading ? (
-        <div className="w-full max-w-3xl space-y-4">
-          {[1, 2, 3, 4].map((i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="rounded-2xl shadow-sm p-3 mb-4 flex items-center justify-between animate-pulse bg-white"
-            >
-              {/* Left side */}
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gray-200"></div>
-
-                <div className="space-y-2">
-                  <div className="h-3 w-32 bg-gray-200 rounded"></div>
-                  <div className="h-3 w-20 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-
-              {/* Right side */}
-              <div className="text-right space-y-2">
-                <div className="h-3 w-20 bg-gray-200 rounded ml-auto"></div>
-                <div className="h-3 w-28 bg-gray-200 rounded ml-auto"></div>
-              </div>
-            </motion.div>
-          ))}
+        <div className="w-full max-w-3xl">
+          <SkeletonList count={4} />
         </div>
       ) : orders?.length === 0 ? (
         <motion.div

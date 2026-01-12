@@ -1,5 +1,4 @@
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
+import { AuthContext } from "../AuthContext";
 import { useGetCartQuery } from "../../redux/Cart/apiCart";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -28,13 +27,28 @@ export default function useHeader() {
     setIsSearchLocal(value);
   }, []);
   const { openSignup } = useContext(SignupContext);
+  const { user, logout: handleLogout } = useContext(AuthContext);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 👇 Click-outside to close the country dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // 👇 تحميل القيمة من URL وتحديثها عند أي تغيير
   useEffect(() => {
     const nameFromUrl = searchParams.get("name") || "";
-    if (nameFromUrl !== nameInput) {
-      setNameInput(nameFromUrl);
-    }
+    setNameInput(nameFromUrl);
+    initialized.current = true;
   }, [searchParams]);
 
   // 👇 تحديث URL مع debounce
@@ -60,27 +74,7 @@ export default function useHeader() {
     return () => clearTimeout(handler);
   }, [nameInput, setSearchParams]);
 
-  const secretKey = import.meta.env.VITE_SECRET_KEY;
-  const encryptedUser = Cookies.get("user");
-  let user: any = null;
-  if (encryptedUser) {
-    const decryptedUser = CryptoJS.AES.decrypt(
-      encryptedUser,
-      secretKey
-    ).toString(CryptoJS.enc.Utf8);
-
-    user = JSON.parse(decryptedUser);
-  }
-
-  const handleLogout = () => {
-    Cookies.remove("user");
-    localStorage.removeItem("usedProfile10");
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 100);
-  };
-
-  const isUser = user?.user.role === "user";
+  const isUser = user?.role === "user";
 
   const { data: cart, refetch: refetchCart } = useGetCartQuery(
     {},
@@ -114,5 +108,6 @@ export default function useHeader() {
     isSearchLocal,
     navigate,
     setIsSearchLocal,
+    dropdownRef,
   };
 }

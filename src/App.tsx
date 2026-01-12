@@ -62,7 +62,15 @@ const CheckoutPage = lazy(() => import("./pages/Orders/CheckoutPage"));
 const ContactUsPage = lazy(() => import("./pages/QuickLinks/contactUsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-export default function App() {
+export default /**
+ * App component: The root component that defines the application routing and page structure.
+ * مكون App: المكون الأساسي الذي يحدد مسارات التطبيق وهيكل الصفحات.
+ */
+function App() {
+  /**
+   * Defines the routes and protected layouts for different user roles.
+   * يتم هنا تعريف المسارات والتنسيقات المحمية لكل دور مستخدم.
+   */
   const location = useLocation();
 
   // هتكون true لو الصفحة الحالية هي checkout
@@ -99,10 +107,35 @@ export default function App() {
             element={<ProductDetailsPage />}
           />
           <Route path="/cart" element={<CartPage />} />
+
           <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/orders" element={<OrdersPage />} />
-          <Route path="/orders/:id" element={<OrderDetailsPage />} />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute roles={["owner", "admin", "user"]}>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute roles={["owner", "admin", "user"]}>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/orders/:id"
+            element={
+              <ProtectedRoute roles={["owner", "admin", "user"]}>
+                <OrderDetailsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/sales-payment-policy"
             element={<SalesPaymentPolicyPage />}

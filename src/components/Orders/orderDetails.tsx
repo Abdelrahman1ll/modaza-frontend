@@ -12,7 +12,13 @@ import {
 
 import OrderProgress from "./orderProgress";
 import useOrderDetails from "./useOrderDetails";
+import { SkeletonList } from "../Skeleton";
+import { DELIVERY } from "../../BrandText";
 
+/**
+ * OrderDetails: Comprehensive view of a single order, including items, shipping, and status history.
+ * تفاصيل الطلب: عرض شامل لطلب واحد، بما في ذلك العناصر، الشحن، وسجل الحالة.
+ */
 export default function OrderDetails() {
   const {
     order,
@@ -193,9 +199,7 @@ export default function OrderDetails() {
 
           <div className="lg:col-span-2 rounded-2xl">
             {isLoadingOrders ? (
-              <div className="flex justify-center items-center py-10">
-                <div className="w-10 h-10 border-4 border-(--color-tiger) border-t-transparent rounded-full animate-spin"></div>
-              </div>
+              <SkeletonList count={3} />
             ) : order?.items.length === 0 ? (
               <div className="flex flex-col items-center py-6">
                 <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
@@ -239,7 +243,7 @@ export default function OrderDetails() {
                         </h3>
                         <div className="flex items-center p-0.5 gap-2 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30">
                           <button
-                            className="w-6 h-6 flex items-center justify-center text-white rounded-full transition"
+                            className="w-6 h-6 flex items-center justify-center text-white rounded-full transition opacity-50"
                             style={{ backgroundColor: "var(--color-tiger)" }}
                           >
                             <Minus size={14} />
@@ -250,7 +254,7 @@ export default function OrderDetails() {
                           >
                             {item?.quantity}
                           </span>
-                          <button className="w-6 h-6 flex items-center justify-center text-white rounded-full transition bg-(--color-tiger)">
+                          <button className="w-6 h-6 flex items-center justify-center text-white rounded-full transition bg-(--color-tiger) opacity-50">
                             <Plus size={14} />
                           </button>
                         </div>
@@ -319,7 +323,7 @@ export default function OrderDetails() {
                   </p>
                   <p className="text-sm" style={{ color: "var(--color-dark)" }}>
                     Estimated Delivery:{" "}
-                    <span className="font-medium">2–3 days</span>
+                    <span className="font-medium">3 - 7 days</span>
                   </p>
                 </div>
               </div>
@@ -338,7 +342,7 @@ export default function OrderDetails() {
                   </span>
                 </p>
                 <p className="text-sm" style={{ color: "var(--color-dark)" }}>
-                  Delivered by FastExpress
+                  {DELIVERY}
                 </p>
               </div>
             </div>

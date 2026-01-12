@@ -8,6 +8,10 @@ import {
   usePatchUsersOwnerByIdMutation,
 } from "../../redux/users/apiUsers";
 
+/**
+ * EditUserOwner: Administrative interface for editing user details from the owner's perspective.
+ * تعديل المستخدم (المالك): واجهة إدارية لتعديل بيانات المستخدمين من قِبل مالك الموقع.
+ */
 export default function EditUserOwner() {
   const { id } = useParams();
   const [userData, setUserData] = useState({
@@ -125,7 +129,7 @@ export default function EditUserOwner() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4">
+    <div className="flex justify-center items-center my-12 p-4">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -136,14 +140,14 @@ export default function EditUserOwner() {
           Edit User
         </h2>
 
-        <form onSubmit={handleSave} className="space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <form onSubmit={handleSave} className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
             {/* قسم البيانات الشخصية */}
             <div>
               <h3 className="text-lg font-semibold text-(--color-pakistan) mb-3 border-b pb-1">
                 Personal Information
               </h3>
-              <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 font-medium text-(--color-pakistan)">
                     First Name
@@ -225,7 +229,7 @@ export default function EditUserOwner() {
               <h3 className="text-lg font-semibold text-(--color-pakistan) mb-3 border-b pb-1">
                 Contact Information
               </h3>
-              <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block mb-1 font-medium text-(--color-pakistan)">
                     Email

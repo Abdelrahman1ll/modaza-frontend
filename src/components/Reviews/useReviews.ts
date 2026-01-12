@@ -8,6 +8,10 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRef, useState } from "react";
 import type { ReviewType } from "../../types/ReviewsType";
+/**
+ * useReviews: Logic for fetching, posting, and deleting product reviews.
+ * خطاف المراجعات: منطق جلب ونشر وحذف مراجعات المنتجات.
+ */
 export default function useReviews() {
   const { id } = useParams();
   const { data: reviewsData, refetch } = useGetReviewsQuery(id);

@@ -1,3 +1,7 @@
+/**
+ * FAQs: Frequently Asked Questions with accordion-style answers.
+ * الأسئلة الشائعة: الأسئلة الأكثر شيوعاً مع إجابات بنظام القائمة المنسدلة.
+ */
 export default function FAQs() {
   return (
     <div className="max-w-5xl mx-auto p-6 md:p-12 rounded-2xl shadow-lg border border-(--color-earth) m-8 overflow-hidden">

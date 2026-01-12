@@ -5,10 +5,14 @@ import { useGetProductsQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * ProductSlider: Horizontal draggable slider for featured products.
+ * منزلق المنتجات: منزلق أفقي قابل للسحب للمنتجات المميزة.
+ */
 export default function ProductSlider() {
   const navigate = useNavigate();
 
-  const { data: products, isLoading } = useGetProductsQuery('/products');
+  const { data: products, isLoading } = useGetProductsQuery("/products");
   const [index, setIndex] = useState(0);
   const [isGrabbing, setIsGrabbing] = useState(false);
 

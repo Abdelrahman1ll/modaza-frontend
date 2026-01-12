@@ -4,6 +4,10 @@ import type { ProductSizeType } from "../../types/ProductType";
 import MotionZoomImage from "./ImageZoom";
 import useProductDetail from "./useProductDetail";
 import AddToCartButton from "./AddToCartButton";
+/**
+ * ProductDetail: Renders the full details of a specific product, including images, sizes, and stock.
+ * تفاصيل المنتج: يعرض التفاصيل الكاملة لمنتج معين، بما في ذلك الصور، المقاسات، وحالة المخزون.
+ */
 export default function ProductDetail() {
   const {
     product,

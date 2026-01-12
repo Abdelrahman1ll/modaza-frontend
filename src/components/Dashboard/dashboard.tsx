@@ -24,6 +24,10 @@ import {
 import { useGetDashboardOrdersQuery } from "../../redux/Orders/apiOrders";
 import Loading from "../Loading";
 
+/**
+ * Dashboard: Main administrative overview showing key metrics and system status.
+ * لوحة التحكم: نظرة إدارية عامة تعرض المؤشرات الرئيسية وحالة النظام.
+ */
 export default function Dashboard() {
   const {
     data: dashboardOrders,
@@ -51,7 +55,11 @@ export default function Dashboard() {
 
   // Totals Cards
   const totalsCards = [
-    { title: "Total Orders", value: totals.totalOrders, icon: <ShoppingBag /> },
+    {
+      title: "Total Orders",
+      value: totals.totalOrders,
+      icon: <ShoppingBag />,
+    },
     { title: "Today Orders", value: totals.totalToday, icon: <TrendingUp /> },
     {
       title: "Yesterday Orders",
@@ -114,7 +122,11 @@ export default function Dashboard() {
                 }}
               >
                 <div className="text-3xl">{item.icon}</div>
-                <p className="text-sm opacity-90">{item.title}</p>
+                <p className="text-sm opacity-90">
+                  {item.title === "Total Orders"
+                    ? item.title + " (" + totals?.ordersLength + ")"
+                    : item.title}
+                </p>
                 <p className="text-3xl font-bold">{item.value}</p>
               </div>
             ))}

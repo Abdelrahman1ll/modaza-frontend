@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
-import { X, Plus, Minus, ShoppingCart } from "lucide-react";
+import { X, Plus, Minus, ShoppingCart, AlertCircle } from "lucide-react";
 import type { CartItemType } from "../../types/CartType";
 import UseCart from "./useCart";
 
+/**
+ * Cart: Shopping cart interface for viewing, adjusting, and proceeding to checkout.
+ * السلة: واجهة سلة التسوق لعرض وتعديل المنتجات والمتابعة لإتمام الطلب.
+ */
 export default function Cart() {
   const {
     data,
@@ -82,30 +86,26 @@ export default function Cart() {
           </button>
         </motion.div>
       ) : isError ? (
-        <div className="flex flex-col items-center justify-center h-64 rounded-2xl shadow-md p-6">
-          <p className="text-2xl text-red-600 font-bold mb-2">
-            Error Loading Cart
+        <motion.div
+          className="flex flex-col items-center justify-center h-64 rounded-2xl shadow-md p-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <AlertCircle size={60} className="text-(--color-tiger) mb-4" />
+          <p className="text-xl sm:text-2xl font-bold text-(--color-dark) mb-2 text-center">
+            The cart is empty
           </p>
-          <p className="text-sm text-red-500 text-center mb-4">
-            Something went wrong. Please try again.
+          <p className="text-center text-sm sm:text-base text-(--color-dark)/70 mb-4">
+            Log in and take your first order, delivery is free.
           </p>
           <button
-            onClick={() => navigate("/")}
-            className="px-6 py-2 rounded-full font-semibold text-white shadow-md transition"
-            style={{
-              backgroundColor: "var(--color-tiger)",
-              transition: "background-color 0.3s",
-            }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-earth)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "var(--color-tiger)")
-            }
+            onClick={() => navigate("/products")}
+            className="px-6 py-2 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-earth) transition shadow-md"
           >
-            Retry
+            Retry Now
           </button>
-        </div>
+        </motion.div>
       ) : (
         <div className="flex flex-col gap-6">
           {data?.carts?.items.map((item: CartItemType) => {

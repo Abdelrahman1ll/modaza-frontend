@@ -10,7 +10,15 @@ import {
   LogOut,
 } from "lucide-react";
 
-export default function UserMenu({ user, handleLogout }: any) {
+import { AuthContext } from "../AuthContext";
+import { useContext } from "react";
+
+export default function UserMenu({
+  handleLogout,
+}: {
+  handleLogout: () => void;
+}) {
+  const { user } = useContext(AuthContext);
   const avatarRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
@@ -47,7 +55,7 @@ export default function UserMenu({ user, handleLogout }: any) {
         whileHover={{ scale: 1.05 }}
         title="حسابي"
       >
-        {user?.user?.email.charAt(0).toUpperCase() || "A"}
+        {user?.email?.charAt(0).toUpperCase() || "A"}
       </motion.div>
 
       {/* القائمة المنسدلة */}
@@ -59,7 +67,7 @@ export default function UserMenu({ user, handleLogout }: any) {
           exit={{ opacity: 0 }}
           className={`absolute right-0 mt-6 w-52 bg-(--color-cornsilk) text-(--color-pakistan) shadow-lg rounded-xl overflow-hidden border border-(--color-earth) z-50
                 ${
-                  user?.user.role === "owner"
+                  user?.role === "owner"
                     ? "max-[1180px]:-top-132"
                     : "max-[1180px]:-top-42"
                 }
@@ -88,7 +96,7 @@ export default function UserMenu({ user, handleLogout }: any) {
             />{" "}
             <span>My Orders</span>
           </Link>
-          {user?.user.role === "owner" && (
+          {user?.role === "owner" && (
             <div>
               {[
                 { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },

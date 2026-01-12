@@ -1,31 +1,35 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
 
+/**
+ * ApiReviews: Product reviews and ratings.
+ * واجهة برمجة التقييمات: إدارة مراجعات وتقييمات المنتجات.
+ */
 export const ApiReviews = createApi({
   reducerPath: "apiReviews",
   baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
-    PostReviews: builder.mutation({
+    postReviews: builder.mutation({
       query: (data) => ({
         url: "/reviews",
         method: "POST",
         body: data,
       }),
     }),
-    GetReviews: builder.query({
+    getReviews: builder.query({
       query: (id) => ({
         url: `/reviews/${id}`,
         method: "GET",
       }),
     }),
-    PatchReviews: builder.mutation({
+    patchReviews: builder.mutation({
       query: ({ data, id }) => ({
         url: `/reviews/${id}`,
         method: "PATCH",
         body: data,
       }),
     }),
-    DeleteReviews: builder.mutation({
+    deleteReviews: builder.mutation({
       query: (id) => ({
         url: `/reviews/${id}`,
         method: "DELETE",

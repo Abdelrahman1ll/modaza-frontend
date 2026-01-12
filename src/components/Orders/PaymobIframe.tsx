@@ -11,6 +11,10 @@ const paymentCache = new Map<
   string,
   { clientSecret: string; publicKey: string }
 >();
+/**
+ * PaymobIframe: Secure integration for credit card payments using the Paymob gateway.
+ * إطار الدفع (Paymob): تكامل آمن للمدفوعات عبر البطاقات الائتمانية باستخدام بوابة Paymob.
+ */
 export default function PaymobIframe({
   paymentData,
   onCardValidityChange,
@@ -51,7 +55,7 @@ export default function PaymobIframe({
       }
 
       if (data.result === "SUCCESS") {
-        await new Promise((resolve) => setTimeout(resolve, 1000 * 5));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         await handlePayment();
         setIsPaying();
         onCardValidityChange(false);

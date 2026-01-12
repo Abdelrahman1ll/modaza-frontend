@@ -4,6 +4,10 @@ import { useGetProductsQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
 import { PackageSearch } from "lucide-react";
 
+/**
+ * HomeProducts: Horizontal draggable slider for featured products.
+ * منتجات الصفحة الرئيسية: شريط عرض جانبي للمنتجات المميزة.
+ */
 export default function HomeProducts() {
   const {
     data: products,

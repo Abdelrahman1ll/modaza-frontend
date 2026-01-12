@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Edit, Trash2, Palette } from "lucide-react";
+import { SkeletonList } from "../Skeleton";
 import {
   useGetColorsQuery,
   usePostColorMutation,
@@ -9,6 +10,10 @@ import {
 } from "../../redux/color/apiColor";
 import { toast } from "react-toastify";
 
+/**
+ * Color: Administrative interface for managing product color options.
+ * الألوان: واجهة إدارية لإدارة خيارات ألوان المنتجات.
+ */
 export default function Color() {
   const { data: colors, isLoading, error, refetch } = useGetColorsQuery({});
   const [postColor] = usePostColorMutation();
@@ -63,10 +68,8 @@ export default function Color() {
   /* ===================== Loading ===================== */
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto mt-12 p-4 grid gap-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-16 bg-gray-200 rounded-2xl animate-pulse" />
-        ))}
+      <div className="max-w-4xl mx-auto mt-12 p-4">
+        <SkeletonList count={5} />
       </div>
     );
   }

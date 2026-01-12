@@ -4,6 +4,10 @@ import { ChevronRight, ChevronLeft, PackageSearch, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import UseWishlist from "./useWishlist";
 
+/**
+ * Wishlist: Displays the user's favorite products.
+ * قائمة الأمنيات: عرض المنتجات التي يفضلها المستخدم.
+ */
 export default function Wishlist() {
   const {
     handleToggleWishlist,
@@ -173,7 +177,7 @@ export default function Wishlist() {
                         </Link>
 
                         {/* زر التعديل (يظهر فقط لو المستخدم مش "user") */}
-                        {user && user.user.role !== "user" && (
+                        {user && user.role !== "user" && (
                           <Link
                             to={`/edit-product/${wishl?.product.id}`}
                             className="flex-1"

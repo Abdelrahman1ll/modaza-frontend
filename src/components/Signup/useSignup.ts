@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   useUsersCheckEmailMutation,
   usePostUsersMutation,
 } from "../../redux/users/apiUsers";
 import { toast } from "react-toastify";
-import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
+import { AuthContext } from "../AuthContext";
 
+/**
+ * useSignup: Logic for email verification, OTP handling, and new user creation.
+ * خطاف التسجيل: منطق التحقق من البريد، معالجة رمز التحقق، وإنشاء مستخدم جديد.
+ */
 export default function useSignup(onClose: () => void) {
+  const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState<string>("");
   const [showCodeInput, setShowCodeInput] = useState<boolean>(false);
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -35,16 +39,55 @@ export default function useSignup(onClose: () => void) {
   ) => {
     const value = e.target.value;
 
-    if (/^\d?$/.test(value)) {
-      const newCode = [...code];
-      newCode[index] = value;
-      setCode(newCode);
+    // Handle normal typing (single digit)
+    if (value.length <= 1) {
+      if (/^\d?$/.test(value)) {
+        const newCode = [...code];
+        newCode[index] = value;
+        setCode(newCode);
 
-      if (value && index < code.length - 1) {
-        const nextInput = document.getElementById(
-          `code-${index + 1}`
-        ) as HTMLInputElement;
+        // Auto-focus next input
+        if (value && index < 5) {
+          const nextInput = document.getElementById(
+            `code-${index + 1}`
+          ) as HTMLInputElement;
+          nextInput?.focus();
+        }
+      }
+      return;
+    }
+
+    // Handle paste/autofill (multiple digits) via onChange
+    // This catches mobile cases where onPaste might not trigger but value changes
+    const numbers = value.replace(/\D/g, "").split("");
+    if (numbers.length > 0) {
+      setCode((prev) => {
+        const newCode = [...prev];
+        // Distribute numbers starting from current index
+        for (let i = 0; i < numbers.length; i++) {
+          if (index + i < 6) {
+            newCode[index + i] = numbers[i];
+          }
+        }
+        return newCode;
+      });
+
+      // Focus the last filled input
+      const nextIndex = Math.min(index + numbers.length, 5);
+      const nextInput = document.getElementById(
+        `code-${nextIndex}`
+      ) as HTMLInputElement;
+      if (nextIndex < 5 && numbers.length > 0) {
+        // Focus next empty or the last one if full
         nextInput?.focus();
+      } else {
+        nextInput?.focus();
+      }
+
+      // Specifically for the case where we fill up to the end
+      if (index + numbers.length >= 6) {
+        const lastInput = document.getElementById("code-5") as HTMLInputElement;
+        lastInput?.focus();
       }
     }
   };
@@ -54,38 +97,53 @@ export default function useSignup(onClose: () => void) {
     index: number
   ) => {
     if (e.key === "Backspace") {
-      e.preventDefault();
-      const newCode = [...code];
-      newCode[index] = "";
-      setCode(newCode);
-
-      if (index > 0) {
+      // If current field is empty and we hit backspace, move to prev
+      if (!code[index] && index > 0) {
+        e.preventDefault();
         const prevInput = document.getElementById(
           `code-${index - 1}`
         ) as HTMLInputElement;
         prevInput?.focus();
+        // Optional: delete prev value too on backspace
+        /* 
+          const newCode = [...code];
+          newCode[index - 1] = "";
+          setCode(newCode);
+          */
+      } else if (code[index]) {
+        // Standard backspace behavior handles deleting the char normally
+        // But we update state via onChange
+        const newCode = [...code];
+        newCode[index] = "";
+        setCode(newCode);
       }
     }
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasteData = e.clipboardData.getData("Text").slice(0, 6);
-    const newCode = pasteData.split("");
-    setCode((prev) => {
-      const updated = [...prev];
-      for (let i = 0; i < updated.length; i++) {
-        updated[i] = newCode[i] || "";
-      }
-      return updated;
-    });
+    const pasteData = e.clipboardData.getData("text").slice(0, 6);
+    const numbers = pasteData.replace(/\D/g, "").split("");
 
-    // وضع التركيز على آخر مربع تم لصقه
-    const lastIndex = Math.min(newCode.length, code.length - 1);
-    const lastInput = document.getElementById(
-      `code-${lastIndex}`
-    ) as HTMLInputElement;
-    lastInput?.focus();
+    if (numbers.length > 0) {
+      setCode((prev) => {
+        const newCode = [...prev];
+        for (let i = 0; i < numbers.length; i++) {
+          if (i < 6) newCode[i] = numbers[i];
+        }
+        return newCode;
+      });
+
+      const lastIndex = Math.min(numbers.length, 5);
+      // Find the input to focus - usually the one after the last pasted digit
+      // But if length is 6, stay on 5
+      const targetIndex = numbers.length === 6 ? 5 : lastIndex;
+
+      const lastInput = document.getElementById(
+        `code-${targetIndex}`
+      ) as HTMLInputElement;
+      lastInput?.focus();
+    }
   };
 
   const handleVerifyCode = async (e: React.FormEvent) => {
@@ -104,18 +162,7 @@ export default function useSignup(onClose: () => void) {
       }).unwrap();
 
       if (response) {
-        const secretKey = import.meta.env.VITE_SECRET_KEY;
-        const encryptedUser = CryptoJS.AES.encrypt(
-          JSON.stringify(response),
-          secretKey
-        ).toString();
-        Cookies.set("user", encryptedUser, {
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90),
-          secure: import.meta.env.VITE_NODE_ENV === "production" ? true : false,
-          sameSite: "strict",
-          path: "/",
-        });
-
+        setUser(response); // Pass the full response with tokens
         toast.success("Signup successfully");
         onClose();
         setCode(["", "", "", "", "", ""]);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Edit, Trash2, PackageSearch } from "lucide-react";
+import { SkeletonList } from "../Skeleton";
 import {
   useGetCategoryQuery,
   usePostCategoryMutation,
@@ -9,6 +10,10 @@ import {
 } from "../../redux/category/apiCategory";
 import { toast } from "react-toastify";
 
+/**
+ * Category: Administrative interface for creating and managing product categories.
+ * الأصناف: واجهة إدارية لإنشاء وإدارة فئات (أصناف) المنتجات.
+ */
 export default function Category() {
   const {
     data: categories,
@@ -59,10 +64,8 @@ export default function Category() {
   /* ===================== Loading Skeleton ===================== */
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto mt-12 p-4 grid gap-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-16 bg-gray-200 rounded-2xl animate-pulse" />
-        ))}
+      <div className="max-w-4xl mx-auto mt-12 p-4">
+        <SkeletonList count={5} />
       </div>
     );
   }

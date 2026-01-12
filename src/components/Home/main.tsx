@@ -38,6 +38,10 @@ const sections: Section[] = [
     height: "min-h-[80vh]",
   },
 ];
+/**
+ * Main (Hero) Section: The landing view of the home page.
+ * القسم الرئيسي: واجهة العرض الأولى في الصفحة الرئيسية.
+ */
 export default function Main() {
   return (
     <>

@@ -1,10 +1,7 @@
 import type { OrderEmail } from "../../types/OrderEmailType";
 import useEmailOrderDispatcher from "./useEmailOrderDispatcher";
 
-
-
 export default function EmailOrderDispatcher() {
-
   const {
     data,
     isLoading,
@@ -21,7 +18,7 @@ export default function EmailOrderDispatcher() {
     formatEndDateArabic,
     editingId,
   } = useEmailOrderDispatcher();
- 
+
   return (
     <div className="mt-16 flex flex-col items-center justify-center  p-4">
       <div
@@ -33,27 +30,35 @@ export default function EmailOrderDispatcher() {
         </h2>
 
         {/* NAME FIELD */}
-        <input
-          type="text"
-          placeholder="Name"
-          value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          className="w-full p-3 mb-4 border border-(--color-tiger) rounded-full text-center 
-               focus:ring-1 focus:ring-(--color-tiger) outline-none"
-        />
+        <div className="flex flex-col gap-2 mb-4">
+          <label className="text-(--color-dark) font-semibold ml-2">Name</label>
+          <input
+            type="text"
+            placeholder="Name"
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            className="w-full p-3 border border-(--color-tiger) rounded-full text-center 
+                 focus:ring-1 focus:ring-(--color-tiger) outline-none text-(--color-dark) placeholder:text-gray-500"
+          />
+        </div>
         {errors.name && (
           <p className="text-red-500 text-sm mb-2 text-center">{errors.name}</p>
         )}
 
         {/* EMAIL FIELD */}
-        <input
-          type="email"
-          placeholder="Email"
-          value={customerEmail}
-          onChange={(e) => setCustomerEmail(e.target.value)}
-          className="w-full p-3 mb-2 border border-(--color-tiger) rounded-full text-center 
-               focus:ring-1 focus:ring-(--color-tiger) outline-none"
-        />
+        <div className="flex flex-col gap-2 mb-2">
+          <label className="text-(--color-dark) font-semibold ml-2">
+            Email
+          </label>
+          <input
+            type="email"
+            placeholder="Email"
+            value={customerEmail}
+            onChange={(e) => setCustomerEmail(e.target.value)}
+            className="w-full p-3 border border-(--color-tiger) rounded-full text-center 
+                 focus:ring-1 focus:ring-(--color-tiger) outline-none text-(--color-dark) placeholder:text-gray-500"
+          />
+        </div>
         {errors.email && (
           <p className="text-red-500 text-sm mb-2 text-center">
             {errors.email}

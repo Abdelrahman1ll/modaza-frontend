@@ -5,6 +5,10 @@ import {
 } from "../../redux/Cart/apiCart";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+/**
+ * useCart: Logic for managing cart items, quantities, and removal.
+ * خطاف السلة: منطق إدارة منتجات السلة والكميات والحذف.
+ */
 export default function UseCart() {
   const navigate = useNavigate();
   const { data, isLoading, refetch, isError } = useGetCartQuery({});

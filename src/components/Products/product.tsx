@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import type { ProductType } from "../../types/ProductType";
 import useProduct from "./useProduct";
 
+/**
+ * Product: Grid display of products with search and filter results.
+ * المنتج: عرض شبكة المنتجات مع نتائج البحث والتصفية.
+ */
 export default function Product() {
   const {
     products,
@@ -186,7 +190,7 @@ export default function Product() {
                     {/* الأزرار */}
                     <div className="w-full">
                       {/* زر التعديل (يظهر فقط لو المستخدم مش "user") */}
-                      {user && user.user.role !== "user" && (
+                      {user && user.role !== "user" && (
                         <Link
                           to={`/edit-product/${product.id}`}
                           className="flex-1"
