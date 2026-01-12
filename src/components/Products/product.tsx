@@ -52,6 +52,7 @@ export default function Product() {
           ) : (
             products?.products.map((product: ProductType, index: number) => {
               const isHovered = hoveredIds[product.id] || false;
+              const isOutOfStock = product.stock === 0;
               return (
                 <motion.div
                   key={index}
@@ -130,6 +131,28 @@ export default function Product() {
                       <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-2 py-0.5 rounded-full shadow-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500">
                         {product.discountPercentage.toFixed(0)}% off
                       </span>
+                    )}
+
+                    {/* Out of Stock Overlay */}
+                    {isOutOfStock && (
+                      <div className="absolute bottom-4 left-4 z-20 flex items-center justify-cente">
+                        <motion.button
+                          disabled
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.3 }}
+                          className="
+                            px-4 py-1
+                            rounded-full
+                            bg-(--color-tiger)
+                            text-white
+                            text-lg
+                            shadow-xl
+                         "
+                        >
+                          Sold out
+                        </motion.button>
+                      </div>
                     )}
                   </div>
 

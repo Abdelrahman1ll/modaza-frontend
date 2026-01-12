@@ -173,7 +173,8 @@ export default function ProductDetail() {
                   product?.sizes?.map(
                     (size: ProductSizeType, index: number) => {
                       if (!size.size) return null;
-                      const isOutOfStock = size.stock === 0;
+                      const isOutOfStock =
+                        size.stock === 0 || product.stock === 0;
                       return (
                         <motion.button
                           key={index}

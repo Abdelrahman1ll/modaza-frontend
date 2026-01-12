@@ -8,7 +8,7 @@ import {
   House,
   Heart,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import SearchInput from "./search";
 import useHeader from "./useHeader";
 import { BRAND_NAME } from "../../BrandText";
@@ -24,8 +24,8 @@ export default function Header() {
     setIsOpen,
     selected,
     setSelected,
-    name,
-    setName,
+    nameInput,
+    setNameInput,
     handleLogout,
     user,
     totalItems,
@@ -35,6 +35,7 @@ export default function Header() {
     navigate,
     setIsSearchLocal,
   } = useHeader();
+  const location = useLocation();
 
   return (
     <>
@@ -101,9 +102,13 @@ export default function Header() {
                 style={{
                   color: "var(--color-pakistan)",
                 }}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onFocus={() => navigate("/products")}
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onFocus={() => {
+                  if (location.pathname !== "/products") {
+                    navigate("/products");
+                  }
+                }}
               />
               <Search
                 className="absolute text-(--color-pakistan) left-3 top-2.5"

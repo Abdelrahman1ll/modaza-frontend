@@ -96,14 +96,18 @@ export default function useProductForm(mode: "add" | "edit") {
         (p: { id: number }) => p.id === Number(id)
       );
 
-      if (found)
+      if (found) {
         setFormData({
           ...found,
           viewPhotos: found.images || [], // ✅ نضيف الصور القديمة للعرض
           additionImages: [], // ✅ نبدأ فاضية
           removedImages: [], // ✅ نبدأ فاضية
+          category: String(found.category?.id || ""),
+          colors: String(found.colors?.id || ""),
         });
-      else {
+        setNameCategory(found.category?.name || "");
+        setNameColors(found.colors?.name || "");
+      } else {
         toast.error("Product not found.");
       }
     }
@@ -223,9 +227,11 @@ export default function useProductForm(mode: "add" | "edit") {
         "Promotional price must be less than the regular price.";
     }
 
-    if (Number(formData.stock) < 1) {
-      isValid = false;
-      newErrors.stock = "Stock must be at least 1.";
+    if (mode === "add") {
+      if (Number(formData.stock) < 1) {
+        isValid = false;
+        newErrors.stock = "Stock must be at least 1.";
+      }
     }
 
     if (Number(formData.wholesalePrice) < 1) {
@@ -389,8 +395,8 @@ export default function useProductForm(mode: "add" | "edit") {
         setNameColors("");
         setNameCategory("");
       }
-    } catch {
-      toast.error("Error adding product. Please try again.");
+    } catch (error: any) {
+      toast.error(error?.data.message[0] || "Failed to add product");
     }
   };
 

@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function SearchInput({
@@ -13,19 +13,35 @@ export default function SearchInput({
   const [name, setName] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const initialized = useRef(false);
+  //   /* ================= Read from URL ================= */
+  useEffect(() => {
+    const name = searchParams.get("name");
 
+    if (name) {
+      setName(name);
+    }
+
+    initialized.current = true;
+  }, [searchParams]);
+
+  /* ================= Write to URL ================= */
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (name) {
-        searchParams.set("name", name);
+      if (!initialized.current) return;
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (name.length > 0) {
+        params.set("name", name);
       } else {
-        searchParams.delete("name");
+        params.delete("name");
       }
-      setSearchParams(searchParams);
-    }, 200);
+
+      setSearchParams(params);
+    }, 300);
 
     return () => clearTimeout(handler);
-  }, [name]);
+  }, [name, setSearchParams]);
 
   return createPortal(
     <div
@@ -51,7 +67,7 @@ export default function SearchInput({
             setSearch(true);
             navigate("/products");
           }}
-          // autoFocus
+        // autoFocus
         />
         <Search
           className="absolute left-4 top-1/2 -translate-y-1/2"

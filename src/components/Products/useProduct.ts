@@ -7,12 +7,12 @@ import {
   usePostWishlistMutation,
 } from "../../redux/wishlist/apiWishlist";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export default function useProduct() {
   const [searchParams] = useSearchParams();
-  const name = searchParams.get("name") || "";
+  const name = (searchParams.get("name") || "").trim();
   const category = searchParams.get("category") || "";
   const color = searchParams.get("color") || "";
   const minPrice = searchParams.get("minPrice") || "";
@@ -35,10 +35,9 @@ export default function useProduct() {
 
   const isUser = user?.user.role === "user";
 
-  // ✅ بناء الـ query string مع كل الـ parameters
-  const buildQueryString = () => {
+  // 👇 بناء الـ query string واستخدام useMemo لضمان refetch عند التغير
+  const queryString = useMemo(() => {
     const params = new URLSearchParams();
-
     if (name) params.append("name", name);
     if (category) params.append("category", category);
     if (color) params.append("color", color);
@@ -47,15 +46,23 @@ export default function useProduct() {
     if (sortPrice) params.append("sortPrice", sortPrice);
     if (bestSelling) params.append("bestSelling", bestSelling);
 
-    return params.toString() ? `?${params.toString()}` : "";
-  };
+    const result = params.toString();
+    return result ? `?${result}` : "";
+  }, [name, category, color, minPrice, maxPrice, sortPrice, bestSelling]);
 
-  const { data: products, isLoading, isError } = useGetProductsQuery(
-    `/products${buildQueryString()}`
-  );
+  // 👇 جلب المنتجات
+  const {
+    data: products,
+    isLoading,
+    isError,
+    isFetching,
+  } = useGetProductsQuery(`/products${queryString}`);
+
   const [isFav, setIsFav] = useState<{ [key: number]: boolean }>({});
   const [postWishlist] = usePostWishlistMutation();
-  const { data, refetch } = useGetWishlistQuery({});
+  const { data, refetch } = useGetWishlistQuery(undefined, {
+    skip: !user,
+  });
   const [deleteWishlist] = useDeleteWishlistMutation();
 
   useEffect(() => {
@@ -90,7 +97,7 @@ export default function useProduct() {
 
   return {
     products,
-    isLoading,
+    isLoading: isLoading || isFetching,
     isFav,
     handleToggleWishlist,
     hoveredIds,

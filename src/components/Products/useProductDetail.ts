@@ -117,6 +117,10 @@ export default function useProductDetail() {
           openSignup();
           return;
         }
+        if (user && user.user.role !== "user") {
+          toast.error("I'm not allowed to admin");
+          return;
+        }
       } catch {
         openSignup();
         return;

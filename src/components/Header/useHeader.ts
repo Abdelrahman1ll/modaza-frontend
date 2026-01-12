@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
 import { useGetCartQuery } from "../../redux/Cart/apiCart";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { SignupContext } from "../Signup/SignupContext";
 
@@ -17,13 +17,11 @@ export default function useHeader() {
   const [isSearch, setSearch] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(countries[0]);
-  const [name, setName] = useState("");
+  const [nameInput, setNameInput] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const initialized = useRef(false);
   const navigate = useNavigate();
   const [isSearchLocal, setIsSearchLocal] = useState(false);
-
-
 
   useEffect(() => {
     const value = localStorage.getItem("isSearch") === "true";
@@ -31,18 +29,36 @@ export default function useHeader() {
   }, []);
   const { openSignup } = useContext(SignupContext);
 
+  // 👇 تحميل القيمة من URL وتحديثها عند أي تغيير
   useEffect(() => {
+    const nameFromUrl = searchParams.get("name") || "";
+    if (nameFromUrl !== nameInput) {
+      setNameInput(nameFromUrl);
+    }
+  }, [searchParams]);
+
+  // 👇 تحديث URL مع debounce
+  useEffect(() => {
+    if (!initialized.current) return;
+
     const handler = setTimeout(() => {
-      if (name) {
-        searchParams.set("name", name);
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (nameInput.trim()) {
+        params.set("name", nameInput.trim());
       } else {
-        searchParams.delete("name");
+        params.delete("name");
       }
-      setSearchParams(searchParams);
+
+      // 👇 فقط نحدث إذا كان هناك فرق فعلي
+      const currentName = searchParams.get("name") || "";
+      if (currentName !== nameInput.trim()) {
+        setSearchParams(params, { replace: true });
+      }
     }, 500);
 
     return () => clearTimeout(handler);
-  }, [name]);
+  }, [nameInput, setSearchParams]);
 
   const secretKey = import.meta.env.VITE_SECRET_KEY;
   const encryptedUser = Cookies.get("user");
@@ -65,6 +81,7 @@ export default function useHeader() {
   };
 
   const isUser = user?.user.role === "user";
+
   const { data: cart, refetch: refetchCart } = useGetCartQuery(
     {},
     { skip: !isUser }
@@ -87,8 +104,8 @@ export default function useHeader() {
     setIsOpen,
     selected,
     setSelected,
-    name,
-    setName,
+    nameInput,
+    setNameInput,
     handleLogout,
     user,
     totalItems,
