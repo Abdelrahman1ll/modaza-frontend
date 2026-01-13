@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { ToastContainer } from "react-toastify";
 
@@ -8,7 +8,6 @@ const ColorPage = lazy(() => import("./pages/Color/colorPage"));
 
 const Loading = lazy(() => import("./components/Loading"));
 const NetworkStatus = lazy(() => import("./components/NetworkStatus"));
-const BackButton = lazy(() => import("./components/BackButton"));
 const ScrollToTop = lazy(() => import("./components/ScrollToTop"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 
@@ -71,17 +70,11 @@ function App() {
    * Defines the routes and protected layouts for different user roles.
    * يتم هنا تعريف المسارات والتنسيقات المحمية لكل دور مستخدم.
    */
-  const location = useLocation();
-
-  // هتكون true لو الصفحة الحالية هي checkout
-  const isCheckout = location.pathname === "/checkout";
   return (
     <div>
       <BackgroundEffectPage />
 
       <ScrollToTop />
-
-      {!isCheckout && <BackButton />}
 
       <NetworkStatus />
 

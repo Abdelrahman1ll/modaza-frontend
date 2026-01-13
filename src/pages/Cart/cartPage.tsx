@@ -1,3 +1,4 @@
+import BackButton from "../../components/BackButton";
 import Cart from "../../components/Cart/cart";
 import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
@@ -10,6 +11,8 @@ export default function CartPage() {
       <PromoBar />
 
       <Header />
+
+      <BackButton />
 
       <Cart />
 

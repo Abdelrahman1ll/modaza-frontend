@@ -1,3 +1,4 @@
+import BackButton from "../../components/BackButton";
 import Dashboard from "../../components/Dashboard/dashboard";
 import Footer from "../../components/Footer/footer";
 import Header from "../../components/Header/header";
@@ -9,6 +10,8 @@ export default function DashboardPage() {
       <PromoBar />
 
       <Header />
+
+      <BackButton />
 
       <Dashboard />
 

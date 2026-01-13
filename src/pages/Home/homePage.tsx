@@ -1,3 +1,4 @@
+import BackButton from "../../components/BackButton";
 import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
@@ -12,6 +13,8 @@ export default function HomePage() {
       <PromoBar />
 
       <Header />
+
+      <BackButton />
 
       <Main />
 

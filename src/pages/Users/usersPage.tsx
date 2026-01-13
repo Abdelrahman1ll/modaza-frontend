@@ -1,3 +1,4 @@
+import BackButton from "../../components/BackButton";
 import Footer from "../../components/Footer/footer";
 import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";
@@ -9,6 +10,8 @@ export default function UsersPage() {
       <PromoBar />
 
       <Header />
+
+      <BackButton />
 
       <Users />
 

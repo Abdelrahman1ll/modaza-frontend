@@ -73,7 +73,7 @@ export default function HomeProducts() {
           {/* Spacer على اليسار */}
           <div className="shrink-0 w-4 sm:w-8 md:w-12 lg:w-16" />
 
-          {products.products.map((product: ProductType) => (
+          {products?.products.map((product: ProductType) => (
             <div
               key={product.id}
               className="shrink-0 w-52 sm:w-[250px] md:w-[300px] lg:w-[380px] xl:w-[420px]"

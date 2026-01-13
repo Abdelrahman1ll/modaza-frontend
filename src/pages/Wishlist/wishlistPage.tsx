@@ -1,3 +1,4 @@
+import BackButton from "../../components/BackButton";
 import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
@@ -10,6 +11,8 @@ export default function WishlistPage() {
       <PromoBar />
 
       <Header />
+
+      <BackButton />
 
       <h2
         className="text-3xl md:text-4xl font-bold mt-10 text-center"
