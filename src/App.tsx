@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CategoryPage = lazy(() => import("./pages/Category/categoryPage"));
 
@@ -72,12 +73,6 @@ function App() {
    */
   return (
     <div>
-      <BackgroundEffectPage />
-
-      <ScrollToTop />
-
-      <NetworkStatus />
-
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -92,6 +87,10 @@ function App() {
       />
 
       <Suspense fallback={<Loading />}>
+        <BackgroundEffectPage />
+        <ScrollToTop />
+        <NetworkStatus />
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />

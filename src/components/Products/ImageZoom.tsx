@@ -47,7 +47,9 @@ export default function MotionZoomImage({
       <motion.img
         key={mainImage}
         src={mainImage}
-        alt={product?.name || "Product"}
+        alt={product?.name || "Detailed product view"}
+        width={800}
+        height={800}
         loading="lazy"
         decoding="async"
         fetchPriority="high"

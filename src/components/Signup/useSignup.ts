@@ -25,7 +25,6 @@ export default function useSignup(onClose: () => void) {
         await localStorage.setItem("email", email);
         setEmail("");
         setShowCodeInput(true);
-        console.log(response);
       }
     } catch {
       toast.error("Error checking email");

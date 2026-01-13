@@ -87,15 +87,17 @@ export default function Header() {
           </nav>
 
           <Link to="/">
-            <h1
+            <span
               className="text-4xl font-bold drop-shadow-lg cursor-pointer"
               style={{
-                fontFamily: "'Dancing Script Local', 'Pacifico', cursive",
+                fontFamily: "'Dancing Script Local', cursive",
                 letterSpacing: ".8px",
+                minWidth: "150px", // Prevent shift if font loads late
+                display: "inline-block",
               }}
             >
               {BRAND_NAME}
-            </h1>
+            </span>
           </Link>
 
           <div className="flex items-center gap-8">
@@ -125,12 +127,18 @@ export default function Header() {
               <span
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
+                role="button"
+                aria-label="Select country"
+                aria-expanded={isOpen}
+                tabIndex={0}
               >
                 <img
                   src={selected.flag}
-                  alt={selected.name}
+                  alt={`Flag of ${selected.name}`}
                   loading="lazy"
                   decoding="async"
+                  width="16"
+                  height="16"
                   className="w-4 h-4 rounded-full mr-2 object-cover"
                 />
                 {selected.name}
@@ -155,10 +163,12 @@ export default function Header() {
                         }}
                       >
                         <img
-                          src={selected.flag}
-                          alt={selected.name}
+                          src={country.flag}
+                          alt={`Flag of ${country.name}`}
                           loading="lazy"
                           decoding="async"
+                          width="16"
+                          height="16"
                           className="w-4 h-4 rounded-full mr-2 object-cover"
                         />
                         {country.name}
@@ -189,6 +199,9 @@ export default function Header() {
                       (e.currentTarget.style.color = "var(--color-text)")
                     }
                     onClick={() => openSignup()}
+                    role="button"
+                    aria-label="Login"
+                    tabIndex={0}
                   >
                     <User size={24} />
                   </div>
@@ -212,7 +225,11 @@ export default function Header() {
                     (e.currentTarget.style.color = "var(--color-text)")
                   }
                 >
-                  <Heart className="cursor-pointer" size={24} />
+                  <Heart
+                    className="cursor-pointer"
+                    size={24}
+                    aria-label="View Wishlist"
+                  />
                 </Link>
               </motion.div>
 
@@ -233,10 +250,11 @@ export default function Header() {
                     (e.currentTarget.style.color = "var(--color-text)")
                   }
                 >
-                  <ShoppingCart size={24} />
+                  <ShoppingCart size={24} aria-label="View Shopping Cart" />
                   <span
                     className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
-                    title="عدد المنتجات في العربة"
+                    title="Number of items in cart"
+                    aria-label={`${totalItems} items in cart`}
                   >
                     {totalItems}
                   </span>
@@ -258,8 +276,13 @@ export default function Header() {
             <button
               className="text-xl cursor-pointer test-(--color-text)"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
-              {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+              {isMenuOpen ? (
+                <X size={26} aria-label="Close menu" />
+              ) : (
+                <Menu size={26} aria-label="Open menu" />
+              )}
             </button>
           </motion.div>
           {isMenuOpen && (
@@ -317,7 +340,7 @@ export default function Header() {
           )}
 
           <Link to="/">
-            <h1
+            <span
               className="text-3xl font-bold drop-shadow-lg cursor-pointer"
               style={{
                 fontFamily: "'Dancing Script Local', 'Pacifico', cursive",
@@ -325,19 +348,25 @@ export default function Header() {
               }}
             >
               {BRAND_NAME}
-            </h1>
+            </span>
           </Link>
 
           <div className="relative inline-block text-left" ref={dropdownRef}>
             <span
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
+              role="button"
+              aria-label="Select country"
+              aria-expanded={isOpen}
+              tabIndex={0}
             >
               <img
                 src={selected.flag}
-                alt={selected.name}
+                alt={`Flag of ${selected.name}`}
                 loading="lazy"
                 decoding="async"
+                width="16"
+                height="16"
                 className="w-4 h-4 rounded-full mr-2 object-cover"
               />
               {selected.name}
@@ -362,10 +391,12 @@ export default function Header() {
                       }}
                     >
                       <img
-                        src={selected.flag}
-                        alt={selected.name}
+                        src={country.flag}
+                        alt={`Flag of ${country.name}`}
                         loading="lazy"
                         decoding="async"
+                        width="16"
+                        height="16"
                         className="w-4 h-4 rounded-full mr-2 object-cover"
                       />
                       {country.name}
@@ -397,8 +428,15 @@ export default function Header() {
               setIsSearchLocal(!isSearchLocal);
               localStorage.removeItem("isSearch");
             }}
+            role="button"
+            aria-label={isSearch ? "Close search" : "Open search"}
+            tabIndex={0}
           >
-            {isSearch ? <X size={22} /> : <Search size={22} />}
+            {isSearch ? (
+              <X size={22} aria-label="Close search" />
+            ) : (
+              <Search size={22} aria-label="Open search" />
+            )}
           </div>
         </motion.div>
 
@@ -419,10 +457,11 @@ export default function Header() {
               (e.currentTarget.style.color = "var(--color-text)")
             }
           >
-            <ShoppingCart size={24} />
+            <ShoppingCart size={24} aria-label="View Shopping Cart" />
             <span
               className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
-              title="عدد المنتجات في العربة"
+              title="Number of items in cart"
+              aria-label={`${totalItems} items in cart`}
             >
               {totalItems}
             </span>
@@ -446,7 +485,7 @@ export default function Header() {
               (e.currentTarget.style.color = "var(--color-text)")
             }
           >
-            <Heart size={24} />
+            <Heart size={24} aria-label="View Wishlist" />
           </Link>
         </motion.div>
 
@@ -469,8 +508,11 @@ export default function Header() {
                 (e.currentTarget.style.color = "var(--color-text)")
               }
               onClick={() => openSignup()}
+              role="button"
+              aria-label="Login"
+              tabIndex={0}
             >
-              <User size={24} />
+              <User size={24} aria-label="Login or View Account" />
             </div>
           </motion.div>
         )}
@@ -492,7 +534,7 @@ export default function Header() {
               (e.currentTarget.style.color = "var(--color-text)")
             }
           >
-            <House size={24} />
+            <House size={24} aria-label="Back to Home" />
           </Link>
         </motion.div>
       </header>

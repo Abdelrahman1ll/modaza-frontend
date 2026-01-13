@@ -8,12 +8,31 @@
   --color-tiger: #BC6C25;
 }
 
+@font-face {
+  font-family: "Dancing Script Local";
+  src: url("/fonts/DancingScript-VariableFont_wght.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base styles with performance considerations */
 body {
   background-color: var(--color-cornsilk);
   color: var(--color-dark);
-  font-family: 'Cairo', sans-serif;
+  font-family: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
   margin: 0;
   padding: 0;
+  font-display: swap;
+}
+
+/* Custom Utilities for Performance */
+.h-100 {
+  height: 25rem; /* 400px */
+}
+
+.aspect-product {
+  aspect-ratio: 4/5;
 }
 
 @keyframes dot {
@@ -29,8 +48,6 @@ body {
   animation: dot 1.4s infinite ease-in-out both;
 }
 
-
-
 /* global.css أو أي ملف CSS */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -39,13 +56,3 @@ body {
   -ms-overflow-style: none; /* IE & Edge */
   scrollbar-width: none;    /* Firefox */
 }
-
-
-@font-face {
-  font-family: "Dancing Script Local";
-  src: url("/fonts/DancingScript-VariableFont_wght.ttf") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-

@@ -124,7 +124,9 @@ export default function ProductDetail() {
                   <motion.img
                     key={index}
                     src={img || "/photo-1495385794356-15371f348c31.jpeg"}
-                    alt="Thumbnail"
+                    alt={`${product?.name} perspective ${index + 1}`}
+                    width={80}
+                    height={80}
                     onClick={() => setCurrentIndex(index)}
                     className={`w-20 h-20 object-cover rounded-xl cursor-pointer border-2 transition ${
                       mainImage === img

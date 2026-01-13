@@ -140,34 +140,64 @@ export default function Footer() {
             <p className="text-sm mb-2 text-(--color-earth)">
               Enter your email to receive the latest offers and new products.
             </p>
-            <div className="flex ">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="p-2 text-sm rounded-l-md w-full bg-(--color-cornsilk) text-(--color-pakistan) border border-(--color-tiger) focus:outline-none"
-                onChange={() => openSignup()}
-                value={""}
-              />
-              <button
-                className="bg-(--color-tiger) cursor-pointer hover:opacity-90 text-white px-4 rounded-r-md text-sm font-medium"
-                onClick={() => openSignup()}
-              >
-                Subscribe
-              </button>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="newsletter-email" className="sr-only">
+                Newsletter Email
+              </label>
+              <div className="flex">
+                <input
+                  id="newsletter-email"
+                  type="email"
+                  placeholder="Enter your email"
+                  className="p-2 text-sm rounded-l-md w-full bg-(--color-cornsilk) text-(--color-pakistan) border border-(--color-tiger) focus:outline-none"
+                  onChange={() => openSignup()}
+                  value={""}
+                />
+                <button
+                  className="bg-(--color-tiger) cursor-pointer hover:opacity-90 text-white px-4 rounded-r-md text-sm font-medium"
+                  onClick={() => openSignup()}
+                >
+                  Subscribe
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="flex gap-4 mt-5 text-(--color-earth) ">
-            <a href="#" className="hover:text-(--color-cornsilk)">
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-(--color-cornsilk)"
+              aria-label="Follow us on Facebook"
+            >
               <FaFacebookF size={20} />
             </a>
-            <a href="#" className="hover:text-(--color-cornsilk)">
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-(--color-cornsilk)"
+              aria-label="Follow us on Instagram"
+            >
               <FaInstagram size={20} />
             </a>
-            <a href="#" className="hover:text-(--color-cornsilk)">
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-(--color-cornsilk)"
+              aria-label="Follow us on Twitter"
+            >
               <FaTwitter size={20} />
             </a>
-            <a href="#" className="hover:text-(--color-cornsilk)">
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-(--color-cornsilk)"
+              aria-label="Follow us on TikTok"
+            >
               <FaTiktok size={20} />
             </a>
           </div>

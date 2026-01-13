@@ -1,8 +1,223 @@
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { PackageSearch, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
+import React, { memo } from "react";
 import type { ProductType } from "../../types/ProductType";
+import type { UserType } from "../../types/UserType";
 import useProduct from "./useProduct";
+
+// Variants for staggered children animation
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
+/**
+ * Loading skeleton for the product list
+ */
+const ProductSkeleton = () => (
+  <>
+    {Array.from({ length: 6 }).map((_, index) => (
+      <div key={index} className="bg-transparent flex flex-col animate-pulse">
+        <div className="w-full h-[460px] rounded-3xl bg-gray-200 mb-4" />
+        <div className="flex justify-between mb-2">
+          <div className="h-6 w-32 bg-gray-200 rounded"></div>
+          <div className="flex flex-col items-end">
+            <div className="h-4 w-16 bg-gray-200 rounded mb-1"></div>
+            <div className="h-6 w-20 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="h-10 w-full bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    ))}
+  </>
+);
+
+/**
+ * Individual Product Card component
+ */
+const ProductCard = memo(
+  ({
+    product,
+    isFav,
+    isHovered,
+    user,
+    setHoveredIds,
+    handleToggleWishlist,
+  }: {
+    product: ProductType;
+    isFav: boolean;
+    isHovered: boolean;
+    user: UserType | null;
+    setHoveredIds: React.Dispatch<
+      React.SetStateAction<Record<number, boolean>>
+    >;
+    handleToggleWishlist: (id: number) => void;
+  }) => {
+    const isOutOfStock = product.stock === 0;
+
+    return (
+      <motion.div
+        variants={itemVariants}
+        className="group/card relative flex flex-col bg-transparent"
+        onMouseEnter={() =>
+          setHoveredIds((prev) => ({ ...prev, [product.id]: true }))
+        }
+        onMouseLeave={() =>
+          setHoveredIds((prev) => ({ ...prev, [product.id]: false }))
+        }
+      >
+        {/* Main Image Container with Depth Effect */}
+        <div className="relative aspect-[3/4.2] w-full overflow-hidden rounded-[2.5rem] bg-gray-50 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:rounded-[2rem]">
+          <Link
+            to={`/products-details/${product.id}`}
+            className="block h-full w-full"
+          >
+            <div className="relative h-full w-full overflow-hidden">
+              {/* Primary Image */}
+              <motion.img
+                loading="lazy"
+                src={product.images[0]}
+                alt={product.name}
+                className="absolute inset-0 h-full w-full object-cover p-0"
+                animate={{
+                  scale: isHovered ? 1.15 : 1,
+                  filter: isHovered ? "brightness(0.9)" : "brightness(1)",
+                }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              />
+
+              {/* Secondary Image - Seamless Crossfade */}
+              <motion.img
+                src={product.images[1] || product.images[0]}
+                alt={`${product.name} alternate`}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover"
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: isHovered ? 1 : 0,
+                  scale: isHovered ? 1.15 : 1.25,
+                }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              />
+
+              {/* Floating "See Details" Glass Bar */}
+              <div className="absolute inset-x-4 bottom-4 z-20 flex translate-y-8 items-center justify-center opacity-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/card:translate-y-0 group-hover/card:opacity-100">
+                <div className="w-full flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/40 py-3 text-sm font-bold text-gray-900 shadow-xl backdrop-blur-md">
+                  <span>Explore Details</span>
+                  <PackageSearch size={16} />
+                </div>
+              </div>
+
+              {/* Elegant Gradient Scrim */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
+            </div>
+          </Link>
+
+          {/* Wishlist - Premium Glass Circle */}
+          <motion.button
+            onClick={() => handleToggleWishlist(product.id)}
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            whileTap={{ scale: 0.85 }}
+            className="absolute top-6 right-6 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-white/20 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:bg-white/40"
+            aria-label={isFav ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <Heart
+              size={22}
+              className={`transition-all duration-500 ${
+                isFav
+                  ? "fill-[#BC6C25] stroke-[#BC6C25] drop-shadow-[0_0_8px_rgba(188,108,37,0.4)]"
+                  : "fill-transparent stroke-white"
+              }`}
+            />
+          </motion.button>
+
+          {/* Minimalist Vertical Discount Label */}
+          {product.discountPercentage !== 0 && !isOutOfStock && (
+            <div className="absolute top-6 left-6 z-30">
+              <div className="flex items-center gap-2 rounded-full border border-(--color-tiger)/30 bg-white/95 px-3 py-1 text-[10px] font-black tracking-widest text-(--color-tiger) shadow-lg backdrop-blur-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-(--color-tiger) opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-(--color-tiger)"></span>
+                </span>
+                {product.discountPercentage.toFixed(0)}% OFF
+              </div>
+            </div>
+          )}
+
+          {/* Out of Stock - Sophisticated Overlay */}
+          {isOutOfStock && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[3px]">
+              <div className="overflow-hidden rounded-full border border-white/30 bg-white/10 px-8 py-3 shadow-2xl backdrop-blur-xl">
+                <span className="text-sm font-black uppercase tracking-[0.2em] text-white">
+                  Sold Out
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Boutique Typography Footer */}
+        <div className="mt-6 flex flex-col items-center text-center px-4">
+          <span className="mb-1 text-[10px] font-black uppercase tracking-[0.25em] text-[#BC6C25]/80">
+            {typeof product.category === "object" && product.category !== null
+              ? (product.category as unknown as { name: string }).name
+              : product.category || "Modeza Collection"}
+          </span>
+          <h3 className="mb-2 text-lg font-bold tracking-tight text-gray-900 transition-colors duration-300 group-hover/card:text-(--color-tiger)">
+            {product.name}
+          </h3>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <span className="text-xl font-black text-gray-900">
+              {product.price.toLocaleString()}
+              <span className="ml-1 text-[10px] uppercase opacity-50">EGP</span>
+            </span>
+            {product.discountPercentage !== 0 && (
+              <span className="text-sm font-medium text-gray-400 line-through decoration-[#BC6C25]/40 decoration-wavy">
+                {product.promotionalPrice.toLocaleString()} EGP
+              </span>
+            )}
+          </div>
+
+          {/* Rare Owner Actions */}
+          {user && user.role !== "user" && (
+            <Link to={`/edit-product/${product.id}`} className="mt-4 w-full">
+              <motion.button
+                whileHover={{ scale: 1.02, backgroundColor: "#000" }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full rounded-2xl bg-gray-900 py-3 text-xs font-black uppercase tracking-[0.1em] text-white shadow-lg transition-all"
+              >
+                Management Control
+              </motion.button>
+            </Link>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+);
+
+ProductCard.displayName = "ProductCard";
 
 /**
  * Product: Grid display of products with search and filter results.
@@ -19,31 +234,21 @@ export default function Product() {
     user,
     isError,
   } = useProduct();
+
+  const productList = products?.products || [];
+
   return (
     <div className="m-4">
       <section className="w-full mx-auto px-4">
-        {/* شبكة المنتجات */}
-        <div className="grid grid-cols-1 min-[600px]:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 min-[600px]:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {isLoading ? (
-            Array.from({ length: 6 }).map((_, index) => (
-              <div
-                key={index}
-                className="bg-transparent flex flex-col animate-pulse"
-              >
-                <div className="w-full h-[460px] rounded-3xl bg-gray-200 mb-4" />
-                <div className="flex justify-between mb-2">
-                  <div className="h-6 w-32 bg-gray-200 rounded"></div>
-                  <div className="flex flex-col items-end">
-                    <div className="h-4 w-16 bg-gray-200 rounded mb-1"></div>
-                    <div className="h-6 w-20 bg-gray-200 rounded"></div>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="h-10 w-full bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            ))
-          ) : products?.products?.length === 0 || isError ? (
+            <ProductSkeleton />
+          ) : productList.length === 0 || isError ? (
             <div className="col-span-full flex flex-col items-center justify-center py-20">
               <PackageSearch
                 size={100}
@@ -54,163 +259,19 @@ export default function Product() {
               </p>
             </div>
           ) : (
-            products?.products.map((product: ProductType, index: number) => {
-              const isHovered = hoveredIds[product.id] || false;
-              const isOutOfStock = product.stock === 0;
-              return (
-                <motion.div
-                  key={index}
-                  className="bg-transparent transition-all duration-300 flex flex-col"
-                  whileHover={{ y: -5 }}
-                >
-                  {/* الصورة */}
-
-                  <div className="relative rounded-3xl overflow-hidden group">
-                    {/* سلايدر الصور */}
-                    <Link
-                      to={`/products-details/${product?.id}`}
-                      onMouseEnter={() =>
-                        setHoveredIds((prev) => ({
-                          ...prev,
-                          [product.id]: true,
-                        }))
-                      }
-                      onMouseLeave={() =>
-                        setHoveredIds((prev) => ({
-                          ...prev,
-                          [product.id]: false,
-                        }))
-                      }
-                    >
-                      <div className="relative w-full h-[560px] max-[1090px]:h-[480px] overflow-hidden rounded-3xl">
-                        {/* الصورة الأولى */}
-                        <motion.img
-                          loading="lazy"
-                          src={product.images[0]}
-                          srcSet={`
-                             ${product.images[0]} 400w,
-                              ${product.images[0]} 800w,
-                             ${product.images[0]} 1200w
-                            `}
-                          sizes="(max-width: 640px) 400px, (max-width: 768px) 800px, 1200px"
-                          alt={product.name}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-
-                        {/* الصورة الثانية */}
-                        <motion.img
-                          src={product.images[1]}
-                          alt={product?.name}
-                          loading="lazy"
-                          className="absolute inset-0 w-full h-full object-cover"
-                          animate={{
-                            opacity: isHovered ? 1 : 0,
-                            scale: isHovered ? 1.15 : 1,
-                            z: isHovered ? 10 : 0,
-                          }}
-                          transition={{ duration: 0.5, ease: "easeOut" }}
-                        />
-                      </div>
-                    </Link>
-                    {/* زرار القلب */}
-                    <motion.button
-                      onClick={() => handleToggleWishlist(product?.id)}
-                      whileTap={{ scale: 0.8 }}
-                      className="absolute top-4 right-4 backdrop-blur-md p-2 rounded-full shadow-md cursor-pointer opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500"
-                    >
-                      <motion.div
-                        initial={false}
-                        animate={{ scale: isFav[product.id] ? 1.3 : 1 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <Heart
-                          size={24}
-                          color={isFav[product.id] ? "#BC6C25" : "black"}
-                          fill={isFav[product.id] ? "#BC6C25" : "transparent"}
-                        />
-                      </motion.div>
-                    </motion.button>
-                    {/* الخصم */}
-                    {product.discountPercentage !== 0 && (
-                      <span className="absolute top-4 left-4 bg-(--color-tiger) text-white text-sm font-bold px-2 py-0.5 rounded-full shadow-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500">
-                        {product.discountPercentage.toFixed(0)}% off
-                      </span>
-                    )}
-
-                    {/* Out of Stock Overlay */}
-                    {isOutOfStock && (
-                      <div className="absolute bottom-4 left-4 z-20 flex items-center justify-cente">
-                        <motion.button
-                          disabled
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          transition={{ duration: 0.3 }}
-                          className="
-                            px-4 py-1
-                            rounded-full
-                            bg-(--color-tiger)
-                            text-white
-                            text-lg
-                            shadow-xl
-                         "
-                        >
-                          Sold out
-                        </motion.button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* التفاصيل */}
-                  <div className="p-1 flex flex-col gap-4 grow">
-                    {/* الاسم والسعر */}
-                    <div className="">
-                      <h3
-                        className="text-lg font-semibold"
-                        style={{ color: "var(--color-dark)" }}
-                      >
-                        {product.name}
-                      </h3>
-
-                      <div>
-                        {product.discountPercentage !== 0 ? (
-                          <span className="text-gray-400 line-through text-lg">
-                            {product.promotionalPrice.toFixed(2)} EGP
-                          </span>
-                        ) : null}
-
-                        <span
-                          className="text-lg font-bold ml-2"
-                          style={{ color: "var(--color-pakistan)" }}
-                        >
-                          {product.price.toFixed(2)} EGP
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* الأزرار */}
-                    <div className="w-full">
-                      {/* زر التعديل (يظهر فقط لو المستخدم مش "user") */}
-                      {user && user.role !== "user" && (
-                        <Link
-                          to={`/edit-product/${product.id}`}
-                          className="flex-1"
-                        >
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="w-full py-2 px-4 rounded-full font-semibold bg-(--color-pakistan) hover:bg-(--color-dark) text-white shadow-md transition-all"
-                          >
-                            Edit
-                          </motion.button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })
+            productList.map((product: ProductType) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isFav={isFav[product.id]}
+                isHovered={hoveredIds[product.id] || false}
+                user={user}
+                setHoveredIds={setHoveredIds}
+                handleToggleWishlist={handleToggleWishlist}
+              />
+            ))
           )}
-        </div>
+        </motion.div>
       </section>
     </div>
   );

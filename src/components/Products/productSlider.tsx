@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
 import { useNavigate } from "react-router-dom";
+import { getCloudinaryUrl, getCloudinarySrcSet } from "../../utils/cloudinary";
 
 /**
  * ProductSlider: Horizontal draggable slider for featured products.
@@ -99,9 +100,14 @@ export default function ProductSlider() {
                     }}
                   >
                     <img
-                      src={product?.images[0]}
+                      src={getCloudinaryUrl(product?.images[0], { width: 320 })}
+                      srcSet={getCloudinarySrcSet(product?.images[0])}
+                      sizes="(max-width: 640px) 320px, 400px"
                       alt={product?.name}
-                      className="h-100 w-full object-cover"
+                      width={320}
+                      height={400}
+                      className="w-full h-full object-cover"
+                      style={{ aspectRatio: "320/400" }}
                       draggable={false}
                     />
                   </div>
