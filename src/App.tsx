@@ -17,7 +17,7 @@ const ShippingDeliveryPage = lazy(
   () => import("./pages/QuickLinks/ShippingDeliveryPage")
 );
 const BackgroundEffectPage = lazy(
-  () => import("./pages/BackgroundEffect/backgroundEffectPage")
+  () => import("./pages/BackgroundEffect/BackgroundEffectPage")
 );
 
 const HomePage = lazy(() => import("./pages/Home/homePage"));

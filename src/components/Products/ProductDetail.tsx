@@ -182,7 +182,7 @@ export default function ProductDetail() {
                       return (
                         <motion.button
                           key={index}
-                          onClick={() => setSelectedSize(size?.id!)}
+                          onClick={() => setSelectedSize(size.id ?? null)}
                           whileTap={!isOutOfStock ? { scale: 0.9 } : {}}
                           disabled={isOutOfStock}
                           className={`px-4 py-2 rounded-full test-lg font-medium border-2 transition-all  ${

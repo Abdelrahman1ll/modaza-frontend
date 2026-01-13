@@ -1,7 +1,7 @@
 import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok } from "react-icons/fa6";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
 import { useContext } from "react";
-import { SignupContext } from "../Signup/SignupContext";
+import { SignupContext } from "../../context/SignupContext";
 import { Link } from "react-router-dom";
 import { BRAND_EMAIL, BRAND_NAME, BRAND_PHONE } from "../../BrandText";
 /**

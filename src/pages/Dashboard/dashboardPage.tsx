@@ -1,5 +1,5 @@
 import BackButton from "../../components/BackButton";
-import Dashboard from "../../components/Dashboard/dashboard";
+import Dashboard from "../../components/Dashboard/Dashboard";
 import Footer from "../../components/Footer/footer";
 import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";

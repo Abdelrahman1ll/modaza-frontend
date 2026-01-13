@@ -1,11 +1,11 @@
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { useGetCartQuery, usePostCartMutation } from "../../redux/Cart/apiCart";
 import { useParams } from "react-router-dom";
 import { useContext, useState } from "react";
 import { useGetProductIdQuery } from "../../redux/products/apiProducts";
 import type { ProductType } from "../../types/ProductType";
-import { SignupContext } from "../Signup/SignupContext";
+import { SignupContext } from "../../context/SignupContext";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 
 /**
@@ -60,7 +60,11 @@ export default function useProductDetail() {
     return "#A80000"; // أحمر
   };
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<{
+    selectedSize: string | null;
+    quantity: string | null;
+    id: string | null;
+  }>({
     selectedSize: null,
     quantity: null,
     id: null,
@@ -77,7 +81,11 @@ export default function useProductDetail() {
       toast.error("I'm not allowed to admin");
       return;
     }
-    let newErrors: any = {
+    const newErrors: {
+      selectedSize: string | null;
+      quantity: string | null;
+      id: string | null;
+    } = {
       selectedSize: null,
       quantity: null,
       id: null,
@@ -100,8 +108,9 @@ export default function useProductDetail() {
         sizes: selectedSize,
       }).unwrap();
       refetchCart();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to add item to cart");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to add item to cart");
     }
   };
 

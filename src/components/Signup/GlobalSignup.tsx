@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SignupContext } from "./SignupContext";
+import { SignupContext } from "../../context/SignupContext";
 import Signup from "./signup";
 
 /**

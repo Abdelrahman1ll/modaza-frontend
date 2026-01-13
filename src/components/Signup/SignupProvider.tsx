@@ -1,12 +1,7 @@
-import { createContext, useState } from "react";
+import { useState } from "react";
+import { SignupContext } from "../../context/SignupContext";
 
-export const SignupContext = createContext({
-  showSignup: false,
-  openSignup: () => {},
-  closeSignup: () => {},
-});
-
-export function SignupProvider({ children }:{ children: React.ReactNode }) {
+export function SignupProvider({ children }: { children: React.ReactNode }) {
   const [showSignup, setShowSignup] = useState(false);
 
   const openSignup = () => setShowSignup(true);

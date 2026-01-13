@@ -2,7 +2,7 @@ import { useUsersSignupGoogleMutation } from "../../redux/users/apiUsers";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { useContext } from "react";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 interface GoogleSignupProps {
   onClose: () => void;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Save } from "lucide-react";
 import { useParams } from "react-router-dom";
@@ -7,6 +7,7 @@ import {
   useGetUsersQuery,
   usePatchUsersOwnerByIdMutation,
 } from "../../redux/users/apiUsers";
+import type { UserType } from "../../types/UserType";
 
 /**
  * EditUserOwner: Administrative interface for editing user details from the owner's perspective.
@@ -33,9 +34,12 @@ export default function EditUserOwner() {
   });
 
   const { data: getUsers } = useGetUsersQuery({});
-  const users = Array.isArray(getUsers) ? getUsers : getUsers?.users || [];
+  const users: UserType[] = useMemo(() => {
+    return Array.isArray(getUsers) ? getUsers : getUsers?.users || [];
+  }, [getUsers]);
+
   useEffect(() => {
-    const user = users.find((user: any) => Number(user.id) === Number(id));
+    const user = users.find((u: UserType) => Number(u.id) === Number(id));
     if (user) {
       setUserData({
         firstName: user.firstName || "",

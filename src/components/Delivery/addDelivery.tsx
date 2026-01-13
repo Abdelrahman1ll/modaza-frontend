@@ -7,6 +7,13 @@ import {
 } from "../../redux/Delivery/apiDelivery";
 import { toast } from "react-toastify";
 
+interface DeliveryType {
+  id: number;
+  deliveryPriceClose: number;
+  deliveryPriceFar: number;
+  freeDelivery: boolean;
+}
+
 export default function DeliveryPrice() {
   const [priceClose, setPriceClose] = useState("");
   const [priceFar, setPriceFar] = useState("");
@@ -14,7 +21,7 @@ export default function DeliveryPrice() {
   const [postDelivery, { isLoading }] = usePostDeliveryMutation();
   const { data, refetch } = useGetDeliveryQuery({});
 
-  const delivery = data?.deliveries.find((d: any) => d.id === 1);
+  const delivery = data?.deliveries.find((d: DeliveryType) => d.id === 1);
 
   const handleAddDelivery = async () => {
     if (!priceClose || Number(priceClose) <= 0) {
@@ -37,8 +44,9 @@ export default function DeliveryPrice() {
       setPriceClose("");
       setPriceFar("");
       toast.success("Delivery prices updated successfully");
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update delivery prices");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to update delivery prices");
     }
   };
 
@@ -50,7 +58,7 @@ export default function DeliveryPrice() {
       await postFreeDelivery({}).unwrap();
       toast.success("Free Delivery Activated!");
       refetch();
-    } catch (err) {
+    } catch {
       toast.error("Failed to activate free delivery");
     }
   };

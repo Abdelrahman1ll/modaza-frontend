@@ -1,5 +1,5 @@
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 import { useContext, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";

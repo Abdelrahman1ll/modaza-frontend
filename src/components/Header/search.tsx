@@ -41,7 +41,7 @@ export default function SearchInput({
     }, 300);
 
     return () => clearTimeout(handler);
-  }, [name, setSearchParams]);
+  }, [name, setSearchParams, searchParams]);
 
   return createPortal(
     <div

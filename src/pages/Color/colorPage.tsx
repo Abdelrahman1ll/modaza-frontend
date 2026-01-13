@@ -1,5 +1,5 @@
 import BackButton from "../../components/BackButton";
-import Color from "../../components/Color/color";
+import Color from "../../components/Color/Color";
 import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
@@ -15,7 +15,7 @@ export default function ColorPage() {
       <BackButton />
 
       <Color />
-      
+
       <PaymentSection />
 
       <Footer />

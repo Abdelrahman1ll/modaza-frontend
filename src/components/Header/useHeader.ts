@@ -1,8 +1,8 @@
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useGetCartQuery } from "../../redux/Cart/apiCart";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { SignupContext } from "../Signup/SignupContext";
+import { SignupContext } from "../../context/SignupContext";
 
 const countries = [
   { name: "Egypt", flag: "/eg.svg" },
@@ -72,7 +72,7 @@ export default function useHeader() {
     }, 500);
 
     return () => clearTimeout(handler);
-  }, [nameInput, setSearchParams]);
+  }, [nameInput, setSearchParams, searchParams]);
 
   const isUser = user?.role === "user";
 

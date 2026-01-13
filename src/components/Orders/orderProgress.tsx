@@ -17,8 +17,8 @@ export default function OrderProgress({
   order,
   refetch,
 }: {
-  order: OrderType | any;
-  refetch: any;
+  order: OrderType;
+  refetch: () => void;
 }) {
   const {
     isPaid,

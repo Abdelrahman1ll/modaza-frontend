@@ -7,4 +7,5 @@ export type UserType = {
   birthday?: string | null;
   role: string;
   createdAt: string;
+  PROFILE?: boolean;
 };

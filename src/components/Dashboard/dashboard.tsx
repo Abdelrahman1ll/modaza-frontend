@@ -28,6 +28,62 @@ import Loading from "../Loading";
  * Dashboard: Main administrative overview showing key metrics and system status.
  * لوحة التحكم: نظرة إدارية عامة تعرض المؤشرات الرئيسية وحالة النظام.
  */
+interface OrderByStatusItem {
+  status: string;
+  count: number;
+}
+
+interface TopCustomerItem {
+  email: string;
+  count: number;
+}
+
+interface DashboardStats {
+  totals: {
+    totalOrders?: number;
+    totalToday?: number;
+    totalYesterday?: number;
+    totalWeek?: number;
+    totalMonth?: number;
+    totalYear?: number;
+    ordersLength?: number;
+  };
+  discounts: {
+    withDiscount?: number;
+    withoutDiscount?: number;
+  };
+  changes: {
+    daily?: string;
+    weekly?: string;
+    monthly?: string;
+    yearly?: string;
+  };
+  ordersByStatus: OrderByStatusItem[];
+  topCustomers: TopCustomerItem[];
+  costs: {
+    totalWholesalePrice?: number;
+    totalMarketingCosts?: number;
+    totalPackagingCost?: number;
+    deliveryPrice?: number;
+    totalNetProfit?: number;
+  };
+}
+
+interface PieLabelProps {
+  cx?: number | string;
+  cy?: number | string;
+  midAngle?: number;
+  innerRadius?: number | string;
+  outerRadius?: number | string;
+  percent?: number;
+  index?: number;
+  name?: string;
+}
+
+/**
+ * Dashboard: Main administrative overview showing key metrics and system status.
+ * لوحة التحكم: نظرة إدارية عامة تعرض المؤشرات الرئيسية وحالة النظام.
+ */
 export default function Dashboard() {
   const {
     data: dashboardOrders,
@@ -35,7 +91,7 @@ export default function Dashboard() {
     isError,
   } = useGetDashboardOrdersQuery({});
 
-  const stats = dashboardOrders?.stats || {};
+  const stats = (dashboardOrders?.stats || {}) as DashboardStats;
 
   const {
     totals = {},
@@ -44,7 +100,7 @@ export default function Dashboard() {
     ordersByStatus = [],
     topCustomers = [],
     costs = {},
-  } = dashboardOrders?.stats || {};
+  } = stats;
 
   const COLORS = [
     "var(--color-tiger)",
@@ -79,14 +135,14 @@ export default function Dashboard() {
 
   // Line chart
   const lineData = [
-    { name: "Daily", value: parseFloat(changes.daily) || 0 },
-    { name: "Weekly", value: parseFloat(changes.weekly) || 0 },
-    { name: "Monthly", value: parseFloat(changes.monthly) || 0 },
-    { name: "Yearly", value: parseFloat(changes.yearly) || 0 },
+    { name: "Daily", value: parseFloat(changes.daily || "0") || 0 },
+    { name: "Weekly", value: parseFloat(changes.weekly || "0") || 0 },
+    { name: "Monthly", value: parseFloat(changes.monthly || "0") || 0 },
+    { name: "Yearly", value: parseFloat(changes.yearly || "0") || 0 },
   ];
 
   // Bar Chart – API returns ARRAY not object
-  const barData = ordersByStatus.map((item: any) => ({
+  const barData = ordersByStatus.map((item: OrderByStatusItem) => ({
     status: item.status,
     count: item.count,
   }));
@@ -124,7 +180,7 @@ export default function Dashboard() {
                 <div className="text-3xl">{item.icon}</div>
                 <p className="text-sm opacity-90">
                   {item.title === "Total Orders"
-                    ? item.title + " (" + totals?.ordersLength + ")"
+                    ? `${item.title} (${totals?.ordersLength})`
                     : item.title}
                 </p>
                 <p className="text-3xl font-bold">{item.value}</p>
@@ -154,19 +210,31 @@ export default function Dashboard() {
                     innerRadius={60} // دي دائرة فارغة في النص
                     outerRadius={100}
                     labelLine={false}
-                    label={({
-                      cx,
-                      cy,
-                      midAngle,
-                      outerRadius,
-                      percent,
-                      name,
-                    }: any) => {
-                      const radius = outerRadius + 20; // النص يبقى خارج الحلقة
+                    label={(props: PieLabelProps) => {
+                      const { cx, cy, midAngle, outerRadius, percent, name } =
+                        props;
+                      if (
+                        cx === undefined ||
+                        cy === undefined ||
+                        midAngle === undefined ||
+                        outerRadius === undefined ||
+                        percent === undefined ||
+                        name === undefined
+                      )
+                        return null;
+
+                      const nCx = typeof cx === "string" ? parseFloat(cx) : cx;
+                      const nCy = typeof cy === "string" ? parseFloat(cy) : cy;
+                      const nOuterRadius =
+                        typeof outerRadius === "string"
+                          ? parseFloat(outerRadius)
+                          : outerRadius;
+
+                      const radius = nOuterRadius + 20; // النص يبقى خارج الحلقة
                       const x =
-                        cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+                        nCx + radius * Math.cos(-midAngle * (Math.PI / 180));
                       const y =
-                        cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+                        nCy + radius * Math.sin(-midAngle * (Math.PI / 180));
 
                       return (
                         <text
@@ -274,7 +342,7 @@ export default function Dashboard() {
 
             {/* Status Percentages */}
             <div className="flex justify-around mt-2 mb-1 text-sm flex-wrap gap-2">
-              {barData?.map((item: any, i: number) => {
+              {barData?.map((item: OrderByStatusItem, i: number) => {
                 const shortKey =
                   window.innerWidth < 768
                     ? item.status.slice(0, 2).toUpperCase()
@@ -318,7 +386,7 @@ export default function Dashboard() {
                 </thead>
 
                 <tbody>
-                  {topCustomers?.map((item: any, i: number) => (
+                  {topCustomers?.map((item: TopCustomerItem, i: number) => (
                     <tr
                       key={i}
                       className="hover:bg-opacity-20 hover:bg-white transition"

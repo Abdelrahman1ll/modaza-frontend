@@ -72,8 +72,9 @@ export default function useDiscountCodes() {
           EndDate: newExpiry,
         }).unwrap();
       }
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to add/edit discount code");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to add/edit discount code");
     }
     setNewCode("");
     setNewDiscount("");
@@ -98,8 +99,9 @@ export default function useDiscountCodes() {
     try {
       await deleteDiscountCodes(id).unwrap();
       refetch();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to delete discount code");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to delete discount code");
     }
   };
 

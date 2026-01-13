@@ -10,10 +10,27 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-import OrderProgress from "./orderProgress";
+import OrderProgress from "./OrderProgress";
 import useOrderDetails from "./useOrderDetails";
 import { SkeletonList } from "../Skeleton";
 import { DELIVERY } from "../../BrandText";
+
+interface OrderItemType {
+  id: number;
+  product: {
+    name: string;
+    images: string[];
+    discountPercentage?: number;
+    price: number;
+  };
+  quantity: number;
+  sizes: {
+    size: string;
+    length: number;
+    width: number;
+  };
+  price: number;
+}
 
 /**
  * OrderDetails: Comprehensive view of a single order, including items, shipping, and status history.
@@ -200,7 +217,7 @@ export default function OrderDetails() {
           <div className="lg:col-span-2 rounded-2xl">
             {isLoadingOrders ? (
               <SkeletonList count={3} />
-            ) : order?.items.length === 0 ? (
+            ) : !order || order?.items?.length === 0 ? (
               <div className="flex flex-col items-center py-6">
                 <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
                 <p className="text-xl font-bold text-(--color-dark)">
@@ -212,7 +229,7 @@ export default function OrderDetails() {
               </div>
             ) : (
               <div className="flex flex-col gap-4">
-                {order?.items.map((item: any) => (
+                {order?.items?.map((item: OrderItemType) => (
                   <div
                     key={item.id}
                     className="flex max-[580px]:flex-col md:flex-row items-center gap-4 p-2 md:p-4 rounded-xl shadow bg-(--color-cornsilk)"
@@ -428,7 +445,7 @@ export default function OrderDetails() {
             </div>
           </div>
 
-          {role !== "user" && (
+          {role !== "user" && order && (
             <OrderProgress order={order} refetch={refetchOrders} />
           )}
         </motion.div>

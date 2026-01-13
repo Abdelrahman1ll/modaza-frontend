@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { User, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useGetUsersQuery } from "../../redux/users/apiUsers";
+import type { UserType } from "../../types/UserType";
 /**
  * AllUsers: Administrative interface for viewing and managing the list of registered users.
  * المستخدمين: واجهة إدارية لعرض وإدارة قائمة المستخدمين المسجلين.
@@ -26,7 +27,7 @@ export default function AllUsers() {
       <div className="w-full max-w-3xl space-y-3">
         <div></div>
         {users &&
-          users.map((user: any, index: number) => (
+          users.map((user: UserType, index: number) => (
             <div key={index}>
               <Link to={`/edit-user-owner/${user?.id}`}>
                 <motion.div

@@ -82,7 +82,8 @@ export default function useReviews() {
       setNewRating(0);
       setNewComment("");
       refetch();
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
       if (err?.data?.message?.includes("Error in RolesGuard")) {
         toast.error("You are not allowed to add a review.");
       } else if (

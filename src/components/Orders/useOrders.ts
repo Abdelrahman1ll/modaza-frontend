@@ -1,4 +1,4 @@
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import {
   useGetOwnerOrdersQuery,
@@ -7,6 +7,9 @@ import {
 } from "../../redux/Orders/apiOrders";
 import { toast } from "react-toastify";
 import { formatEndDateArabic } from "../../utils/formatters";
+
+import type { OrderType } from "../../types/OrderType";
+
 /**
  * useOrders: Fetches and manages orders based on user role (user/admin/owner).
  * خطاف الطلبات: جلب وإدارة الطلبات حسب دور المستخدم (مستخدم/أدمن/مالك).
@@ -17,14 +20,14 @@ export default function useOrders() {
 
   // استدعاء كل الـ hooks — لازم يكون برا الشروط
   const { data: ownerOrders, isLoading: isOwnerOrdersLoading } =
-    useGetOwnerOrdersQuery({}, { skip: role !== "owner" });
+    useGetOwnerOrdersQuery(undefined, { skip: role !== "owner" });
   const { data: userOrders, isLoading: isUserOrdersLoading } =
-    useGetUserOrdersQuery({}, { skip: role !== "user" });
+    useGetUserOrdersQuery(undefined, { skip: role !== "user" });
   const { data: adminOrders, isLoading: isAdminOrdersLoading } =
-    useGetAdminOrdersQuery({}, { skip: role !== "admin" });
+    useGetAdminOrdersQuery(undefined, { skip: role !== "admin" });
 
   // تحديد الـ orders بناء على الـ role
-  let orders: any[] = [];
+  let orders: OrderType[] = [];
   let isLoading: boolean = false;
   if (role === "owner") {
     orders = ownerOrders?.orders || [];

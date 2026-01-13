@@ -76,7 +76,9 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                     name={input.name}
                     min={input.type === "number" ? 0 : undefined}
                     value={
-                      formData[input.name as keyof ErrorProductType] as any
+                      formData[input.name as keyof ErrorProductType] as
+                        | string
+                        | number
                     }
                     placeholder={input.label}
                     onChange={handleChange}
@@ -131,24 +133,26 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                       </p>
                     ) : (
                       <div className="max-h-52 overflow-y-auto">
-                        {categories?.categories?.map((cate: any) => (
-                          <div
-                            key={cate.id}
-                            className="p-2 hover:bg-gray-100 cursor-pointer rounded"
-                            onClick={() => {
-                              handleChange({
-                                target: {
-                                  name: "category",
-                                  value: cate.id,
-                                } as any,
-                              } as any);
-                              setNameCategory(cate.name);
-                              setOpenCategory(false);
-                            }}
-                          >
-                            {cate.name}
-                          </div>
-                        ))}
+                        {categories?.categories?.map(
+                          (cate: { id: string; name: string }) => (
+                            <div
+                              key={cate.id}
+                              className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                              onClick={() => {
+                                handleChange({
+                                  target: {
+                                    name: "category",
+                                    value: cate.id,
+                                  },
+                                } as unknown as React.ChangeEvent<HTMLInputElement>);
+                                setNameCategory(cate.name);
+                                setOpenCategory(false);
+                              }}
+                            >
+                              {cate.name}
+                            </div>
+                          )
+                        )}
                       </div>
                     )}
                   </div>
@@ -198,7 +202,9 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                     type="number"
                     name={input.name}
                     value={
-                      formData[input.name as keyof ErrorProductType] as any
+                      formData[input.name as keyof ErrorProductType] as
+                        | string
+                        | number
                     }
                     placeholder={input.label}
                     onChange={handleChange}
@@ -253,24 +259,26 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                       </p>
                     ) : (
                       <div className="max-h-52 overflow-y-auto">
-                        {colors?.colors?.map((cate: any) => (
-                          <div
-                            key={cate.id}
-                            className="p-2 hover:bg-gray-100 cursor-pointer rounded"
-                            onClick={() => {
-                              handleChange({
-                                target: {
-                                  name: "colors",
-                                  value: cate.id,
-                                } as any,
-                              } as any);
-                              setNameColors(cate.name);
-                              setOpenColors(false);
-                            }}
-                          >
-                            {cate.name}
-                          </div>
-                        ))}
+                        {colors?.colors?.map(
+                          (cate: { id: string; name: string }) => (
+                            <div
+                              key={cate.id}
+                              className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                              onClick={() => {
+                                handleChange({
+                                  target: {
+                                    name: "colors",
+                                    value: cate.id,
+                                  },
+                                } as unknown as React.ChangeEvent<HTMLInputElement>);
+                                setNameColors(cate.name);
+                                setOpenColors(false);
+                              }}
+                            >
+                              {cate.name}
+                            </div>
+                          )
+                        )}
                       </div>
                     )}
                   </div>
@@ -302,7 +310,9 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                     name={input.name}
                     min="0"
                     value={
-                      formData[input.name as keyof ErrorProductType] as any
+                      formData[input.name as keyof ErrorProductType] as
+                        | string
+                        | number
                     }
                     onChange={handleChange}
                     placeholder={input.label}
@@ -381,7 +391,11 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                     <input
                       type={field === "size" ? "text" : "number"}
                       min={field !== "size" ? 0 : undefined}
-                      value={(size as any)[field]}
+                      value={
+                        (size as unknown as Record<string, string | number>)[
+                          field
+                        ]
+                      }
                       placeholder={field}
                       onChange={(e) =>
                         handleSizeChange(

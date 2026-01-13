@@ -1,29 +1,12 @@
-import { createContext, useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
 import type { UserType } from "../types/UserType";
-
-/**
- * AuthContextType defines the structure of the authentication state and its management functions.
- * تعريف هيكل حالة المصادقة ووظائف التحكم بها.
- */
-type AuthContextType = {
-  user: UserType | null;
-  setUser: (data: any) => void;
-  logout: () => void;
-  initializing: boolean;
-};
-
-/**
- * AuthContext: Global authentication management.
- * سياق المصادقة: إدارة دخول المستخدم في كل التطبيق.
- */
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  setUser: () => {},
-  logout: () => {},
-  initializing: true,
-});
+import {
+  AuthContext,
+  type AuthData,
+  type SetUserPayload,
+} from "../context/AuthContext";
 
 /**
  * AuthProvider component that wraps the application and provides the auth state.
@@ -48,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * وظيفة تحديث بيانات المستخدم وتخزينها مشفرة في الكوكيز.
    * تتعامل مع استجابة تسجيل الدخول الكاملة وتحديثات الملف الشخصي الجزئية.
    */
-  const setUser = (data: any) => {
+  const setUser = (data: SetUserPayload) => {
     if (!data) {
       _setUser(null);
       Cookies.remove("user");
@@ -57,14 +40,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Check if it's a full auth response or just a user object
     // التحقق مما إذا كانت هذه استجابة كاملة للمصادقة أم مجرد بيانات مستخدم
-    const isFullResponse = data.accessToken && data.user;
-    const userData = isFullResponse ? data.user : data;
+    const isFullResponse = !!(
+      data &&
+      typeof data === "object" &&
+      "accessToken" in data &&
+      "user" in data
+    );
+    const userData = isFullResponse
+      ? (data as AuthData).user
+      : (data as UserType);
 
     _setUser(userData);
 
     // Prepare cookie data
     // تجهيز البيانات لحفظها في الكوكيز
-    let cookieData: any;
+    let cookieData: SetUserPayload;
     if (isFullResponse) {
       cookieData = data;
     } else {

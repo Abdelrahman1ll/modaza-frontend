@@ -7,9 +7,9 @@ import {
   usePostOrdersMutation,
 } from "../../redux/Orders/apiOrders";
 import { toast } from "react-toastify";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import egyptGovernorates from "../../data/egyptGovernorates.json";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { EGYPTIAN_PHONE_REGEX } from "../../utils/validators";
 import ttsMP3 from "/ttsMP3.com_VoiceText_2025-11-19_2-28-51.mp3";
@@ -73,7 +73,7 @@ export default function useCheckout() {
   const [search, setSearch] = useState(""); // Search term for governorates | كلمة البحث للمحافظات
   const [isCardValid, setIsCardValid] = useState(false); // Validation for credit card | صحة بيانات البطاقة الائتمانية
   const [isPaying, setIsPaying] = useState(false); // Payment processing status | حالة معالجة الدفع
-  const payRef = useRef<any>(null); // Ref for triggering payment iframe | مرجع لتشغيل إطار الدفع
+  const payRef = useRef<(() => void) | null>(null); // Ref for triggering payment iframe | مرجع لتشغيل إطار الدفع
 
   const [errors, setErrors] = useState({
     firstName: "",
@@ -93,23 +93,23 @@ export default function useCheckout() {
     }
   }, [user]);
 
-  const { data, isLoading } = useGetCartQuery({});
-  const { data: delivery } = useGetDeliveryQuery({});
+  const { data, isLoading } = useGetCartQuery(undefined);
+  const { data: delivery } = useGetDeliveryQuery(undefined);
   const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
   const [postOrders, { isLoading: orderLoading }] = usePostOrdersMutation();
-  const { refetch } = useGetUserOrdersQuery({});
+  const { refetch } = useGetUserOrdersQuery(undefined);
   const [deliveryFee, setDeliveryFee] = useState(0);
 
   /**
    * Internal check for form validity without updating UI errors.
    * تحقق داخلي من صحة النموذج دون تحديث أخطاء واجهة المستخدم.
    */
-  const checkIsValid = () => {
+  const checkIsValid = useCallback(() => {
     const isFirstNameValid = !!firstName;
     const isLastNameValid = !!lastName;
     const isStateValid = !!state;
     const isAddressValid = !!addressDetails;
-    const isPhone1Valid = phone1 && EGYPTIAN_PHONE_REGEX.test(phone1);
+    const isPhone1Valid = !!(phone1 && EGYPTIAN_PHONE_REGEX.test(phone1));
     const isPhone2Valid = !phone2 || EGYPTIAN_PHONE_REGEX.test(phone2);
 
     return (
@@ -120,7 +120,7 @@ export default function useCheckout() {
       isPhone1Valid &&
       isPhone2Valid
     );
-  };
+  }, [firstName, lastName, state, addressDetails, phone1, phone2]);
 
   /**
    * Validates the checkout form fields and updates the error state.
@@ -188,9 +188,20 @@ export default function useCheckout() {
     } else {
       localStorage.removeItem("checkoutAddress");
     }
-  }, [saveAddress, firstName, lastName, state, addressDetails, phone1, phone2]);
+  }, [
+    saveAddress,
+    checkIsValid,
+    firstName,
+    lastName,
+    state,
+    addressDetails,
+    phone1,
+    phone2,
+  ]);
 
-  const deliveryData = delivery?.deliveries?.find((d: any) => d.id === 1);
+  const deliveryData = delivery?.deliveries?.find(
+    (d: { id: number }) => d.id === 1
+  );
   const isFirstOrder: boolean = data?.carts?.thIsIsYourFirstOrder;
   const freeDelivery: boolean = deliveryData?.freeDelivery;
   const PROFILE: boolean = data?.carts?.user.PROFILE;
@@ -229,7 +240,7 @@ export default function useCheckout() {
     } else {
       setDeliveryFee(deliveryData.deliveryPriceClose);
     }
-  }, [state, deliveryData]);
+  }, [state, deliveryData, isFirstOrder, freeDelivery]);
 
   /**
    * Applies a promo code and handles special rules for PROFILE and BIRTHDAY codes.
@@ -256,8 +267,9 @@ export default function useCheckout() {
       setDiscount(response?.discountCode?.discount);
       setCode(response?.discountCode?.code);
       setErrorMsg("");
-    } catch (error: any) {
-      setErrorMsg(error.data.message);
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      setErrorMsg(err?.data?.message || "Error applying discount");
     }
   };
 
@@ -338,22 +350,23 @@ export default function useCheckout() {
       }, 200);
 
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
       // Handle domain-specific errors like reused codes | معالجة أخطاء محددة كالأكواد المستعملة سابقاً
-      if (error?.data?.message === "Discount code already used for PROFILE") {
+      if (err?.data?.message === "Discount code already used for PROFILE") {
         setErrorMsg("The PROFILE code has already been used");
         setDiscount(0);
         setCode("");
         return;
       } else if (
-        error?.data?.message === "Discount code already used for BIRTHDAY"
+        err?.data?.message === "Discount code already used for BIRTHDAY"
       ) {
         setErrorMsg("The BIRTHDAY code has already been used");
         setDiscount(0);
         setCode("");
         return;
       }
-      toast.error(error?.data?.message || "Error placing order");
+      toast.error(err?.data?.message || "Error placing order");
     }
   };
 

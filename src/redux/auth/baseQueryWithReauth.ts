@@ -3,6 +3,7 @@ import {
   fetchBaseQuery,
   type FetchArgs,
   type FetchBaseQueryError,
+  type BaseQueryApi,
 } from "@reduxjs/toolkit/query/react";
 import Cookies from "js-cookie";
 import CryptoJS from "crypto-js";
@@ -37,8 +38,8 @@ const baseQuery = fetchBaseQuery({
 
 export const baseQueryWithReauth = async (
   args: string | FetchArgs,
-  api: any,
-  extraOptions: any
+  api: BaseQueryApi,
+  extraOptions: object
 ) => {
   let result = await baseQuery(args, api, extraOptions);
 
@@ -56,7 +57,7 @@ export const baseQueryWithReauth = async (
     if (!refreshToken) return result;
     if (refreshToken) {
       try {
-        const refreshResponse: any = await baseQuery(
+        const refreshResponse = (await baseQuery(
           {
             url: "/auth/refresh",
             method: "POST",
@@ -64,7 +65,7 @@ export const baseQueryWithReauth = async (
           },
           api,
           extraOptions
-        );
+        )) as { data: { accessToken: string } };
         if (refreshResponse) {
           const newAccessToken = refreshResponse.data.accessToken;
           const encryptedUser = Cookies.get("user");

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGetCategoryQuery } from "../../redux/category/apiCategory";
 import { useGetColorsQuery } from "../../redux/color/apiColor";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, type URLSearchParamsInit } from "react-router-dom";
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
 
 const sortOptions = [
@@ -128,18 +128,20 @@ export default function FilterSidebar() {
   const colorsList = colorData?.colors || [];
 
   const { data: productsData } = useGetProductsQuery("/products");
-  const products = productsData?.products || [];
 
   /* ================= Compute max price ================= */
   useEffect(() => {
+    const products = productsData?.products || [];
     if (!products.length || maxPrice) return;
 
-    const computed = Math.max(...products.map((p: any) => Number(p.price)));
+    const computed = Math.max(
+      ...products.map((p: { price: number | string }) => Number(p.price))
+    );
     setMaxPrice(computed);
     if (priceRange[1] === 0) {
       setPriceRange([MIN_PRICE, computed]);
     }
-  }, [products, maxPrice]);
+  }, [productsData?.products, maxPrice, priceRange]);
 
   /* ================= Read from URL ================= */
   useEffect(() => {
@@ -178,12 +180,12 @@ export default function FilterSidebar() {
     }
 
     initialized.current = true;
-  }, []);
+  }, [maxPrice, searchParams]);
 
   /* ================= Write to URL ================= */
   useEffect(() => {
     if (!initialized.current) return;
-    const params: any = {};
+    const params: Record<string, string | number | boolean> = {};
 
     if (selectedCats.length > 0) {
       params.category = selectedCats.join(",");
@@ -213,7 +215,7 @@ export default function FilterSidebar() {
       params.name = name;
     }
 
-    setSearchParams(params);
+    setSearchParams(params as unknown as URLSearchParamsInit);
   }, [
     selectedCats,
     selectedColors,
@@ -221,6 +223,7 @@ export default function FilterSidebar() {
     selectedSort,
     setSearchParams,
     searchParams,
+    maxPrice,
   ]);
 
   /* ================= Helpers ================= */

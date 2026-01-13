@@ -11,6 +11,15 @@ const paymentCache = new Map<
   string,
   { clientSecret: string; publicKey: string }
 >();
+interface PaymentData {
+  amount: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  city: string;
+}
+
 /**
  * PaymobIframe: Secure integration for credit card payments using the Paymob gateway.
  * إطار الدفع (Paymob): تكامل آمن للمدفوعات عبر البطاقات الائتمانية باستخدام بوابة Paymob.
@@ -22,9 +31,9 @@ export default function PaymobIframe({
   setIsPaying,
   handlePayment,
 }: {
-  paymentData: any;
+  paymentData: PaymentData;
   onCardValidityChange: (isValid: boolean) => void;
-  triggerPayRef: React.MutableRefObject<(() => void) | undefined>;
+  triggerPayRef: React.MutableRefObject<(() => void) | null>;
   setIsPaying: () => void;
   handlePayment: () => void;
 }) {
@@ -71,7 +80,7 @@ export default function PaymobIframe({
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [handlePayment, onCardValidityChange, setIsPaying]);
 
   // ========================
   // Initialize payment
@@ -105,7 +114,7 @@ export default function PaymobIframe({
         );
 
         setIsLoading(false);
-      } catch (err) {
+      } catch {
         setError("An error occurred. Please try again.");
         setIsLoading(false);
       }
@@ -113,7 +122,7 @@ export default function PaymobIframe({
 
     if (paymentData?.amount > 0) initPayment();
     effectRan.current = true;
-  }, [paymentData]);
+  }, [paymentData, postPayment]);
 
   // ========================
   // Expose trigger function for external "Pay" button

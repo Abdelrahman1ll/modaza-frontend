@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+import type { OrdersType } from "../../types/OrderType";
 
 /**
  * ApiOrders: Redux Toolkit API slice for order-related operations.
@@ -25,7 +26,7 @@ export const ApiOrders = createApi({
      * Fetches orders for the business owner.
      * جلب الطلبات الخاصة بمالك المتجر.
      */
-    getOwnerOrders: builder.query({
+    getOwnerOrders: builder.query<OrdersType, void>({
       query: () => ({
         url: "/orders/owner",
         method: "GET",
@@ -47,7 +48,7 @@ export const ApiOrders = createApi({
      * Fetches orders for administrators.
      * جلب الطلبات الخاصة بالمديرين (أدمن).
      */
-    getAdminOrders: builder.query({
+    getAdminOrders: builder.query<OrdersType, void>({
       query: () => ({
         url: "/orders/admin",
         method: "GET",
@@ -58,7 +59,7 @@ export const ApiOrders = createApi({
      * Fetches orders for the currently authenticated user.
      * جلب الطلبات الخاصة بالمستخدم الحالي المسجل دخوله.
      */
-    getUserOrders: builder.query({
+    getUserOrders: builder.query<OrdersType, void>({
       query: () => ({
         url: "/orders/user",
         method: "GET",

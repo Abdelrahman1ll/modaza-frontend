@@ -10,6 +10,11 @@ import {
 } from "../../redux/category/apiCategory";
 import { toast } from "react-toastify";
 
+interface CategoryType {
+  id: number;
+  name: string;
+}
+
 /**
  * Category: Administrative interface for creating and managing product categories.
  * الأصناف: واجهة إدارية لإنشاء وإدارة فئات (أصناف) المنتجات.
@@ -35,19 +40,22 @@ export default function Category() {
       return;
     }
     try {
-      editId
-        ? await patchCategory({ id: editId, data: { name } }).unwrap()
-        : await postCategory({ name }).unwrap();
+      if (editId) {
+        await patchCategory({ id: editId, data: { name } }).unwrap();
+      } else {
+        await postCategory({ name }).unwrap();
+      }
 
       setName("");
       setEditId(null);
       refetch();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to add category");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to add category");
     }
   };
 
-  const handleEdit = (cat: any) => {
+  const handleEdit = (cat: CategoryType) => {
     setName(cat.name);
     setEditId(cat.id);
   };
@@ -56,8 +64,9 @@ export default function Category() {
     try {
       await deleteCategory(id).unwrap();
       refetch();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to delete category");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to delete category");
     }
   };
 
@@ -144,7 +153,7 @@ export default function Category() {
 
       {/* Categories List */}
       <div className="grid gap-4">
-        {categories?.categories?.map((cat: any, index: number) => (
+        {categories?.categories?.map((cat: CategoryType, index: number) => (
           <motion.div
             key={cat.id}
             initial={{ opacity: 0, x: -20 }}

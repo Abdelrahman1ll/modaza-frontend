@@ -179,7 +179,7 @@ export default function Checkout() {
                   />
 
                   <div className="max-h-52 overflow-y-auto">
-                    {filteredStates.map((gov: any) => (
+                    {filteredStates.map((gov: string) => (
                       <div
                         key={gov}
                         className="p-2 hover:bg-gray-100 cursor-pointer rounded"
@@ -187,7 +187,7 @@ export default function Checkout() {
                           setState(gov);
                           setIsDropdownOpen(false);
                           setSearch("");
-                          setErrors((prev: any) => ({ ...prev, state: "" }));
+                          setErrors((prev) => ({ ...prev, state: "" }));
                         }}
                       >
                         {gov}
@@ -428,7 +428,7 @@ export default function Checkout() {
                 disabled={!isCardValid || isPaying}
                 onClick={() => {
                   setIsPaying(true);
-                  payRef.current();
+                  payRef.current?.();
                 }}
                 className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -649,7 +649,7 @@ export default function Checkout() {
             disabled={!isCardValid || isPaying}
             onClick={() => {
               setIsPaying(true);
-              payRef.current();
+              payRef.current?.();
             }}
             className="mt-4 w-full h-12 bg-(--color-tiger) hover:bg-(--color-tiger)/80 text-white rounded-xl text-lg shadow-md transition disabled:opacity-50 disabled:cursor-not-allowed"
           >

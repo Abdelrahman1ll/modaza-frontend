@@ -1,11 +1,21 @@
 import { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
-import { AuthContext } from "../components/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import {
   useDeleteWishlistMutation,
   useGetWishlistQuery,
   usePostWishlistMutation,
 } from "../redux/wishlist/apiWishlist";
+
+// Define a basic interface for wishlist item to avoid 'any'
+interface WishlistItem {
+  id: number;
+  product: {
+    id: number;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
 
 /**
  * useWishlistToggle: Logic for managing favorite status and wishlist updates.
@@ -28,7 +38,7 @@ export function useWishlistToggle() {
   useEffect(() => {
     if (data?.wishlist) {
       const favStatus: { [key: number]: boolean } = {};
-      data.wishlist.forEach((item: any) => {
+      data.wishlist.forEach((item: WishlistItem) => {
         favStatus[item.product.id] = true;
       });
       setIsFav(favStatus);
@@ -50,7 +60,7 @@ export function useWishlistToggle() {
     try {
       // Find if the product is already in the wishlist | التحقق مما إذا كان المنتج موجوداً بالفعل في القائمة
       const wishlistItem = data?.wishlist?.find(
-        (item: any) => String(item.product.id) === String(productId)
+        (item: WishlistItem) => String(item.product.id) === String(productId)
       );
 
       if (wishlistItem) {

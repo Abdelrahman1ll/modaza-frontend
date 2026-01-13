@@ -30,7 +30,7 @@ export type ErrorProductType = {
   colors: string;
   viewPhotos: string[]; // عرض صور المنتج اللي في السيرفر واللي في الاضافة
   removedImages: string[]; // صور محذوفة من السيرفر
-  additionImages: string[]; // صور جديدة للمنتج
+  additionImages: (string | File)[]; // صور جديدة للمنتج
 };
 /**
  * useProductForm: Manages the complex state and validation for product creation and administrative updates.
@@ -115,7 +115,7 @@ export default function useProductForm(mode: "add" | "edit") {
         toast.error("Product not found.");
       }
     }
-  }, [mode, Number(id)]);
+  }, [mode, id, products]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -138,7 +138,7 @@ export default function useProductForm(mode: "add" | "edit") {
   };
 
   const addSizeField = () =>
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       sizes: [...prev.sizes, { size: "", length: "", width: "", stock: "" }],
     }));
@@ -155,7 +155,7 @@ export default function useProductForm(mode: "add" | "edit") {
     const newFiles = Array.from(files);
     const previews = newFiles.map((file) => URL.createObjectURL(file));
 
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
       additionImages: [...(prev.additionImages || []), ...newFiles],
       viewPhotos: [...(prev.viewPhotos || []), ...previews],
@@ -172,13 +172,13 @@ export default function useProductForm(mode: "add" | "edit") {
     const isServerImage = safeView.some((img) => removedPhoto.includes(img));
 
     if (isServerImage) {
-      setFormData((prev: any) => ({
+      setFormData((prev) => ({
         ...prev,
         removedImages: [...(prev.removedImages || []), removedPhoto],
         viewPhotos: safeView.filter((_, i) => i !== index),
       }));
     } else {
-      setFormData((prev: any) => ({
+      setFormData((prev) => ({
         ...prev,
         additionImages: safeAdditions.filter((_, i) => i !== index),
         viewPhotos: safeView.filter((_, i) => i !== index),
@@ -399,8 +399,12 @@ export default function useProductForm(mode: "add" | "edit") {
         setNameColors("");
         setNameCategory("");
       }
-    } catch (error: any) {
-      toast.error(error?.data.message[0] || "Failed to add product");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string[] | string } };
+      const message = Array.isArray(err?.data?.message)
+        ? err.data.message[0]
+        : err?.data?.message;
+      toast.error(message || "Failed to add product");
     }
   };
 

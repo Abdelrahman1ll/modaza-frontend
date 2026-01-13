@@ -1,5 +1,5 @@
 import BackButton from "../../components/BackButton";
-import Category from "../../components/Category/category";
+import Category from "../../components/Category/Category";
 import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
@@ -15,7 +15,7 @@ export default function CategoryPage() {
       <BackButton />
 
       <Category />
-      
+
       <PaymentSection />
 
       <Footer />

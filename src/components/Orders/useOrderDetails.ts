@@ -1,4 +1,4 @@
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import {
   useGetOwnerOrdersQuery,
@@ -11,15 +11,18 @@ import type { OrderType } from "../../types/OrderType";
 import { useParams } from "react-router-dom";
 import { CheckCircle2, Package, Truck } from "lucide-react";
 
-type StepKey = "isConfirmed" | "isShipped" | "isDelivered";
-
-type SpecialStep = {
+interface SpecialStep {
   label: string;
-  icon: React.ComponentType<any>;
-  key: StepKey;
+  icon: React.ComponentType<{
+    size?: number;
+    className?: string;
+    color?: string;
+    style?: React.CSSProperties;
+  }>;
+  key: keyof OrderType;
   color: string;
   active?: boolean;
-};
+}
 /**
  * useOrderDetails: Logic for fetching and managing state for the order details view.
  * خطاف تفاصيل الطلب: يدير منطق جلب الحالة لجانب عرض تفاصيل الطلب.
@@ -34,17 +37,17 @@ export default function useOrderDetails() {
     data: ownerOrders,
     refetch: refetchOwnerOrders,
     isLoading: isLoadingOwnerOrders,
-  } = useGetOwnerOrdersQuery({}, { skip: role !== "owner" });
+  } = useGetOwnerOrdersQuery(undefined, { skip: role !== "owner" });
   const {
     data: userOrders,
     refetch: refetchUserOrders,
     isLoading: isLoadingUserOrders,
-  } = useGetUserOrdersQuery({}, { skip: role !== "user" });
+  } = useGetUserOrdersQuery(undefined, { skip: role !== "user" });
   const {
     data: adminOrders,
     refetch: refetchAdminOrders,
     isLoading: isLoadingAdminOrders,
-  } = useGetAdminOrdersQuery({}, { skip: role !== "admin" });
+  } = useGetAdminOrdersQuery(undefined, { skip: role !== "admin" });
 
   // تحديد الـ orders بناء على الـ role
   let orders: OrderType[] = [];
@@ -95,7 +98,9 @@ export default function useOrderDetails() {
   // Get LAST active step
   const lastActiveIndex = [...specialSteps]
     .reverse()
-    .findIndex((step: SpecialStep) => order?.[step.key] === true);
+    .findIndex(
+      (step: SpecialStep) => order?.[step.key as keyof OrderType] === true
+    );
 
   const actualIndex =
     lastActiveIndex === -1 ? -1 : specialSteps.length - 1 - lastActiveIndex;

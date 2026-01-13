@@ -4,7 +4,7 @@ import {
   usePostUsersMutation,
 } from "../../redux/users/apiUsers";
 import { toast } from "react-toastify";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 /**
  * useSignup: Logic for email verification, OTP handling, and new user creation.

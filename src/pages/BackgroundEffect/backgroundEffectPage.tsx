@@ -7,9 +7,11 @@ export default function BackgroundEffectPage() {
 
   useEffect(() => {
     // يشتغل بعد أول Paint
-    requestIdleCallback
-      ? requestIdleCallback(() => setMounted(true))
-      : setTimeout(() => setMounted(true), 1500);
+    if (typeof requestIdleCallback !== "undefined") {
+      requestIdleCallback(() => setMounted(true));
+    } else {
+      setTimeout(() => setMounted(true), 1500);
+    }
   }, []);
 
   if (!mounted) return null;

@@ -2,7 +2,7 @@ import { usePatchUsersByIdMutation } from "../../redux/users/apiUsers";
 import { toast } from "react-toastify";
 import { useState, useEffect, useContext } from "react";
 import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
-import { AuthContext } from "../AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { EGYPTIAN_PHONE_REGEX } from "../../utils/validators";
 /**
  * useProfile hook manages the user's profile information, validation, and completion rewards.
@@ -46,7 +46,7 @@ export default function useProfile() {
         email: user.email || "",
         phone: user.phone || "",
         birthday: user.birthday || "",
-        PROFILE: (user as any).PROFILE || false,
+        PROFILE: user.PROFILE || false,
       });
     }
   }, [user]);
@@ -102,7 +102,7 @@ export default function useProfile() {
     };
 
     checkReward();
-  }, [userData]);
+  }, [userData, validateDiscountCode]);
 
   const [patchUsers, { isLoading }] = usePatchUsersByIdMutation();
 
@@ -183,8 +183,9 @@ export default function useProfile() {
         phone: userData.phone,
         birthday: userData.birthday,
       });
-    } catch (error: any) {
-      toast.error(error?.data.message || "Error saving profile");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Error saving profile");
     }
   };
 

@@ -12,7 +12,7 @@ import {
 } from "../../redux/Orders/apiOrders";
 import type { OrderType } from "../../types/OrderType";
 
-export default function useOrderProgress({ order }: OrderType | any) {
+export default function useOrderProgress({ order }: { order: OrderType }) {
   const [patchIsPaid] = usePatchIsPaidOrdersMutation();
   const [patchIsConfirmed] = usePatchIsConfirmedOrdersMutation();
   const [patchIsShipped] = usePatchIsShippedOrdersMutation();

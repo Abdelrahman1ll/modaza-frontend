@@ -10,6 +10,12 @@ import {
 } from "../../redux/color/apiColor";
 import { toast } from "react-toastify";
 
+interface ColorType {
+  id: number;
+  name: string;
+  color: string;
+}
+
 /**
  * Color: Administrative interface for managing product color options.
  * الألوان: واجهة إدارية لإدارة خيارات ألوان المنتجات.
@@ -35,21 +41,24 @@ export default function Color() {
     }
 
     try {
-      editId
-        ? await patchColor({ id: editId, data: { name, color } }).unwrap()
-        : await postColor({ name, color }).unwrap();
+      if (editId) {
+        await patchColor({ id: editId, data: { name, color } }).unwrap();
+      } else {
+        await postColor({ name, color }).unwrap();
+      }
 
       setName("");
       setEditId(null);
       setColor("#000000");
       refetch();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to save color");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to save color");
     }
   };
 
   /* ===================== Edit ===================== */
-  const handleEdit = (colorItem: any) => {
+  const handleEdit = (colorItem: ColorType) => {
     setName(colorItem.name);
     setEditId(colorItem.id);
     setColor(colorItem.color);
@@ -60,8 +69,9 @@ export default function Color() {
     try {
       await deleteColor(id).unwrap();
       refetch();
-    } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to delete color");
+    } catch (error: unknown) {
+      const err = error as { data?: { message?: string } };
+      toast.error(err?.data?.message || "Failed to delete color");
     }
   };
 
@@ -172,7 +182,7 @@ export default function Color() {
 
       {/* List */}
       <div className="grid gap-4">
-        {colors?.colors?.map((colorItem: any, index: number) => (
+        {colors?.colors?.map((colorItem: ColorType, index: number) => (
           <motion.div
             key={colorItem.id}
             initial={{ opacity: 0, x: -20 }}
