@@ -3,6 +3,8 @@ import { useGetCategoryQuery } from "../../redux/category/apiCategory";
 import { useGetColorsQuery } from "../../redux/color/apiColor";
 import { useSearchParams, type URLSearchParamsInit } from "react-router-dom";
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
+import { motion, AnimatePresence } from "framer-motion";
+import { SlidersHorizontal, ChevronDown, X, Check } from "lucide-react";
 
 const sortOptions = [
   { label: "Featured", value: "featured" },
@@ -10,68 +12,6 @@ const sortOptions = [
   { label: "Price: High to Low", value: "price-high" },
   { label: "Price: Low to High", value: "price-low" },
 ];
-
-// --- Icons (Internal) ---
-const IconChevronDown = () => (
-  <svg
-    className="h-4 w-4"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 9l-7 7-7-7"
-    />
-  </svg>
-);
-const IconChevronUp = () => (
-  <svg
-    className="h-4 w-4"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M5 15l7-7 7 7"
-    />
-  </svg>
-);
-const IconFilter = () => (
-  <svg
-    className="h-6 w-6"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-    />
-  </svg>
-);
-const IconClose = () => (
-  <svg
-    className="h-6 w-6"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M6 18L18 6M6 6l12 12"
-    />
-  </svg>
-);
 
 // --- Helper Component ---
 const Accordion = ({
@@ -85,19 +25,33 @@ const Accordion = ({
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-(--color-pakistan) py-4 last:border-0">
+    <div className="border-b border-(--color-pakistan)/20 py-4 last:border-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between font-medium text-gray-900 hover:text-(--color-tiger) transition-colors"
+        className="flex w-full items-center justify-between font-bold text-(--color-pakistan) hover:text-(--color-tiger) transition-colors group"
       >
-        <span>{title}</span>
-        {isOpen ? <IconChevronUp /> : <IconChevronDown />}
+        <span className="text-sm uppercase tracking-wider">{title}</span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="text-(--color-tiger)"
+        >
+          <ChevronDown size={18} />
+        </motion.div>
       </button>
-      {isOpen && (
-        <div className="mt-4 animate-in slide-in-from-top-1 duration-200">
-          {children}
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4 pb-1">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -111,6 +65,7 @@ export default function FilterSidebar() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const initialized = useRef(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [sortOpen, setSortOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState("Featured");
@@ -247,309 +202,367 @@ export default function FilterSidebar() {
   /* ================= UI ================= */
   return (
     <div className="m-4 mb-8">
-      {/* Trigger Button */}
-      <div className="w-full mx-auto px-4 flex flex-col sm:flex-row sm:justify-between gap-2 mb-2">
-        {/* Show Filters */}
-        <button
-          onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 bg-(--color-cornsilk) text-(--color-pakistan) 
-               px-4 py-2 sm:px-3 sm:py-2 border border-(--color-pakistan) rounded-sm 
-               hover:bg-(--color-pakistan) hover:text-(--color-cornsilk) transition-colors cursor-pointer w-full sm:w-auto"
-        >
-          <IconFilter />
-          <span>Show Filters</span>
-        </button>
-
-        {/* Best Selling */}
-        <div className="flex justify-start w-full sm:w-auto">
-          <button
-            onClick={() => setSortOpen(!sortOpen)}
-            className="flex items-center justify-between w-full sm:w-48 bg-(--color-cornsilk) text-(--color-pakistan) 
-                 px-4 py-2 sm:px-3 sm:py-2 border border-(--color-pakistan) rounded-sm 
-                 hover:bg-(--color-pakistan) hover:text-(--color-cornsilk) transition-colors cursor-pointer"
+      {/* Trigger Buttons */}
+      <div className="w-full mx-auto px-4">
+        <div className="flex flex-row items-center justify-between gap-3 mb-8">
+          {/* Filter Drawer Trigger */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsOpen(true)}
+            className="flex items-center justify-between gap-3 px-5 py-3 bg-white/60 backdrop-blur-md rounded-2xl 
+                 border border-(--color-tiger)/20 shadow-lg shadow-(--color-pakistan)/5
+                 hover:bg-white transition-all cursor-pointer font-bold group"
           >
-            <span>{selectedSort}</span>
-            <svg
-              className={`w-4 h-4 transition-transform ${
-                sortOpen ? "rotate-180" : ""
-              }`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
+            <div className="flex items-center gap-3">
+              <SlidersHorizontal
+                size={18}
+                className="text-(--color-tiger) group-hover:rotate-12 transition-transform"
               />
-            </svg>
-          </button>
+              <span className="text-sm">Filters</span>
+            </div>
+          </motion.button>
+
+          {/* Sort Select Dropdown */}
+          <div
+            className="relative flex-1 sm:flex-none sm:w-64"
+            ref={dropdownRef}
+          >
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSortOpen(!sortOpen)}
+              className="w-full flex items-center justify-between gap-4 px-5 py-3 bg-white/60 backdrop-blur-md rounded-2xl 
+                   border border-(--color-tiger)/20 shadow-lg shadow-(--color-pakistan)/5
+                   hover:bg-white transition-all cursor-pointer font-bold group"
+            >
+              <span className="text-sm truncate flex-1 text-left">
+                {selectedSort}
+              </span>
+              <motion.div
+                animate={{ rotate: sortOpen ? 180 : 0 }}
+                className="text-(--color-tiger)"
+              >
+                <ChevronDown size={18} />
+              </motion.div>
+            </motion.button>
+
+            <AnimatePresence>
+              {sortOpen && (
+                <>
+                  {/* Backdrop for handling click outside */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-10"
+                    onClick={() => setSortOpen(false)}
+                  />
+
+                  {/* Menu */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                    className="absolute right-0 top-full mt-2 w-full min-w-[200px] bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-(--color-tiger)/20 z-100 overflow-hidden py-1.5"
+                  >
+                    {sortOptions.map((option) => (
+                      <motion.button
+                        key={option.value}
+                        whileHover={{ x: 5 }}
+                        onClick={() => {
+                          setSelectedSort(option.label);
+                          setSortOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 text-sm transition-all flex items-center justify-between group
+                      ${
+                        selectedSort === option.label
+                          ? "bg-(--color-tiger) text-white font-bold"
+                          : "text-(--color-pakistan) hover:bg-(--color-tiger)/5"
+                      }`}
+                      >
+                        <span>{option.label}</span>
+                        {selectedSort === option.label && <Check size={14} />}
+                      </motion.button>
+                    ))}
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
-
-      {/* Dropdown Menu */}
-      {sortOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setSortOpen(false)}
-          />
-
-          {/* Menu */}
-          <div className="absolute right-8 w-48 bg-(--color-cornsilk) rounded-md shadow-lg border border-gray-200 z-20 overflow-hidden">
-            {sortOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => {
-                  setSelectedSort(option.label);
-                  setSortOpen(false);
-                }}
-                className={`w-full text-left px-4 py-3 text-sm transition-colors
-              ${
-                selectedSort === option.label
-                  ? "bg-(--color-tiger) text-(--color-cornsilk) font-semibold"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
 
       {/* Slide-over Drawer */}
-      <div
-        className={`fixed inset-0 z-50 flex transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        {/* Backdrop */}
-        <div
-          className={`fixed inset-0 bg-black/25 backdrop-blur-sm transition-opacity duration-300 ${
-            isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
-          onClick={() => setIsOpen(false)}
-        />
-
-        {/* Drawer Content */}
-        <div
-          className="relative w-full max-w-[300px] md:max-w-sm bg-(--color-cornsilk) p-6 shadow-xl overflow-y-auto h-full z-50 
-  [&::-webkit-scrollbar]:hidden"
-        >
-          {" "}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold">Filters</h2>
-            <button
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 flex overflow-hidden">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="absolute inset-0 bg-(--color-pakistan)/40 backdrop-blur-sm transition-opacity"
+            />
+
+            {/* Drawer Content */}
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-full max-w-[320px] md:max-w-sm bg-white/90 backdrop-blur-2xl p-6 shadow-2xl h-full z-50 overflow-y-auto scrollbar-hide border-r border-(--color-tiger)/10"
             >
-              <IconClose />
-            </button>
-          </div>
-          <div className="space-y-6">
-            <Accordion title="Category">
-              <div className="space-y-2">
-                {category.map((cat: { id: string; name: string }) => (
-                  <div key={cat.id} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id={cat.id}
-                      checked={selectedCats.includes(String(cat.id))}
-                      onChange={() =>
-                        toggleList(
-                          String(cat.id),
-                          selectedCats,
-                          setSelectedCats
-                        )
-                      }
-                      className="h-4 w-4 rounded border-gray-300"
-                      style={{
-                        accentColor: "var(--color-tiger)",
-                      }}
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-black text-(--color-pakistan) flex items-center gap-2">
+                    Filters
+                    <SlidersHorizontal
+                      size={20}
+                      className="text-(--color-tiger)"
                     />
-
-                    <label
-                      htmlFor={cat.id}
-                      className="ml-3 text-sm text-gray-600 cursor-pointer hover:text-(--color-tiger)"
-                    >
-                      {cat.name}
-                    </label>
-                  </div>
-                ))}
+                  </h2>
+                  <p className="text-xs text-(--color-pakistan)/40 uppercase tracking-widest font-bold mt-1">
+                    Refine your search
+                  </p>
+                </div>
+                <motion.button
+                  whileHover={{ rotate: 90, scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 bg-(--color-tiger)/10 text-(--color-tiger) rounded-xl hover:bg-(--color-tiger) hover:text-white transition-colors shadow-sm"
+                >
+                  <X size={20} />
+                </motion.button>
               </div>
-            </Accordion>
 
-            <Accordion title="Price Range">
               <div className="space-y-4">
-                <div className="relative h-8 flex items-center px-2">
-                  {/* Track Background */}
-                  <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-gray-300 rounded-full pointer-events-none" />
+                <Accordion title="Category">
+                  <div className="space-y-3 px-1">
+                    {category.map((cat: { id: string; name: string }) => (
+                      <div key={cat.id} className="flex items-center group">
+                        <div className="relative flex items-center">
+                          <input
+                            type="checkbox"
+                            id={cat.id}
+                            checked={selectedCats.includes(String(cat.id))}
+                            onChange={() =>
+                              toggleList(
+                                String(cat.id),
+                                selectedCats,
+                                setSelectedCats
+                              )
+                            }
+                            className="peer h-5 w-5 rounded-md border-2 border-(--color-pakistan)/20 appearance-none 
+                                    checked:bg-(--color-tiger) checked:border-(--color-tiger) transition-all cursor-pointer"
+                          />
+                          <Check
+                            size={14}
+                            className="absolute left-0.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
+                            strokeWidth={4}
+                          />
+                        </div>
 
-                  {/* Active Track */}
-                  <div
-                    className="absolute h-1 bg-(--color-tiger) rounded-full pointer-events-none top-1/2 -translate-y-1/2"
-                    style={{
-                      left: `${
-                        ((priceRange[0] - MIN_PRICE) / (maxPrice - MIN_PRICE)) *
-                        100
-                      }%`,
-                      right: `${
-                        100 -
-                        ((priceRange[1] - MIN_PRICE) / (maxPrice - MIN_PRICE)) *
-                          100
-                      }%`,
-                    }}
-                  />
+                        <label
+                          htmlFor={cat.id}
+                          className="ml-3 text-sm font-bold text-(--color-pakistan)/70 cursor-pointer group-hover:text-(--color-tiger) transition-colors"
+                        >
+                          {cat.name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </Accordion>
 
-                  {/* Min Slider */}
-                  <input
-                    type="range"
-                    min={MIN_PRICE}
-                    max={maxPrice}
-                    value={priceRange[0]}
-                    onChange={(e) =>
-                      setPriceRange([
-                        Math.min(Number(e.target.value), priceRange[1] - 10),
-                        priceRange[1],
-                      ])
-                    }
-                    style={{
-                      zIndex: priceRange[0] > maxPrice - 100 ? "40" : "30",
-                    }}
-                    className="absolute w-full h-8 top-1/2 left-0 -translate-y-1/2 appearance-none cursor-pointer bg-transparent pointer-events-none 
-          [&::-webkit-slider-thumb]:pointer-events-auto
-          [&::-webkit-slider-thumb]:appearance-none
-          [&::-webkit-slider-thumb]:h-5
-          [&::-webkit-slider-thumb]:w-5
-          [&::-webkit-slider-thumb]:rounded-full
-          [&::-webkit-slider-thumb]:bg-(--color-tiger)
-          [&::-webkit-slider-thumb]:border-2
-          [&::-webkit-slider-thumb]:border-white
-          [&::-webkit-slider-thumb]:shadow-lg
-          [&::-webkit-slider-thumb]:cursor-grab
-          [&::-webkit-slider-thumb]:hover:scale-125
-          [&::-webkit-slider-thumb]:active:cursor-grabbing
-          [&::-webkit-slider-thumb]:transition-transform
-          [&::-moz-range-thumb]:pointer-events-auto
-          [&::-moz-range-thumb]:h-5
-          [&::-moz-range-thumb]:w-5
-          [&::-moz-range-thumb]:rounded-full
-          [&::-moz-range-thumb]:bg-(--color-tiger)
-          [&::-moz-range-thumb]:border-4
-          [&::-moz-range-thumb]:border-white
-          [&::-moz-range-thumb]:cursor-grab"
-                  />
+                <Accordion title="Price Range">
+                  <div className="space-y-6 pt-2 pb-4 px-3">
+                    <div className="relative h-2 flex items-center">
+                      {/* Track Background */}
+                      <div className="absolute left-0 right-0 h-1.5 bg-(--color-pakistan)/10 rounded-full" />
 
-                  {/* Max Slider */}
-                  <input
-                    type="range"
-                    min={MIN_PRICE}
-                    max={maxPrice}
-                    value={priceRange[1]}
-                    onChange={(e) =>
-                      setPriceRange([
-                        priceRange[0],
-                        Math.max(Number(e.target.value), priceRange[0] + 10),
-                      ])
-                    }
-                    className="absolute w-full h-8 top-1/2 -translate-y-1/2 appearance-none cursor-pointer bg-transparent pointer-events-none z-20
-          [&::-webkit-slider-thumb]:pointer-events-auto
-          [&::-webkit-slider-thumb]:appearance-none
-          [&::-webkit-slider-thumb]:h-5
-          [&::-webkit-slider-thumb]:w-5
-          [&::-webkit-slider-thumb]:rounded-full
-          [&::-webkit-slider-thumb]:bg-(--color-tiger)
-          [&::-webkit-slider-thumb]:border-2
-          [&::-webkit-slider-thumb]:border-white
-          [&::-webkit-slider-thumb]:shadow-lg
-          [&::-webkit-slider-thumb]:cursor-grab
-          [&::-webkit-slider-thumb]:hover:scale-125
-          [&::-webkit-slider-thumb]:active:cursor-grabbing
-          [&::-webkit-slider-thumb]:transition-transform
-          [&::-moz-range-thumb]:pointer-events-auto
-          [&::-moz-range-thumb]:h-5
-          [&::-moz-range-thumb]:w-5
-          [&::-moz-range-thumb]:rounded-full
-          [&::-moz-range-thumb]:bg-(--color-tiger)
-          [&::-moz-range-thumb]:border-4
-          [&::-moz-range-thumb]:border-white
-          [&::-moz-range-thumb]:cursor-grab"
-                  />
-                </div>
+                      {/* Active Track */}
+                      <motion.div
+                        className="absolute h-1.5 bg-(--color-tiger) rounded-full shadow-[0_0_10px_rgba(188,108,37,0.3)]"
+                        style={{
+                          left: `${
+                            ((priceRange[0] - MIN_PRICE) /
+                              (maxPrice - MIN_PRICE)) *
+                            100
+                          }%`,
+                          right: `${
+                            100 -
+                            ((priceRange[1] - MIN_PRICE) /
+                              (maxPrice - MIN_PRICE)) *
+                              100
+                          }%`,
+                        }}
+                      />
 
-                {/* Price Display */}
-                <div className="flex items-center justify-center gap-3 text-sm">
-                  <span className="font-semibold text-gray-700">
-                    EGP {priceRange[0]}
-                  </span>
-                  <span className="text-gray-400">—</span>
-                  <span className="font-semibold text-gray-700">
-                    EGP {priceRange[1]}
-                  </span>
-                </div>
-              </div>
-            </Accordion>
+                      {/* Min Slider */}
+                      <input
+                        type="range"
+                        min={MIN_PRICE}
+                        max={maxPrice}
+                        value={priceRange[0]}
+                        onChange={(e) =>
+                          setPriceRange([
+                            Math.min(
+                              Number(e.target.value),
+                              priceRange[1] - 10
+                            ),
+                            priceRange[1],
+                          ])
+                        }
+                        style={{
+                          zIndex: priceRange[0] > maxPrice - 100 ? "40" : "30",
+                        }}
+                        className="absolute w-full h-2 appearance-none cursor-pointer bg-transparent pointer-events-none 
+              [&::-webkit-slider-thumb]:pointer-events-auto
+              [&::-webkit-slider-thumb]:appearance-none
+              [&::-webkit-slider-thumb]:h-5
+              [&::-webkit-slider-thumb]:w-5
+              [&::-webkit-slider-thumb]:rounded-full
+              [&::-webkit-slider-thumb]:bg-white
+              [&::-webkit-slider-thumb]:border-4
+              [&::-webkit-slider-thumb]:border-(--color-tiger)
+              [&::-webkit-slider-thumb]:shadow-lg
+              [&::-webkit-slider-thumb]:hover:scale-125
+              [&::-webkit-slider-thumb]:transition-transform
+              [&::-moz-range-thumb]:pointer-events-auto
+              [&::-moz-range-thumb]:h-4
+              [&::-moz-range-thumb]:w-4
+              [&::-moz-range-thumb]:rounded-full
+              [&::-moz-range-thumb]:bg-white
+              [&::-moz-range-thumb]:border-4
+              [&::-moz-range-thumb]:border-(--color-tiger)"
+                      />
 
-            <Accordion title="Color">
-              <div className="flex flex-col gap-4">
-                {colorsList.map(
-                  (c: { name: string; color: string; id: string }) => (
-                    <div
-                      key={c.id}
-                      onClick={() =>
-                        toggleList(
-                          String(c.id),
-                          selectedColors,
-                          setSelectedColors
-                        )
-                      }
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      {/* دائرة اللون */}
-                      <span
-                        className={`w-6 h-6 rounded-full relative flex items-center justify-center`}
-                        style={{ backgroundColor: c.color }}
-                        title={c.name}
-                      >
-                        {/* علامة الصح */}
-                        {selectedColors.includes(String(c.id)) && (
-                          <svg
-                            className="w-4 h-4 text-white drop-shadow-lg"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={3}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        )}
-                      </span>
-                      {/* اسم اللون */}
-                      <span className="text-sm text-gray-700 hover:text-(--color-tiger)">
-                        {c.name}
-                      </span>
+                      {/* Max Slider */}
+                      <input
+                        type="range"
+                        min={MIN_PRICE}
+                        max={maxPrice}
+                        value={priceRange[1]}
+                        onChange={(e) =>
+                          setPriceRange([
+                            priceRange[0],
+                            Math.max(
+                              Number(e.target.value),
+                              priceRange[0] + 10
+                            ),
+                          ])
+                        }
+                        className="absolute w-full h-2 appearance-none cursor-pointer bg-transparent pointer-events-none z-20
+              [&::-webkit-slider-thumb]:pointer-events-auto
+              [&::-webkit-slider-thumb]:appearance-none
+              [&::-webkit-slider-thumb]:h-5
+              [&::-webkit-slider-thumb]:w-5
+              [&::-webkit-slider-thumb]:rounded-full
+              [&::-webkit-slider-thumb]:bg-white
+              [&::-webkit-slider-thumb]:border-4
+              [&::-webkit-slider-thumb]:border-(--color-tiger)
+              [&::-webkit-slider-thumb]:shadow-lg
+              [&::-webkit-slider-thumb]:hover:scale-125
+              [&::-webkit-slider-thumb]:transition-transform
+              [&::-moz-range-thumb]:pointer-events-auto
+              [&::-moz-range-thumb]:h-4
+              [&::-moz-range-thumb]:w-4
+              [&::-moz-range-thumb]:rounded-full
+              [&::-moz-range-thumb]:bg-white
+              [&::-moz-range-thumb]:border-4
+              [&::-moz-range-thumb]:border-(--color-tiger)"
+                      />
                     </div>
-                  )
-                )}
-              </div>
-            </Accordion>
 
-            <button
-              onClick={handleClearAll}
-              className="w-full mt-6 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-(--color-tiger) hover:text-(--color-cornsilk) transition-colors cursor-pointer"
-            >
-              Clear All
-            </button>
+                    {/* Price Display */}
+                    <div className="flex items-center justify-between px-2">
+                      <div className="bg-(--color-pakistan)/5 px-3 py-1 rounded-lg border border-(--color-pakistan)/10 flex flex-col items-center">
+                        <span className="text-[10px] uppercase font-black text-(--color-pakistan)/40">
+                          Min
+                        </span>
+                        <span className="text-sm font-black text-(--color-pakistan)">
+                          {priceRange[0]}{" "}
+                          <span className="text-[10px]">EGP</span>
+                        </span>
+                      </div>
+                      <div className="h-px w-4 bg-(--color-pakistan)/20 mt-2" />
+                      <div className="bg-(--color-tiger)/5 px-3 py-1 rounded-lg border border-(--color-tiger)/10 flex flex-col items-center">
+                        <span className="text-[10px] uppercase font-black text-(--color-tiger)/40">
+                          Max
+                        </span>
+                        <span className="text-sm font-black text-(--color-tiger)">
+                          {priceRange[1]}{" "}
+                          <span className="text-[10px]">EGP</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Accordion>
+
+                <Accordion title="Color">
+                  <div className="grid grid-cols-2 gap-3 px-1 py-1">
+                    {colorsList.map(
+                      (c: { name: string; color: string; id: string }) => (
+                        <motion.div
+                          key={c.id}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() =>
+                            toggleList(
+                              String(c.id),
+                              selectedColors,
+                              setSelectedColors
+                            )
+                          }
+                          className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-all border-2
+                                ${
+                                  selectedColors.includes(String(c.id))
+                                    ? "bg-(--color-tiger)/5 border-(--color-tiger) shadow-sm"
+                                    : "bg-(--color-pakistan)/5 border-transparent hover:border-(--color-pakistan)/10"
+                                }`}
+                        >
+                          <div
+                            className="w-6 h-6 rounded-full relative flex items-center justify-center shadow-inner"
+                            style={{ backgroundColor: c.color }}
+                          >
+                            {selectedColors.includes(String(c.id)) && (
+                              <Check
+                                size={14}
+                                className="text-white drop-shadow-md"
+                                strokeWidth={4}
+                              />
+                            )}
+                          </div>
+                          <span
+                            className={`text-[13px] font-bold ${
+                              selectedColors.includes(String(c.id))
+                                ? "text-(--color-tiger)"
+                                : "text-(--color-pakistan)/70"
+                            }`}
+                          >
+                            {c.name}
+                          </span>
+                        </motion.div>
+                      )
+                    )}
+                  </div>
+                </Accordion>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleClearAll}
+                  className="w-full mt-8 py-4 px-4 bg-(--color-pakistan) text-(--color-cornsilk) rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-(--color-tiger) shadow-lg shadow-(--color-pakistan)/20 transition-all cursor-pointer"
+                >
+                  Clear All Filters
+                </motion.button>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

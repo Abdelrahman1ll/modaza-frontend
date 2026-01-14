@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
-import "./AddToCartButton.css"; // هنضيف الكي فريمز هنا
+import { motion } from "framer-motion";
+import "./AddToCartButton.css";
 
 /**
  * AddToCartButton: A reusable button component with loading state for cart operations.
- * زر الإضافة للسلة: مكون زر قابل لإعادة الاستخدام مع حالة تحميل لعمليات السلة.
  */
 export default function AddToCartButton({
   addToCart,
@@ -16,35 +16,44 @@ export default function AddToCartButton({
   const handleClick = () => {
     setClicked(true);
     addToCart();
-    setTimeout(() => setClicked(false), 1000); // مدة أطول لرؤية الحركة بالكامل
+    setTimeout(() => setClicked(false), 2000);
   };
 
   return (
-    <button
+    <motion.button
       onClick={handleClick}
-      className="flex items-center justify-center gap-2 flex-1 py-3 rounded-full font-semibold text-white text-lg relative overflow-hidden"
+      whileHover={{ scale: 1.02, y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      className="group/btn relative flex items-center justify-center gap-3 flex-1 h-14 rounded-2xl font-black text-white text-lg overflow-hidden transition-all duration-300 shadow-xl hover:shadow-(--color-tiger)/20"
       style={{
-        backgroundColor: "var(--color-earth)",
-        boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+        background: clicked
+          ? "var(--color-tiger)"
+          : "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
       }}
     >
-      {/* Overlay متحرك */}
+      {/* Premium Shimmer Effect */}
+      <span className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:animate-[shimmer_1.5s_infinite]" />
+
+      {/* Slide Overlay for Click State */}
       <span
-        className={`absolute top-0 left-0 h-full w-full rounded-full ${
-          clicked ? "slideOverlay" : ""
+        className={`absolute inset-0 h-full w-full rounded-2xl transition-transform duration-2000 ease-out ${
+          clicked ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{
-          backgroundColor: "var(--color-tiger)",
+          backgroundColor: "rgba(0,0,0,0.1)",
         }}
       ></span>
 
-      <span className="relative z-10">Add to Cart</span>
+      <span className="relative z-10 tracking-tight">Add to Cart</span>
       <ShoppingCart
-        size={26}
-        className={`relative z-10 transition-transform duration-300 ${
-          clicked ? "translate-x-2 rotate-12" : ""
+        size={24}
+        strokeWidth={2.5}
+        className={`relative z-10 transition-all duration-500 ${
+          clicked
+            ? "translate-x-1 rotate-12 scale-110"
+            : "group-hover/btn:translate-x-1"
         }`}
       />
-    </button>
+    </motion.button>
   );
 }

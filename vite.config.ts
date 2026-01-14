@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
     // Content Security Policy (CSP): Protect against XSS and data injection
     // سياسة أمان المحتوى: حماية الموقع من هجمات حقن الأكواد الضارة (XSS)
     "Content-Security-Policy":
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://accounts.google.com https://*.cloudinary.com ws: wss:; frame-src 'self' https://accounts.google.com; worker-src 'self' blob:;",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://accounts.google.com https://*.cloudinary.com https://formspree.io ws: wss:; frame-src 'self' https://accounts.google.com; worker-src 'self' blob:; media-src 'self' data:;",
   };
 
   return {

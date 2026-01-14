@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { ArrowUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
@@ -36,15 +37,27 @@ export default function ScrollToTop() {
   };
 
   return (
-    <>
+    <AnimatePresence>
       {isVisible && (
-        <button
+        <motion.button
+          initial={{ opacity: 0, y: 20, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.8 }}
+          whileHover={{
+            scale: 1.15,
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+          }}
+          whileTap={{ scale: 0.95 }}
           onClick={scrollToTop}
-          className="fixed bottom-24 right-6 text-(--color-text) p-1.5 rounded-full shadow-lg hover:scale-110 transition-transform z-50 cursor-pointer"
+          className="fixed bottom-24 right-6 z-50 flex items-center justify-center w-10 h-10 rounded-full bg-white/60 backdrop-blur-md border border-(--color-tiger)/20 shadow-lg cursor-pointer transition-colors duration-300 group"
+          title="الرجوع للأعلى"
         >
-          <ArrowUp size={20} />
-        </button>
+          <ArrowUp
+            size={20}
+            className="text-(--color-tiger) group-hover:-translate-y-1 transition-transform duration-300"
+          />
+        </motion.button>
       )}
-    </>
+    </AnimatePresence>
   );
 }

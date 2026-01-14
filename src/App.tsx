@@ -17,6 +17,12 @@ const FAQsPage = lazy(() => import("./pages/QuickLinks/FAQsPage"));
 const ShippingDeliveryPage = lazy(
   () => import("./pages/QuickLinks/ShippingDeliveryPage")
 );
+const SecurePaymentPage = lazy(
+  () => import("./pages/QuickLinks/SecurePaymentPage")
+);
+const WorldwideShippingPage = lazy(
+  () => import("./pages/QuickLinks/WorldwideShippingPage")
+);
 const BackgroundEffectPage = lazy(
   () => import("./pages/BackgroundEffect/BackgroundEffectPage")
 );
@@ -74,16 +80,18 @@ function App() {
   return (
     <div>
       <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
+        position="bottom-right"
+        autoClose={4000}
+        hideProgressBar
         newestOnTop
         closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
+        theme="light"
+        toastClassName="premium-toast"
+        className="premium-toast-body"
       />
 
       <Suspense fallback={<Loading />}>
@@ -144,6 +152,11 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/faqs" element={<FAQsPage />} />
           <Route path="/shipping-delivery" element={<ShippingDeliveryPage />} />
+          <Route path="/secure-payment" element={<SecurePaymentPage />} />
+          <Route
+            path="/shipping-in-egypt"
+            element={<WorldwideShippingPage />}
+          />
           <Route path="*" element={<NotFound />} />
 
           {/* Protected Routes */}

@@ -38,57 +38,55 @@ export default function Header() {
     isSearchLocal,
     navigate,
     setIsSearchLocal,
-    dropdownRef,
+    desktopDropdownRef,
+    mobileDropdownRef,
+    toggleCountryDropdown,
   } = useHeader();
   const location = useLocation();
 
   return (
     <>
       {/* Desktop Header | ترويسة الحاسوب */}
-      <header className="shadow-md py-4 px-6 max-[1180px]:hidden">
-        <div className="w-full flex items-center justify-between gap-6">
-          <nav className="flex items-center gap-6 font-medium">
+      <header
+        className="absolute top-0 left-0 w-full z-50 transition-all duration-300 backdrop-blur-md shadow-sm py-3 px-6 max-[1180px]:hidden"
+        style={{
+          backgroundColor:
+            "color-mix(in srgb, var(--color-cornsilk), transparent 20%)",
+          borderBottom:
+            "1px solid color-mix(in srgb, var(--color-dark), transparent 90%)",
+        }}
+      >
+        <div className="w-full flex items-center justify-between gap-6 max-w-[1920px] mx-auto">
+          <nav className="flex items-center gap-8 font-medium">
             <Link
               to="/"
-              className="font-bold transition"
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--color-tiger)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--color-dark)")
-              }
+              className="text-(--color-dark) hover:text-(--color-tiger) font-bold transition-colors duration-300 relative group"
             >
               Home
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-tiger) transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               to="/products"
-              className="font-bold transition"
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--color-tiger)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--color-dark)")
-              }
+              className="text-(--color-dark) hover:text-(--color-tiger) font-bold transition-colors duration-300 relative group"
             >
               All Products
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-tiger) transition-all duration-300 group-hover:w-full"></span>
             </Link>
             <Link
               to="/contact-us"
-              className="font-bold transition"
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--color-tiger)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--color-dark)")
-              }
+              className="text-(--color-dark) hover:text-(--color-tiger) font-bold transition-colors duration-300 relative group"
             >
               Contact Us
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-tiger) transition-all duration-300 group-hover:w-full"></span>
             </Link>
           </nav>
 
-          <Link to="/">
+          <Link
+            to="/"
+            className="transform hover:scale-105 transition-transform duration-300"
+          >
             <span
-              className="text-4xl font-bold drop-shadow-lg cursor-pointer"
+              className="text-4xl font-bold drop-shadow-sm cursor-pointer text-(--color-dark)"
               style={{
                 fontFamily: "'Dancing Script Local', cursive",
                 letterSpacing: ".8px",
@@ -100,14 +98,16 @@ export default function Header() {
             </span>
           </Link>
 
-          <div className="flex items-center gap-8">
-            <div className="relative md:block w-64">
+          <div className="flex items-center gap-6">
+            <div className="relative md:block w-72">
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full pl-10  py-2 rounded-full focus:border focus:outline-none"
+                className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white/60 focus:bg-white shadow-inner focus:shadow-md transition-all duration-300 outline-none"
                 style={{
                   color: "var(--color-pakistan)",
+                  border:
+                    "1px solid color-mix(in srgb, var(--color-pakistan), transparent 80%)",
                 }}
                 value={nameInput}
                 onChange={(e) => setNameInput(e.target.value)}
@@ -118,15 +118,22 @@ export default function Header() {
                 }}
               />
               <Search
-                className="absolute text-(--color-pakistan) left-3 top-2.5"
-                size={20}
+                className="absolute text-(--color-pakistan)/70 left-4 top-3"
+                size={18}
               />
             </div>
 
-            <div className="relative inline-block text-left" ref={dropdownRef}>
+            <div
+              className="relative inline-block text-left"
+              ref={desktopDropdownRef}
+            >
               <span
-                onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
+                onClick={toggleCountryDropdown}
+                className="inline-flex justify-center items-center px-4 py-2 bg-white/60 hover:bg-white text-(--color-dark) font-medium shadow-sm active:scale-95 transition-all duration-200 cursor-pointer rounded-full select-none"
+                style={{
+                  border:
+                    "1px solid color-mix(in srgb, var(--color-pakistan), transparent 90%)",
+                }}
                 role="button"
                 aria-label="Select country"
                 aria-expanded={isOpen}
@@ -137,26 +144,32 @@ export default function Header() {
                   alt={`Flag of ${selected.name}`}
                   loading="lazy"
                   decoding="async"
-                  width="16"
-                  height="16"
-                  className="w-4 h-4 rounded-full mr-2 object-cover"
+                  width="18"
+                  height="18"
+                  className="w-4.5 h-4.5 rounded-full mr-2.5 object-cover shadow-sm"
                 />
-                {selected.name}
+                <span className="text-sm">{selected.name}</span>
               </span>
 
               <AnimatePresence>
                 {isOpen && (
                   <motion.ul
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute mt-2 w-40 bg-(--color-cornsilk) rounded-lg shadow-lg z-50 overflow-hidden"
+                    className="absolute right-0 mt-5 w-48 backdrop-blur-xl rounded-xl shadow-xl z-50 overflow-hidden py-1"
+                    style={{
+                      backgroundColor:
+                        "color-mix(in srgb, var(--color-cornsilk), transparent 5%)",
+                      border:
+                        "1px solid color-mix(in srgb, var(--color-earth), transparent 80%)",
+                    }}
                   >
                     {countries.map((country) => (
                       <li
                         key={country.name}
-                        className="flex items-center px-4 py-2 cursor-pointer hover:bg-(--color-earth)"
+                        className="flex items-center px-3 py-1 cursor-pointer hover:bg-(--color-earth)/10 border-b border-black/5 last:border-0"
                         onClick={() => {
                           setSelected(country);
                           setIsOpen(false);
@@ -167,11 +180,13 @@ export default function Header() {
                           alt={`Flag of ${country.name}`}
                           loading="lazy"
                           decoding="async"
-                          width="16"
-                          height="16"
-                          className="w-4 h-4 rounded-full mr-2 object-cover"
+                          width="20"
+                          height="20"
+                          className="w-5 h-5 rounded-full mr-3 object-cover shadow-sm"
                         />
-                        {country.name}
+                        <span className="text-lg font-medium">
+                          {country.name}
+                        </span>
                       </li>
                     ))}
                   </motion.ul>
@@ -179,80 +194,61 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
-            <div className="flex items-center gap-8 mr-2">
+            <div className="flex items-center gap-5 mr-1">
               {user ? (
                 <UserMenu handleLogout={handleLogout} />
               ) : (
                 <motion.div
-                  whileHover={{ scale: 1.2, y: -4 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <div
-                    className="transition cursor-pointer"
+                    className="p-2 rounded-full hover:bg-white/50 transition-colors cursor-pointer text-(--color-dark) hover:text-(--color-primary)"
                     title="تسجيل الدخول"
-                    style={{ background: "none" }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--color-primary)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--color-text)")
-                    }
                     onClick={() => openSignup()}
                     role="button"
                     aria-label="Login"
                     tabIndex={0}
                   >
-                    <User size={24} />
+                    <User size={22} strokeWidth={2} />
                   </div>
                 </motion.div>
               )}
 
               <motion.div
-                whileHover={{ scale: 1.2, y: -4 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Link
                   to="/wishlist"
-                  className="transition relative "
+                  className="block p-2 rounded-full hover:bg-white/50 transition-colors text-(--color-dark) hover:text-(--color-primary) relative"
                   title="قائمة المفضلة"
-                  style={{ background: "none" }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-primary)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-text)")
-                  }
                 >
                   <Heart
                     className="cursor-pointer"
-                    size={24}
+                    size={22}
+                    strokeWidth={2}
                     aria-label="View Wishlist"
                   />
                 </Link>
               </motion.div>
 
               <motion.div
-                whileHover={{ scale: 1.2, y: -4 }}
-                whileTap={{ scale: 0.9 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Link
                   to="/cart"
-                  className="transition relative "
+                  className="block p-2 rounded-full hover:bg-white/50 transition-colors text-(--color-dark) hover:text-(--color-primary) relative"
                   title="عربة التسوق"
-                  style={{ background: "none" }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "var(--color-primary)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color = "var(--color-text)")
-                  }
                 >
-                  <ShoppingCart size={24} aria-label="View Shopping Cart" />
+                  <ShoppingCart
+                    size={22}
+                    strokeWidth={2}
+                    aria-label="View Shopping Cart"
+                  />
                   <span
-                    className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
+                    className="absolute top-0 right-0 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger) shadow-sm ring-2 ring-[--color-cornsilk]"
                     title="Number of items in cart"
                     aria-label={`${totalItems} items in cart`}
                   >
@@ -266,82 +262,95 @@ export default function Header() {
       </header>
 
       {/* Top Mobile Header | ترويسة الهاتف العلوية */}
-      <header className="shadow-md py-4 px-1 min-[1180px]:hidden">
-        <div className="w-full flex items-center justify-between gap-6">
-          <motion.div
-            whileHover={{ scale: 1.2, y: -4 }}
+      <header
+        className="sticky top-0 z-40 transition-all duration-300 backdrop-blur-md shadow-sm py-3 px-4 min-[1180px]:hidden"
+        style={{
+          backgroundColor:
+            "color-mix(in srgb, var(--color-cornsilk), transparent 10%)",
+          borderBottom:
+            "1px solid color-mix(in srgb, var(--color-dark), transparent 95%)",
+        }}
+      >
+        <div className="w-full flex items-center justify-between">
+          <motion.button
             whileTap={{ scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            className="p-2 rounded-full hover:bg-black/5 text-[--color-dark]"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
-            <button
-              className="text-xl cursor-pointer test-(--color-text)"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {isMenuOpen ? (
-                <X size={26} aria-label="Close menu" />
-              ) : (
-                <Menu size={26} aria-label="Open menu" />
-              )}
-            </button>
-          </motion.div>
+            {isMenuOpen ? (
+              <X size={24} aria-label="Close menu" />
+            ) : (
+              <Menu size={24} aria-label="Open menu" />
+            )}
+          </motion.button>
+
           {isMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40 w-full h-full"
+            <div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-40 w-full h-full backdrop-blur-sm"
                 onClick={() => setIsMenuOpen(false)}
               />
-              <div className="fixed top-24 left-0 h-full bg-(--color-cornsilk) w-2/3 shadow-lg z-50 flex flex-col p-6 transition-transform duration-300">
+              <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="fixed top-4 left-4 h-[calc(100vh-2rem)] w-[80%] max-w-sm bg-(--color-cornsilk) shadow-2xl z-50 flex flex-col p-8 border border-white/20 rounded-3xl overflow-hidden"
+              >
+                <div className="mb-8 flex justify-between items-center">
+                  <span
+                    className="text-3xl font-bold text-(--color-dark)"
+                    style={{ fontFamily: "'Dancing Script Local', cursive" }}
+                  >
+                    {BRAND_NAME}
+                  </span>
+                  <button
+                    onClick={() => setIsMenuOpen(false)}
+                    className="p-2 hover:bg-black/5 rounded-full"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+
                 <nav className="flex flex-col gap-4 font-medium">
                   <Link
                     to="/"
-                    className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
+                    className="font-bold py-3 px-6 flex items-center bg-white/40 border border-white/20 rounded-2xl text-(--color-dark) shadow-sm hover:shadow-md hover:bg-white/60 transition-all"
                     onClick={() => setIsMenuOpen(false)}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--color-tiger)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--color-dark)")
-                    }
                   >
+                    <House size={18} className="mr-3 opacity-70" />
                     Home
                   </Link>
 
                   <Link
                     to="/products"
-                    className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
+                    className="font-bold py-3 px-6 flex items-center bg-white/40 border border-white/20 rounded-2xl text-(--color-dark) shadow-sm hover:shadow-md hover:bg-white/60 transition-all"
                     onClick={() => setIsMenuOpen(false)}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--color-tiger)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--color-dark)")
-                    }
                   >
+                    <Search size={18} className="mr-3 opacity-70" />
                     All Products
                   </Link>
 
                   <Link
                     to="/contact-us"
-                    className="font-bold py-2 px-6 flex justify-center border border-gray-300 rounded-full"
+                    className="font-bold py-3 px-6 flex items-center bg-white/40 border border-white/20 rounded-2xl text-(--color-dark) shadow-sm hover:shadow-md hover:bg-white/60 transition-all"
                     onClick={() => setIsMenuOpen(false)}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = "var(--color-tiger)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = "var(--color-dark)")
-                    }
                   >
+                    <User size={18} className="mr-3 opacity-70" />
                     Contact Us
                   </Link>
                 </nav>
-              </div>
-            </>
+              </motion.div>
+            </div>
           )}
 
-          <Link to="/">
+          <Link to="/" className="absolute left-1/2 transform -translate-x-1/2">
             <span
-              className="text-3xl font-bold drop-shadow-lg cursor-pointer"
+              className="text-3xl font-bold drop-shadow-sm cursor-pointer text-(--color-dark)"
               style={{
                 fontFamily: "'Dancing Script Local', 'Pacifico', cursive",
                 letterSpacing: ".8px",
@@ -351,10 +360,13 @@ export default function Header() {
             </span>
           </Link>
 
-          <div className="relative inline-block text-left" ref={dropdownRef}>
+          <div
+            className="relative inline-block text-left"
+            ref={mobileDropdownRef}
+          >
             <span
-              onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex justify-center items-center px-2 py-1 bg-(--color-dark) text-white font-medium shadow-md focus:outline-none cursor-pointer rounded-full"
+              onClick={toggleCountryDropdown}
+              className="inline-flex justify-center items-center p-2 rounded-full hover:bg-black/5 transition-colors"
               role="button"
               aria-label="Select country"
               aria-expanded={isOpen}
@@ -365,26 +377,25 @@ export default function Header() {
                 alt={`Flag of ${selected.name}`}
                 loading="lazy"
                 decoding="async"
-                width="16"
-                height="16"
-                className="w-4 h-4 rounded-full mr-2 object-cover"
+                width="20"
+                height="20"
+                className="w-6 h-6 rounded-full object-cover shadow-sm ring-2 ring-white/50"
               />
-              {selected.name}
             </span>
 
             <AnimatePresence>
               {isOpen && (
                 <motion.ul
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute mt-1 right-0 w-40 bg-(--color-cornsilk) rounded-lg shadow-lg z-50 overflow-hidden"
+                  className="absolute top-14 right-0 w-44 bg-(--color-cornsilk)/95 backdrop-blur-xl rounded-xl shadow-xl border border-(--color-earth)/20 z-50 overflow-hidden py-1"
                 >
                   {countries.map((country) => (
                     <li
                       key={country.name}
-                      className="flex items-center px-4 py-2 cursor-pointer hover:bg-(--color-earth)"
+                      className="flex items-center px-3 py-1 cursor-pointer hover:bg-(--color-earth)/10 border-b border-black/5 last:border-0"
                       onClick={() => {
                         setSelected(country);
                         setIsOpen(false);
@@ -395,11 +406,13 @@ export default function Header() {
                         alt={`Flag of ${country.name}`}
                         loading="lazy"
                         decoding="async"
-                        width="16"
-                        height="16"
-                        className="w-4 h-4 rounded-full mr-2 object-cover"
+                        width="20"
+                        height="20"
+                        className="w-5 h-5 rounded-full mr-3 object-cover shadow-sm"
                       />
-                      {country.name}
+                      <span className="text-lg font-medium">
+                        {country.name}
+                      </span>
                     </li>
                   ))}
                 </motion.ul>
@@ -410,19 +423,20 @@ export default function Header() {
       </header>
 
       {/* Floating Bottom Mobile Header | ترويسة الهاتف العائمة السفلية */}
+
       <header
-        className="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 
-             flex items-center justify-between shadow-lg 
-             border border-(--color-text) py-3 px-6 rounded-full w-[90%] 
-             backdrop-blur-md bg-opacity-90 min-[1180px]:hidden"
+        className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 
+             flex items-center justify-between shadow-[0_8px_32px_rgba(0,0,0,0.12)] 
+             border border-white/40 py-3 px-8 rounded-full w-[90%] max-w-sm
+             backdrop-blur-xl min-[1180px]:hidden ring-1 ring-black/5"
       >
-        <motion.div
-          whileHover={{ scale: 1.2, y: -4 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
+        <motion.div whileTap={{ scale: 0.9 }} className="relative">
           <div
-            className="cursor-pointer"
+            className={`p-2 rounded-full transition-all ${
+              isSearch
+                ? "bg-(--color-tiger) text-white shadow-lg shadow-(--color-tiger)/30"
+                : "text-(--color-dark) hover:bg-black/5"
+            }`}
             onClick={() => {
               setSearch(!isSearch);
               setIsSearchLocal(!isSearchLocal);
@@ -433,108 +447,60 @@ export default function Header() {
             tabIndex={0}
           >
             {isSearch ? (
-              <X size={22} aria-label="Close search" />
+              <X size={22} strokeWidth={2.5} />
             ) : (
-              <Search size={22} aria-label="Open search" />
+              <Search size={22} strokeWidth={2.5} />
             )}
           </div>
         </motion.div>
 
-        <motion.div
-          whileHover={{ scale: 1.2, y: -4 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
+        <motion.div whileTap={{ scale: 0.9 }}>
           <Link
             to="/cart"
-            className="transition relative"
+            className="block p-2 rounded-full relative text-(--color-dark) hover:bg-black/5 transition-all"
             title="عربة التسوق"
-            style={{ background: "none" }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.color = "var(--color-primary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.color = "var(--color-text)")
-            }
           >
-            <ShoppingCart size={24} aria-label="View Shopping Cart" />
-            <span
-              className="absolute -top-1.5 -right-2.5 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger)"
-              title="Number of items in cart"
-              aria-label={`${totalItems} items in cart`}
-            >
+            <ShoppingCart size={24} strokeWidth={2.5} />
+            <span className="absolute -top-1 -right-1 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full bg-(--color-tiger) shadow-md border-2 border-(--color-cornsilk)">
               {totalItems}
             </span>
           </Link>
         </motion.div>
 
-        <motion.div
-          whileHover={{ scale: 1.2, y: -4 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
+        <motion.div whileTap={{ scale: 0.9 }}>
           <Link
             to="/wishlist"
-            className="transition relative"
-            title="عربة التسوق"
-            style={{ background: "none" }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.color = "var(--color-primary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.color = "var(--color-text)")
-            }
+            className="block p-2 rounded-full text-(--color-dark) hover:bg-black/5 transition-all"
+            title="قائمة المفضلة"
           >
-            <Heart size={24} aria-label="View Wishlist" />
+            <Heart size={24} strokeWidth={2.5} />
           </Link>
         </motion.div>
 
         {user ? (
           <UserMenu handleLogout={handleLogout} />
         ) : (
-          <motion.div
-            whileHover={{ scale: 1.2, y: -4 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
+          <motion.div whileTap={{ scale: 0.9 }}>
             <div
-              className="transition cursor-pointer"
+              className="block p-2 rounded-full text-(--color-dark) hover:bg-black/5 transition-all cursor-pointer"
               title="تسجيل الدخول"
-              style={{ background: "none" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "var(--color-primary)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.color = "var(--color-text)")
-              }
               onClick={() => openSignup()}
               role="button"
               aria-label="Login"
               tabIndex={0}
             >
-              <User size={24} aria-label="Login or View Account" />
+              <User size={24} strokeWidth={2.5} />
             </div>
           </motion.div>
         )}
 
-        <motion.div
-          whileHover={{ scale: 1.2, y: -4 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
+        <motion.div whileTap={{ scale: 0.9 }}>
           <Link
             to="/"
-            className="transition"
+            className="block p-2 rounded-full text-(--color-dark) hover:bg-black/5 transition-all"
             title="الصفحة الرئيسية"
-            style={{ background: "none" }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.color = "var(--color-primary)")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.color = "var(--color-text)")
-            }
           >
-            <House size={24} aria-label="Back to Home" />
+            <House size={24} strokeWidth={2.5} />
           </Link>
         </motion.div>
       </header>

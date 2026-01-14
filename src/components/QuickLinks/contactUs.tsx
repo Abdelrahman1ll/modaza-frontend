@@ -1,6 +1,15 @@
 import { useState } from "react";
-import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok } from "react-icons/fa6";
-import { MdEmail, MdPhone } from "react-icons/md";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Mail,
+  Phone,
+  Send,
+  CheckCircle2,
+  Facebook,
+  Instagram,
+  Twitter,
+  CircleDot,
+} from "lucide-react";
 import { useForm, ValidationError } from "@formspree/react";
 import { BRAND_EMAIL, BRAND_PHONE } from "../../BrandText";
 
@@ -16,188 +25,249 @@ export default function ContactUs() {
   const [state, handleSubmit] = useForm("xldzgwvb");
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-20 mt-4">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24">
+    <div className="min-h-[80vh] flex items-center justify-center p-4 md:p-10 mt-10 md:mt-24">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-6xl flex flex-col lg:flex-row gap-10 lg:gap-16"
+      >
         {/* Left Column: Contact Information */}
-        <div className="flex flex-col justify-center space-y-6 md:space-y-10 order-2 lg:order-1">
-          <div className="text-center lg:text-left">
-            <h2 className="text-2xl md:text-5xl font-extrabold text-(--color-pakistan) mb-3 md:mb-6 tracking-tight">
-              Get in Touch
-            </h2>
-            <p className="text-sm md:text-lg text-gray-600 leading-relaxed">
-              We'd love to hear from you. Reach out to us directly or fill out
-              the form.
-            </p>
+        <div className="flex-1 space-y-10 py-6">
+          <div className="space-y-4">
+            <motion.span
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-[10px] font-black uppercase tracking-[0.4em] text-(--color-tiger) block"
+            >
+              Contact Us
+            </motion.span>
+            <motion.h2
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-4xl md:text-6xl font-black text-(--color-pakistan) tracking-tight leading-[1.1]"
+            >
+              Let’s Start a
+              <br />
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-(--color-tiger) to-(--color-earth)">
+                Conversation
+              </span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-gray-500 font-medium max-w-md leading-relaxed"
+            >
+              We’re here to help you find your unique style. Reach out to our
+              boutique experts for any inquiries.
+            </motion.p>
           </div>
 
-          <div className="flex flex-col gap-4 md:gap-8">
-            {/* Phone */}
-            <div className="flex items-center space-x-2  p-2 md:p-4 rounded-xl bg-transparent border md:border-0 border-gray-100">
-              <div className="shrink-0 bg-(--color-earth)/10 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-full text-(--color-earth)">
-                <MdPhone className="text-lg md:text-2xl" />
+          <div className="space-y-6">
+            {/* Phone Card */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-center gap-6 p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow group"
+            >
+              <div className="w-14 h-14 bg-(--color-tiger)/5 text-(--color-tiger) rounded-2xl flex items-center justify-center group-hover:bg-(--color-tiger) group-hover:text-white transition-all">
+                <Phone size={24} />
               </div>
-              <div className="grow">
-                <p className="text-xs md:text-sm text-gray-500 font-bold uppercase tracking-wider">
-                  Phone
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                  Call Us Anywhere
                 </p>
-                <p className="text-base md:text-xl font-semibold text-(--color-pakistan) font-mono">
+                <p className="text-xl font-bold text-(--color-pakistan) font-mono">
                   {BRAND_PHONE}
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Email */}
-            <div className="flex items-center space-x-4 p-2 md:p-4 rounded-xl bg-transparent border md:border-0 border-gray-100">
-              <div className="shrink-0 bg-(--color-earth)/10 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-full text-(--color-earth)">
-                <MdEmail className="text-lg md:text-2xl" />
+            {/* Email Card */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex items-center gap-6 p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow group"
+            >
+              <div className="w-14 h-14 bg-(--color-pakistan)/5 text-(--color-pakistan) rounded-2xl flex items-center justify-center group-hover:bg-(--color-pakistan) group-hover:text-white transition-all">
+                <Mail size={24} />
               </div>
-              <div className="grow">
-                <p className="text-xs md:text-sm text-gray-500 font-bold uppercase tracking-wider">
-                  Email
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+                  Email Our Boutique
                 </p>
-                <p className="text-base md:text-xl font-semibold text-(--color-pakistan) break-all">
+                <p className="text-xl font-bold text-(--color-pakistan) break-all">
                   {BRAND_EMAIL}
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Social Icons */}
-          <div className="text-center lg:text-left">
-            <p className="text-xs md:text-sm font-semibold text-(--color-pakistan) mb-3 md:mb-5">
-              Follow Us
-            </p>
-            <div className="flex justify-center lg:justify-start space-x-3 md:space-x-4">
-              {[
-                { Icon: FaFacebookF, label: "Facebook" },
-                { Icon: FaInstagram, label: "Instagram" },
-                { Icon: FaTwitter, label: "Twitter" },
-                { Icon: FaTiktok, label: "TikTok" },
-              ].map(({ Icon, label }, index) => (
-                <a
-                  key={index}
+          {/* Socials */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="flex items-center gap-4 pt-4"
+          >
+            <span className="text-[10px] font-black uppercase tracking-widest text-(--color-pakistan)/40">
+              Follow The Trend
+            </span>
+            <div className="h-px w-10 bg-(--color-pakistan)/10" />
+            <div className="flex gap-2">
+              {[Instagram, Twitter, Facebook].map((Icon, i) => (
+                <motion.a
+                  key={i}
                   href="#"
-                  aria-label={label}
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full text-(--color-pakistan) hover:bg-(--color-tiger) hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  className="w-10 h-10 flex items-center justify-center border border-gray-100 rounded-full text-(--color-pakistan) hover:border-(--color-tiger) hover:text-(--color-tiger) transition-all"
                 >
-                  <Icon className="text-lg md:text-xl" />
-                </a>
+                  <Icon size={18} />
+                </motion.a>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Right Column: The Form */}
-        <div className="bg-(--color-cornsilk) shadow-lg md:shadow-2xl rounded-2xl md:rounded-3xl p-5 md:p-12 border border-gray-100 relative overflow-hidden order-1 lg:order-2">
-          {/* Decorative circle - Hidden on mobile to save space/reduce clutter */}
-          <div className="hidden md:block absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-(--color-earth)/10 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Right Column: Glassmorphic Form Container */}
+        <div className="flex-1 relative">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="bg-white/70 backdrop-blur-2xl p-8 md:p-12 rounded-[2.5rem] border border-white/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative overflow-hidden h-full flex flex-col justify-center"
+          >
+            {/* Background Decorations */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-(--color-tiger)/5 rounded-full blur-3xl -z-10" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-(--color-pakistan)/5 rounded-full blur-3xl -z-10" />
 
-          <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-8 text-(--color-pakistan)">
-            Send Us a Message
-          </h3>
-
-          {state.succeeded ? (
-            <div className="flex flex-col items-center justify-center h-full py-10 space-y-4">
-              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl">
-                🎉
-              </div>
-              <p className="text-green-700 text-center text-xl md:text-2xl font-bold">
-                Message Sent!
-              </p>
-              <p className="text-gray-500 text-center text-sm md:text-base">
-                We'll get back to you as soon as possible.
-              </p>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-4 md:gap-6 relative z-10"
-            >
-              <div className="space-y-1 md:space-y-2">
-                <label
-                  htmlFor="name"
-                  className="text-xs md:text-sm font-semibold text-gray-700 ml-1"
+            <AnimatePresence mode="wait">
+              {state.succeeded ? (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center text-center space-y-6 py-10"
                 >
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  placeholder="John Doe"
-                  className="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-(--color-earth) focus:ring-4 focus:ring-(--color-earth)/20 p-3 md:p-4 rounded-xl transition-all duration-200 outline-none text-(--color-pakistan) text-sm md:text-base"
-                  required
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
-                />
-                <ValidationError
-                  prefix="Name"
-                  field="name"
-                  errors={state.errors}
-                  className="text-red-500 text-xs mt-1"
-                />
-              </div>
+                  <div className="w-24 h-24 bg-green-500 text-white rounded-4xl flex items-center justify-center shadow-2xl rotate-12">
+                    <CheckCircle2 size={48} />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-3xl font-black text-(--color-pakistan)">
+                      Message Sent!
+                    </h3>
+                    <p className="text-gray-500 font-medium max-w-xs">
+                      Thank you for reaching out. Our team will get back to you
+                      shortly.
+                    </p>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div key="form">
+                  <h3 className="text-2xl font-black text-(--color-pakistan) mb-8 flex items-center gap-3">
+                    <CircleDot className="text-(--color-tiger)" size={20} />
+                    Send Inquiries
+                  </h3>
 
-              <div className="space-y-1 md:space-y-2">
-                <label
-                  htmlFor="email"
-                  className="text-xs md:text-sm font-semibold text-gray-700 ml-1"
-                >
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="john@example.com"
-                  className="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-(--color-earth) focus:ring-4 focus:ring-(--color-earth)/20 p-3 md:p-4 rounded-xl transition-all duration-200 outline-none text-(--color-pakistan) text-sm md:text-base"
-                  required
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                />
-                <ValidationError
-                  prefix="Email"
-                  field="email"
-                  errors={state.errors}
-                  className="text-red-500 text-xs mt-1"
-                />
-              </div>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-(--color-pakistan)/40 uppercase tracking-widest ml-1">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        placeholder="John Doe"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full px-5 py-4 bg-white/50 border border-gray-100 rounded-2xl focus:outline-none focus:border-(--color-tiger) focus:bg-white transition-all font-bold text-(--color-pakistan) text-sm shadow-sm"
+                      />
+                      <ValidationError
+                        prefix="Name"
+                        field="name"
+                        errors={state.errors}
+                        className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1"
+                      />
+                    </div>
 
-              <div className="space-y-1 md:space-y-2">
-                <label
-                  htmlFor="message"
-                  className="text-xs md:text-sm font-semibold text-gray-700 ml-1"
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  placeholder="How can we help?"
-                  className="w-full bg-gray-50 border border-gray-200 focus:bg-white focus:border-(--color-earth) focus:ring-4 focus:ring-(--color-earth)/20 p-3 md:p-4 rounded-xl transition-all duration-200 outline-none text-(--color-pakistan) h-32 md:h-40 resize-none text-sm md:text-base"
-                  required
-                  onChange={(e) => setMessage(e.target.value)}
-                  value={message}
-                ></textarea>
-                <ValidationError
-                  prefix="Message"
-                  field="message"
-                  errors={state.errors}
-                  className="text-red-500 text-xs mt-1"
-                />
-              </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-(--color-pakistan)/40 uppercase tracking-widest ml-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="john@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full px-5 py-4 bg-white/50 border border-gray-100 rounded-2xl focus:outline-none focus:border-(--color-tiger) focus:bg-white transition-all font-bold text-(--color-pakistan) text-sm shadow-sm"
+                      />
+                      <ValidationError
+                        prefix="Email"
+                        field="email"
+                        errors={state.errors}
+                        className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1"
+                      />
+                    </div>
 
-              <button
-                type="submit"
-                disabled={state.submitting}
-                className="w-full bg-(--color-tiger) text-white font-bold text-base md:text-lg py-3 md:py-4 rounded-xl hover:shadow-lg hover:opacity-95 transform hover:-translate-y-0.5 transition-all duration-200 mt-2"
-              >
-                {state.submitting ? "Sending..." : "Send Message"}
-              </button>
-            </form>
-          )}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-(--color-pakistan)/40 uppercase tracking-widest ml-1">
+                        Message Detail
+                      </label>
+                      <textarea
+                        name="message"
+                        required
+                        rows={4}
+                        placeholder="How can we assist you today?"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="w-full px-5 py-4 bg-white/50 border border-gray-100 rounded-2xl focus:outline-none focus:border-(--color-tiger) focus:bg-white transition-all font-bold text-(--color-pakistan) text-sm shadow-sm resize-none"
+                      />
+                      <ValidationError
+                        prefix="Message"
+                        field="message"
+                        errors={state.errors}
+                        className="text-[10px] font-bold text-red-500 uppercase tracking-widest ml-1"
+                      />
+                    </div>
+
+                    <motion.button
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      type="submit"
+                      disabled={state.submitting}
+                      className="group w-full relative overflow-hidden bg-(--color-pakistan) text-white font-black uppercase tracking-[0.2em] py-5 rounded-2xl shadow-xl transition-all disabled:opacity-70 text-[10px]"
+                    >
+                      <div className="absolute inset-0 bg-linear-to-r from-(--color-tiger) to-(--color-earth) opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="relative z-10 flex items-center justify-center gap-3">
+                        {state.submitting ? (
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            Send Message
+                            <Send
+                              size={14}
+                              className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+                            />
+                          </>
+                        )}
+                      </div>
+                    </motion.button>
+                  </form>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

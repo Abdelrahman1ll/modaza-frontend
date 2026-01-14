@@ -15,7 +15,7 @@ import { useWishlistToggle } from "../../hooks/useWishlistToggle";
 export default function useProductDetail() {
   const { user } = useContext(AuthContext);
   const { id } = useParams();
-  const { data: products, isLoading } = useGetProductIdQuery(id);
+  const { data: products, isLoading, isFetching } = useGetProductIdQuery(id);
   const { openSignup } = useContext(SignupContext);
 
   const product: ProductType = products?.product;
@@ -131,6 +131,7 @@ export default function useProductDetail() {
     selectedSize,
     setSelectedSize,
     isLoading,
+    isFetching,
     setCurrentIndex,
   };
 }

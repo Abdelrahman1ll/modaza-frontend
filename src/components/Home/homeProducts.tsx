@@ -79,7 +79,7 @@ export default function HomeProducts() {
               key={i}
               className="shrink-0 w-[280px] sm:w-[320px] md:w-[380px] lg:w-[420px]"
             >
-              <div className="relative overflow-hidden rounded-[2.5rem] bg-gray-100 animate-pulse aspect-[4/5] shadow-sm">
+              <div className="relative overflow-hidden rounded-[2.5rem] bg-gray-100 animate-pulse aspect-4/5 shadow-sm">
                 <div className="absolute bottom-0 w-full p-8 bg-black/5 flex flex-col gap-3">
                   <div className="h-4 w-2/3 bg-gray-200 rounded-lg" />
                   <div className="h-4 w-1/3 bg-gray-200 rounded-lg" />
@@ -141,7 +141,7 @@ export default function HomeProducts() {
 
                   {/* Glassmorphism Info Overlay */}
                   <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="relative p-6 rounded-[2rem] bg-white/30 backdrop-blur-xl border border-white/40 shadow-xl overflow-hidden group/info">
+                    <div className="relative p-6 rounded-4xl bg-white/30 backdrop-blur-xl border border-white/40 shadow-xl overflow-hidden group/info">
                       <div className="absolute inset-0 bg-white/10 group-hover/info:bg-white/20 transition-colors" />
                       <div className="relative z-10 flex flex-col gap-1">
                         <h3 className="font-black text-(--color-pakistan) text-lg truncate mb-1">

@@ -20,12 +20,16 @@ export default function HomePage() {
 
       <HomeProducts />
 
-      <h2
-        className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mt-8 text-center mb-8  md:mb-16"
-        style={{ color: "var(--color-dark)" }}
-      >
-        Products
-      </h2>
+      <div className="text-center mb-16 space-y-4 px-4">
+        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-(--color-tiger) block">
+          Our Collection
+        </span>
+        <h2 className="text-4xl md:text-6xl font-black text-(--color-pakistan) tracking-tight">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-(--color-tiger) to-(--color-earth)">
+            Products
+          </span>
+        </h2>
+      </div>
 
       <Product />
 

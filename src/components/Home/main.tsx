@@ -54,7 +54,7 @@ export default function Main() {
         <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-(--color-tiger)/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
         <div className="absolute bottom-1/4 left-0 w-[30vw] h-[30vw] bg-(--color-pakistan)/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
 
-        <div className="m-4 md:m-6">
+        <div className="m-4 md:m-6 md:mt-10">
           <motion.div
             variants={cardVariants}
             initial="hidden"
@@ -82,8 +82,8 @@ export default function Main() {
             />
 
             {/* Premium Gradient Overlay with layered opacity */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/20 to-transparent opacity-90" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
+            <div className="absolute inset-0 bg-linear-to-tr from-black/70 via-black/20 to-transparent opacity-90" />
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/30" />
 
             {/* Text & Button Container */}
             <motion.div
@@ -106,7 +106,7 @@ export default function Main() {
               <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black leading-[1.1] tracking-tight text-(--color-cornsilk)">
                 Discover Your
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-(--color-tiger) to-[#d47d2b] drop-shadow-sm">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-(--color-tiger) to-[#d47d2b] drop-shadow-sm">
                   Unique Style
                 </span>
               </h1>
@@ -186,7 +186,7 @@ export default function Main() {
                     translateY: -8,
                     transition: { duration: 0.4, ease: "easeOut" },
                   }}
-                  className="relative overflow-hidden rounded-[2rem] w-full h-[65vh] md:h-[80vh] lg:h-[88vh] bg-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.08)] group"
+                  className="relative overflow-hidden rounded-4xl w-full h-[65vh] md:h-[80vh] lg:h-[88vh] bg-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.08)] group"
                 >
                   <motion.div
                     className="w-full h-full"

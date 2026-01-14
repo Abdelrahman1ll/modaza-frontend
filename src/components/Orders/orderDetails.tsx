@@ -5,15 +5,17 @@ import {
   MapPin,
   CheckCircle2,
   XCircle,
-  Plus,
-  Minus,
   ShoppingCart,
+  Calendar,
+  Phone,
+  Mail,
+  CreditCard,
+  Package,
 } from "lucide-react";
 
 import OrderProgress from "./OrderProgress";
 import useOrderDetails from "./useOrderDetails";
 import { SkeletonList } from "../Skeleton";
-import { DELIVERY } from "../../BrandText";
 
 interface OrderItemType {
   id: number;
@@ -58,392 +60,531 @@ export default function OrderDetails() {
       ? "InstaPay"
       : order?.paymentMethod === "paypal"
       ? "PayPal"
-      : "";
+      : "Payment";
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
 
   return (
     <>
-      <div className="flex justify-center mt-10">
-        <h2
-          className="text-2xl font-bold"
+      <div className="flex justify-center mt-12 mb-4">
+        <motion.h2
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-3xl font-extrabold tracking-tight"
           style={{ color: "var(--color-pakistan)" }}
         >
           Order Details
-        </h2>
+        </motion.h2>
       </div>
 
-      <div className="min-h-screen flex justify-center items-start py-10 px-4 mt-4">
+      <div className="min-h-screen flex justify-center items-start pb-20 px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className={`rounded-2xl shadow-xl w-full max-w-4xl p-4 border transition-colors duration-500
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className={`bg-white/60 backdrop-blur-sm rounded-3xl shadow-2xl w-full max-w-5xl p-5 md:p-8 border transition-all duration-500
       ${
         !order?.isCanceled && order?.isPaid
-          ? "border-green-500"
-          : "border-(--color-earth)"
+          ? "border-green-500/30 ring-1 ring-green-500/10"
+          : "border-(--color-tiger)/40"
       }
       ${
         !order?.isPaid && order?.isCanceled
-          ? "border-red-500"
-          : "border-(--color-earth)"
+          ? "border-red-500/30 ring-1 ring-red-500/10"
+          : "border-(--color-tiger)/40"
       }
-      ${!order?.isPaid && !order?.isCanceled ? "border-(--color-earth)" : ""}
     `}
         >
-          {order?.isPaid && (
-            <div className="inline-flex items-center gap-2 mb-3 mr-1 text-green-400 font-bold rounded">
-              <CheckCircle2 size={16} /> Paid
-            </div>
-          )}
-          {order?.isCanceled && (
-            <div className="inline-flex items-center gap-2 mb-3 mr-1 text-red-500 font-bold rounded">
-              <XCircle size={16} /> Canceled
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-3 mb-6">
+            {order?.isPaid && (
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 text-green-600 text-sm font-bold rounded-full border border-green-500/20 shadow-sm"
+              >
+                <CheckCircle2 size={16} /> Paid
+              </motion.div>
+            )}
+            {order?.isCanceled && (
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 text-red-500 text-sm font-bold rounded-full border border-red-500/20 shadow-sm"
+              >
+                <XCircle size={16} /> Canceled
+              </motion.div>
+            )}
+          </div>
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-4 border-b pb-2 border-(--color-earth)">
-            <h2
-              className="text-[16px] font-bold"
-              style={{ color: "var(--color-pakistan)" }}
-            >
-              {paymentMethod} {role !== "user" && `(${order?.paymentId || ""})`}
-            </h2>
-            <span className="text-sm" style={{ color: "var(--color-dark)" }}>
-              Order ID: {order?.orderNumber}
-            </span>
-          </div>
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-(--color-tiger)/20 pb-6"
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="p-3 rounded-2xl bg-(--color-tiger)/10"
+                style={{ color: "var(--color-tiger)" }}
+              >
+                <CreditCard size={24} />
+              </div>
+              <div>
+                <h2
+                  className="text-xl font-bold"
+                  style={{ color: "var(--color-pakistan)" }}
+                >
+                  {paymentMethod}
+                </h2>
+                {role !== "user" && order?.paymentId && (
+                  <p className="text-sm text-(--color-tiger)/60 font-medium">
+                    Transaction: {order.paymentId}
+                  </p>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-3 bg-(--color-tiger)/5 px-4 py-2 rounded-xl border border-(--color-tiger)/10">
+              <span
+                className="text-sm font-bold"
+                style={{ color: "var(--color-tiger)" }}
+              >
+                ID: {order?.orderNumber}
+              </span>
+            </div>
+          </motion.div>
 
           {/* Customer + Order Info */}
           {role !== "user" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-b border-(--color-earth) pb-4">
+            <motion.div
+              variants={itemVariants}
+              className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8"
+            >
               {/* Customer Info */}
-              <div
-                className="rounded-xl p-5 border"
-                style={{
-                  backgroundColor: "var(--color-cornsilk)",
-                  borderColor: "var(--color-earth)",
-                }}
-              >
+              <div className="group rounded-3xl p-5 border border-(--color-tiger)/10 bg-(--color-tiger)/5 hover:bg-(--color-tiger)/10 transition-all duration-300 shadow-sm hover:shadow-md">
                 <h3
-                  className="text-lg font-semibold mb-3 flex items-center gap-2"
+                  className="text-lg font-bold mb-5 flex items-center gap-3"
                   style={{ color: "var(--color-pakistan)" }}
                 >
-                  <User size={18} /> Customer Information
+                  <div className="p-2 bg-(--color-pakistan)/10 rounded-lg">
+                    <User size={18} />
+                  </div>
+                  Customer Information
                 </h3>
-                <p className="text-gray-700 mb-4">
-                  <span className="font-bold">Full Name:</span>{" "}
-                  {order?.user?.firstName || "N/A"}{" "}
-                  {order?.user.lastName || "N/A"}
-                </p>
-                <p className="text-gray-700 mb-4">
-                  <span className="font-bold">Email:</span>{" "}
-                  {order?.user.email || "N/A"}
-                </p>
-
-                <p className="text-gray-700 mb-4">
-                  <span className="font-bold">Phone:</span>{" "}
-                  {order?.user.phone || "N/A"}
-                </p>
-                <p className="text-gray-700">
-                  <span className="font-bold">Birthday:</span>{" "}
-                  {formatEndDateArabic(order?.user.birthday || "") || "N/A"}
-                </p>
-              </div>
-
-              {/* Order Info */}
-              <div
-                className="rounded-xl p-5 border"
-                style={{
-                  backgroundColor: "var(--color-cornsilk)",
-                  borderColor: "var(--color-earth)",
-                }}
-              >
-                <h3
-                  className="text-lg font-semibold mb-3 flex items-center gap-2"
-                  style={{ color: "var(--color-pakistan)" }}
-                >
-                  <MapPin size={16} />
-                  Order Information
-                </h3>
-                <p className="text-gray-700">
-                  <span className="font-bold">Date:</span>{" "}
-                  {formatEndDateArabic(order?.createdAt || "")}
-                </p>
-
-                <hr className="my-3 border-(--color-earth)" />
-
-                <p className="text-gray-700">
-                  <span className="font-bold">Full Name:</span>{" "}
-                  {order?.addresses?.fullName || "N/A"}{" "}
-                  {order?.addresses?.lastName || "N/A"}
-                </p>
-                <p className="text-gray-700">
-                  <span className="font-bold">Country:</span>{" "}
-                  {order?.addresses.country || "N/A"}
-                </p>
-                <p className="text-gray-700">
-                  <span className="font-bold">City:</span>{" "}
-                  {order?.addresses.city || "N/A"}
-                </p>
-
-                <p className="text-gray-700">
-                  <span className="font-bold">Phone:</span>
-                  {order?.addresses.phone || "N/A"}
-                </p>
-                <p className="text-gray-700">
-                  <span className="font-bold">PhoneOptional:</span>
-                  {order?.addresses.phoneOptional || "N/A"}
-                </p>
-                <p className="text-gray-700">
-                  <span className="font-bold">Address:</span>{" "}
-                  {order?.addresses.address || "N/A"}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Items */}
-          <h3
-            className="text-lg font-semibold mt-2"
-            style={{
-              color: "var(--color-pakistan)",
-              borderColor: "var(--color-earth)",
-            }}
-          >
-            Items in this Order
-          </h3>
-
-          <div className="lg:col-span-2 rounded-2xl">
-            {isLoadingOrders ? (
-              <SkeletonList count={3} />
-            ) : !order || order?.items?.length === 0 ? (
-              <div className="flex flex-col items-center py-6">
-                <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
-                <p className="text-xl font-bold text-(--color-dark)">
-                  Your cart is empty
-                </p>
-                <button className="mt-4 px-6 py-2 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-earth) transition">
-                  Start Shopping
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4">
-                {order?.items?.map((item: OrderItemType) => (
-                  <div
-                    key={item.id}
-                    className="flex max-[580px]:flex-col md:flex-row items-center gap-4 p-2 md:p-4 rounded-xl shadow bg-(--color-cornsilk)"
-                  >
-                    <div className="relative w-32 h-32">
-                      {/* صورة المنتج */}
-                      <img
-                        src={item.product.images[0]}
-                        alt={item.product.name}
-                        loading="lazy"
-                        decoding="async"
-                        fetchPriority="low"
-                        className="w-full h-full object-cover rounded-xl"
-                      />
-
-                      {/* نسبة الخصم */}
-                      {item.product.discountPercentage && (
-                        <span className="absolute -top-1 -left-1 bg-(--color-tiger) text-white text-xs font-bold px-1 py-1 rounded-lg shadow-lg">
-                          {item.product.discountPercentage}%
-                        </span>
-                      )}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <User size={14} className="text-(--color-pakistan)" />
                     </div>
-
-                    <div className="flex-1 flex flex-col gap-2 w-full px-1 sm:px-0">
-                      <div className="flex justify-between">
-                        <h3 className="text-lg font-bold text-(--color-dark)">
-                          {item.product.name}
-                        </h3>
-                        <div className="flex items-center p-0.5 gap-2 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30">
-                          <button
-                            className="w-6 h-6 flex items-center justify-center text-white rounded-full transition opacity-50"
-                            style={{ backgroundColor: "var(--color-tiger)" }}
-                          >
-                            <Minus size={14} />
-                          </button>
-                          <span
-                            className="text-lg font-semibold"
-                            style={{ color: "var(--color-dark)" }}
-                          >
-                            {item?.quantity}
-                          </span>
-                          <button className="w-6 h-6 flex items-center justify-center text-white rounded-full transition bg-(--color-tiger) opacity-50">
-                            <Plus size={14} />
-                          </button>
-                        </div>
-                      </div>
-
-                      <p className="text-(--color-pakistan) font-bold text-md mb-2">
-                        {item.product.price} EGP
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Name
                       </p>
-                      <div className="flex max-[685px]:flex-col justify-between">
-                        <div className="p-2 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit max-[470px]:w-full">
-                          <p className="text-sm text-(--color-pakistan)">
-                            <span className="font-semibold text-(--color-tiger)">
-                              Size: {item?.sizes?.size}
-                            </span>
-                            <span className="ml-2 text-(--color-dark)">
-                              (
-                              <span className="font-medium text-(--color-pakistan)">
-                                Length:
-                              </span>
-                              {item?.sizes.length}cm —{" "}
-                              <span className="font-medium text-(--color-pakistan)">
-                                Width:
-                              </span>
-                              {item?.sizes.width}cm)
-                            </span>
-                          </p>
-                        </div>
-                        <div className="text-lg font-bold text-(--color-dark) mt-2 text-end max-[685px]:mt-4">
-                          {item?.price}.00 EGP
-                        </div>
-                      </div>
+                      <p className="text-gray-700 font-semibold italic">
+                        {order?.user?.firstName || "N/A"}{" "}
+                        {order?.user.lastName || "N/A"}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-          {/* Delivery */}
-          <div
-            className="mt-4 border-t pt-5"
-            style={{ borderColor: "var(--color-earth)" }}
-          >
-            <h3
-              className="text-lg font-semibold mb-3"
-              style={{ color: "var(--color-pakistan)" }}
-            >
-              Delivery Information
-            </h3>
-
-            <div
-              className="rounded-xl border p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3"
-              style={{
-                backgroundColor: "var(--color-cornsilk)",
-                borderColor: "var(--color-earth)",
-              }}
-            >
-              <div className="flex items-center gap-3">
-                <Truck size={20} style={{ color: "var(--color-tiger)" }} />
-                <div>
-                  <p
-                    className="font-medium"
-                    style={{ color: "var(--color-pakistan)" }}
-                  >
-                    Delivery Method:{" "}
-                    <span className="text-gray-700">Home Delivery</span>
-                  </p>
-                  <p className="text-sm" style={{ color: "var(--color-dark)" }}>
-                    Estimated Delivery:{" "}
-                    <span className="font-medium">3 - 7 days</span>
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Mail size={14} className="text-(--color-pakistan)" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Email
+                      </p>
+                      <p className="text-gray-700 font-semibold italic">
+                        {order?.user.email || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Phone size={14} className="text-(--color-pakistan)" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Phone
+                      </p>
+                      <p className="text-(--color-tiger) font-semibold italic">
+                        {order?.user.phone || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Calendar size={14} className="text-(--color-pakistan)" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Birthday
+                      </p>
+                      <p className="text-(--color-tiger) font-semibold italic">
+                        {formatEndDateArabic(order?.user.birthday || "") ||
+                          "N/A"}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="text-right">
-                <p
-                  className="font-medium"
+              {/* Order Info */}
+              <div className="group rounded-3xl p-5 border border-(--color-tiger)/10 bg-(--color-tiger)/5 hover:bg-(--color-tiger)/10 transition-all duration-300 shadow-sm hover:shadow-md">
+                <h3
+                  className="text-lg font-bold mb-5 flex items-center gap-3"
                   style={{ color: "var(--color-pakistan)" }}
                 >
-                  Delivery Fee:{" "}
-                  <span
-                    className="font-semibold"
-                    style={{ color: "var(--color-tiger)" }}
-                  >
-                    {order?.deliveryPrice}.00 EGP
-                  </span>
-                </p>
-                <p className="text-sm" style={{ color: "var(--color-dark)" }}>
-                  {DELIVERY}
-                </p>
+                  <div className="p-2 bg-(--color-pakistan)/10 rounded-lg">
+                    <MapPin size={18} />
+                  </div>
+                  Shipping Details
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <User size={14} className="text-(--color-pakistan)" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Recipient
+                      </p>
+                      <p className="text-(--color-tiger) font-semibold italic">
+                        {order?.addresses?.fullName || "N/A"}{" "}
+                        {order?.addresses?.lastName || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <MapPin size={14} className="text-(--color-pakistan)" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Location
+                      </p>
+                      <p className="text-(--color-tiger) font-semibold italic">
+                        {order?.addresses.city}, {order?.addresses.country}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {order?.addresses.address || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Phone size={14} className="text-(--color-tiger)" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Contact
+                      </p>
+                      <p className="text-(--color-tiger) font-semibold italic">
+                        {order?.addresses.phone || "N/A"}
+                      </p>
+                      {order?.addresses.phoneOptional && (
+                        <p className="text-xs text-gray-500">
+                          Alt: {order.addresses.phoneOptional}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <Calendar size={14} className="text-(--color-tiger)" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-(--color-pakistan)/40 uppercase font-bold tracking-widest">
+                        Ordered On
+                      </p>
+                      <p className="text-(--color-tiger) font-semibold italic">
+                        {formatEndDateArabic(order?.createdAt || "")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          {/* Total */}
-          <div
-            className="mt-8 border-t pt-4 flex justify-between items-center"
-            style={{ borderColor: "var(--color-earth)" }}
-          >
-            <p
-              className="text-lg font-semibold"
-              style={{ color: "var(--color-pakistan)" }}
-            >
-              Total:
-            </p>
-            <p
-              className="text-xl font-bold"
-              style={{ color: "var(--color-tiger)" }}
-            >
-              {order?.totalPrice}.00 EGP
-            </p>
-          </div>
+            </motion.div>
+          )}
 
-          {/* Order Progress */}
-          <div
-            className="mt-4 border-t pt-5"
-            style={{ borderColor: "var(--color-earth)" }}
-          >
+          {/* Items */}
+          <motion.div variants={itemVariants} className="mb-8">
             <h3
-              className="text-lg font-semibold mb-6"
+              className="text-xl font-bold mb-6 flex items-center gap-3"
               style={{ color: "var(--color-pakistan)" }}
             >
-              Order Progress
+              <div className="p-2 bg-(--color-pakistan)/10 rounded-lg">
+                <Package size={20} />
+              </div>
+              Order Items
             </h3>
 
-            <div className="relative flex justify-between items-center w-full max-w-3xl mx-auto px-4">
+            <div className="space-y-6">
+              {isLoadingOrders ? (
+                <SkeletonList count={3} />
+              ) : !order || order?.items?.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center py-20 bg-(--color-tiger)/5 rounded-3xl border border-dashed border-(--color-tiger)/30"
+                >
+                  <div className="p-6 rounded-full bg-(--color-tiger)/10 mb-6">
+                    <ShoppingCart
+                      size={60}
+                      className="text-(--color-tiger)/40"
+                    />
+                  </div>
+                  <p className="text-2xl font-bold text-(--color-tiger)/40 mb-2">
+                    No items found
+                  </p>
+                  <p className="text-(--color-tiger)/40 italic">
+                    This order appears to be empty
+                  </p>
+                </motion.div>
+              ) : (
+                <div className="grid gap-4">
+                  {order?.items?.map((item: OrderItemType) => (
+                    <motion.div
+                      key={item.id}
+                      whileHover={{ scale: 1.01, x: 5 }}
+                      className="group flex flex-col sm:flex-row items-center gap-5 p-3 rounded-2xl border border-(--color-tiger)/10 bg-white/60 hover:border-(--color-tiger)/30 shadow-sm hover:shadow-xl transition-all duration-300"
+                    >
+                      <div className="relative w-32 h-32 shrink-0 overflow-hidden rounded-2xl">
+                        <img
+                          src={item.product.images[0]}
+                          alt={item.product.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                        {item.product.discountPercentage && (
+                          <div className="absolute top-2 left-2 bg-(--color-tiger) text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg uppercase tracking-wider">
+                            {item.product.discountPercentage}% OFF
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 flex flex-col gap-3 w-full">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-lg font-bold text-(--color-tiger) group-hover:text-pakistan transition-colors">
+                              {item.product.name}
+                            </h4>
+                            <p className="text-(--color-tiger) font-bold text-lg">
+                              {item.product.price.toLocaleString()} EGP
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3 px-3 py-1.5 bg-(--color-tiger)/5 rounded-full border border-(--color-tiger)/10">
+                            <span className="text-xs font-bold text-(--color-tiger)/40 uppercase">
+                              Qty
+                            </span>
+                            <span className="text-sm font-black text-(--color-tiger)">
+                              {item?.quantity}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
+                          <div className="flex items-center gap-2 px-2 py-1 bg-(--color-tiger)/5 rounded-xl border border-(--color-tiger)/10">
+                            <span className="text-[10px] font-black uppercase text-(--color-pakistan) tracking-widest">
+                              Selected Size
+                            </span>
+                            <span className="text-lg font-bold text-(--color-tiger)">
+                              {item?.sizes?.size}
+                            </span>
+                            <span className="text-[15px] text-(--color-pakistan) uppercase font-medium">
+                              ({item?.sizes.length}L × {item?.sizes.width}W)
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-black uppercase text-(--color-pakistan)/40 tracking-widest leading-none mb-1">
+                              Subtotal
+                            </p>
+                            <p className="text-lg font-black text-(--color-tiger)">
+                              {item?.price.toLocaleString()}.00 EGP
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+          {/* Delivery & Total */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col gap-8 mb-8 border-t border-(--color-tiger)/10 pt-8"
+          >
+            <div className="flex flex-col gap-4">
+              <h3
+                className="text-lg font-bold flex items-center gap-3"
+                style={{ color: "var(--color-pakistan)" }}
+              >
+                <div className="p-2 bg-(--color-pakistan)/10 rounded-lg">
+                  <Truck size={18} />
+                </div>
+                Delivery Information
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-(--color-tiger)/5 border border-(--color-tiger)/20 flex items-center gap-4 hover:bg-(--color-tiger)/10 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-(--color-tiger)/10 flex items-center justify-center shrink-0">
+                    <Truck size={20} className="text-(--color-tiger)" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-(--color-tiger)/40 tracking-widest">
+                      Method
+                    </p>
+                    <p className="text-sm font-bold text-(--color-tiger) italic">
+                      Home Delivery
+                    </p>
+                  </div>
+                </div>
+                <div className="p-4 rounded-2xl bg-(--color-tiger)/5 border border-(--color-tiger)/20 flex items-center gap-4 hover:bg-(--color-tiger)/10 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-(--color-tiger)/10 flex items-center justify-center shrink-0">
+                    <Calendar size={20} className="text-(--color-tiger)" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-(--color-tiger)/40 tracking-widest">
+                      Timeline
+                    </p>
+                    <p className="text-sm font-bold text-(--color-tiger) italic">
+                      3 - 7 Business Days
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center p-6 rounded-3xl bg-(--color-tiger)/5 text-(--color-tiger) shadow-xl relative overflow-hidden group w-full">
+              <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+              <p className="text-[13px] font-black uppercase tracking-[0.2em] mb-4">
+                Final Summary
+              </p>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between items-center opacity-80">
+                  <span className="text-xs font-semibold">Subtotal</span>
+                  <span className="text-sm font-bold italic">
+                    {(
+                      (order?.totalPrice ?? 0) - (order?.deliveryPrice ?? 0)
+                    ).toLocaleString()}
+                    .00 EGP
+                  </span>
+                </div>
+                <div className="flex justify-between items-center opacity-80">
+                  <span className="text-xs font-semibold">Shipping</span>
+                  <span className="text-sm font-bold italic">
+                    {(order?.deliveryPrice ?? 0).toLocaleString()}.00 EGP
+                  </span>
+                </div>
+                <div className="h-px bg-(--color-tiger)/20 my-2"></div>
+                <div className="flex justify-between items-end">
+                  <span className="text-sm font-black uppercase">
+                    Total Paid
+                  </span>
+                  <span className="text-2xl font-black italic tracking-tight">
+                    {(order?.totalPrice ?? 0).toLocaleString()}.00 EGP
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[12px] italic opacity-80 text-center leading-tight">
+                Tax included. Thank you for shopping with us!
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Order Progress */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-4 border-t border-(--color-tiger)/10 pt-10"
+          >
+            <h3
+              className="text-xl font-bold mb-10 flex items-center justify-center gap-3"
+              style={{ color: "var(--color-pakistan)" }}
+            >
+              <div className="p-2 bg-(--color-pakistan)/10 rounded-lg">
+                <Truck size={20} />
+              </div>
+              Current Status
+            </h3>
+
+            <div className="relative flex justify-between items-center w-full max-w-4xl mx-auto px-4 mb-20">
               {/* Progress Line */}
-              <div className="absolute top-1/2 left-1/2 w-[88%] h-1 bg-gray-300 rounded-full -translate-x-1/2 -translate-y-1/2">
-                <div
-                  className="h-1 bg-green-500 rounded-full transition-all duration-700"
-                  style={{
+              <div className="absolute top-1/2 left-0 w-full h-1 bg-(--color-tiger)/10 rounded-full -translate-y-1/2">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{
                     width:
                       actualIndex === -1
                         ? "0%"
                         : `${((actualIndex + 1) / specialSteps.length) * 100}%`,
                   }}
-                ></div>
+                  transition={{ duration: 1, ease: "circOut" }}
+                  className="h-1 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"
+                ></motion.div>
               </div>
 
               {/* Steps */}
-              {specialSteps.map((step) => {
+              {specialSteps.map((step, idx) => {
                 const Icon = step.icon;
                 const active = order?.[step.key] === true;
+                const current = idx === actualIndex;
 
                 return (
                   <div
                     key={step.label}
-                    className="relative z-10 flex flex-col items-center gap-2"
+                    className="relative z-10 flex flex-col items-center group"
                   >
-                    <div
-                      className={`w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all duration-500 ${
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className={`w-12 h-12 flex items-center justify-center rounded-2xl border-2 transition-all duration-500 shadow-lg ${
                         active
-                          ? "bg-green-500 border-green-500"
-                          : "bg-white border-gray-300"
-                      }`}
+                          ? "bg-green-500 border-green-400 rotate-6"
+                          : "bg-(--color-tiger)/5 border-(--color-tiger)/20 shadow-inner"
+                      } ${current ? "ring-4 ring-green-500/20 scale-110" : ""}`}
                     >
                       <Icon
-                        size={20}
-                        style={{ color: active ? "white" : "gray" }}
+                        size={24}
+                        className={`${
+                          active ? "text-white" : "text-dark/20"
+                        } transition-colors`}
                       />
-                    </div>
+                    </motion.div>
 
-                    <p
-                      className={`text-sm font-medium ${
-                        active ? "text-green-600" : "text-gray-500"
-                      }`}
-                    >
-                      {step.label}
-                    </p>
+                    <div className="absolute -bottom-12 w-24 text-center">
+                      <p
+                        className={`text-[10px] font-black uppercase tracking-widest mb-0.5 ${
+                          active ? "text-green-600" : "text-dark/20"
+                        }`}
+                      >
+                        {step.label}
+                      </p>
+                      {active && (
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="inline-block w-1 h-1 bg-green-500 rounded-full"
+                        ></motion.span>
+                      )}
+                    </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          </motion.div>
 
           {role !== "user" && order && (
             <OrderProgress order={order} refetch={refetchOrders} />

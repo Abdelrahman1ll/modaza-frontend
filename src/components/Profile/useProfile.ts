@@ -82,6 +82,9 @@ export default function useProfile() {
         return;
       }
 
+      // Avoid redundant calls if already visible | تجنب المكالمات المتكررة إذا كان المكافأة مرئية بالفعل
+      if (rewardVisible) return;
+
       try {
         const response = await validateDiscountCode({
           code: "PROFILE",
@@ -93,16 +96,22 @@ export default function useProfile() {
             discount: response.discountCode.discount,
           });
           setRewardVisible(true);
-          setProgress(100);
         }
-      } catch (err) {
+      } catch {
         setRewardVisible(false);
-        console.error("Failed to fetch reward:", err);
       }
     };
 
     checkReward();
-  }, [userData, validateDiscountCode]);
+  }, [
+    !!userData.firstName,
+    !!userData.lastName,
+    !!userData.phone,
+    !!userData.birthday,
+    userData.PROFILE,
+    validateDiscountCode,
+    rewardVisible, // Necessary to prevent redundant calls based on visibility
+  ]);
 
   const [patchUsers, { isLoading }] = usePatchUsersByIdMutation();
 

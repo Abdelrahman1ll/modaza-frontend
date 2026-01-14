@@ -78,6 +78,8 @@ const ProductCard = memo(
     return (
       <motion.div
         variants={itemVariants}
+        initial="hidden"
+        animate="visible"
         className="group/card relative flex flex-col bg-transparent"
         onMouseEnter={() =>
           setHoveredIds((prev) => ({ ...prev, [product.id]: true }))
@@ -87,7 +89,7 @@ const ProductCard = memo(
         }
       >
         {/* Main Image Container with Depth Effect */}
-        <div className="relative aspect-[3/4.2] w-full overflow-hidden rounded-[2.5rem] bg-gray-50 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:rounded-[2rem]">
+        <div className="relative aspect-[3/4.2] w-full overflow-hidden rounded-[2.5rem] bg-gray-50 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover/card:rounded-4xl">
           <Link
             to={`/products-details/${product.id}`}
             className="block h-full w-full"
@@ -129,7 +131,7 @@ const ProductCard = memo(
               </div>
 
               {/* Elegant Gradient Scrim */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
             </div>
           </Link>
 
@@ -193,7 +195,7 @@ const ProductCard = memo(
               <span className="ml-1 text-[10px] uppercase opacity-50">EGP</span>
             </span>
             {product.discountPercentage !== 0 && (
-              <span className="text-sm font-medium text-gray-400 line-through decoration-[#BC6C25]/40 decoration-wavy">
+              <span className="text-lg font-medium text-gray-400 line-through decoration-[#BC6C25]/40 decoration-wavy">
                 {product.promotionalPrice.toLocaleString()} EGP
               </span>
             )}
@@ -205,7 +207,7 @@ const ProductCard = memo(
               <motion.button
                 whileHover={{ scale: 1.02, backgroundColor: "#000" }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full rounded-2xl bg-gray-900 py-3 text-xs font-black uppercase tracking-[0.1em] text-white shadow-lg transition-all"
+                className="w-full rounded-2xl bg-gray-900 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-all"
               >
                 Management Control
               </motion.button>
@@ -233,6 +235,7 @@ export default function Product() {
     setHoveredIds,
     user,
     isError,
+    isFetching,
   } = useProduct();
 
   const productList = products?.products || [];
@@ -246,15 +249,14 @@ export default function Product() {
           animate="visible"
           className="grid grid-cols-1 min-[600px]:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {isLoading ? (
+          {isLoading && !isFetching ? (
             <ProductSkeleton />
           ) : productList.length === 0 || isError ? (
             <div className="col-span-full flex flex-col items-center justify-center py-20">
-              <PackageSearch
-                size={100}
-                className="text-(--color-tiger) mb-6 animate-bounce"
-              />
-              <p className="text-gray-500 text-lg font-medium">
+              <div className="w-20 h-20 bg-(--color-tiger)/10 rounded-full flex items-center justify-center mb-6">
+                <PackageSearch size={40} className="text-(--color-tiger)" />
+              </div>
+              <p className="text-(--color-dark)/70 font-black uppercase tracking-widest text-xs">
                 No products found
               </p>
             </div>

@@ -1,4 +1,4 @@
-@keyframes slideRightSlow {
+@keyframes shimmer {
   0% {
     transform: translateX(-100%);
   }
@@ -7,6 +7,6 @@
   }
 }
 
-.slideOverlay {
-  animation: slideRightSlow 2s linear forwards; /* مدة الحركة 2 ثانية */
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
 }

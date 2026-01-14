@@ -54,5 +54,6 @@ export default function useProduct() {
     setHoveredIds,
     user,
     isError,
+    isFetching,
   };
 }

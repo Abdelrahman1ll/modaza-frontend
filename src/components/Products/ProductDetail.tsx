@@ -26,11 +26,12 @@ export default function ProductDetail() {
     selectedSize,
     setSelectedSize,
     isLoading,
+    isFetching,
     setCurrentIndex,
   } = useProductDetail();
   return (
     <>
-      {isLoading ? (
+      {isLoading && !isFetching ? (
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 m-4 mt-12">
           {/* الجزء الأيسر skeleton */}
           <div className="w-full md:w-1/2 animate-pulse flex flex-col gap-4">
@@ -81,7 +82,7 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
-      ) : product === null ? (
+      ) : !product ? (
         <div className="col-span-full flex flex-col items-center justify-center py-20">
           <PackageSearch
             size={100}
@@ -94,47 +95,67 @@ export default function ProductDetail() {
       ) : (
         <div className="flex flex-col md:flex-row items-start justify-center gap-6 md:gap-10 m-4 mt-12">
           <motion.div
-            className="relative rounded-t-3xl overflow-hidden  w-full md:w-1/2"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            className="relative rounded-[2.5rem] overflow-hidden w-full md:w-1/2 bg-white/50 backdrop-blur-sm shadow-2xl border border-white/20"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* الصورة الرئيسية */}
-            <MotionZoomImage mainImage={mainImage} />
+            {/* الصورة الرئيسية ككونتينر بريميوم */}
+            <div className="relative overflow-hidden rounded-4xl m-2">
+              <MotionZoomImage mainImage={mainImage} />
 
-            {/* أسهم التنقل */}
-            <button
-              onClick={handlePrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white hover:bg-opacity-90 text-(--color-tiger) p-2 rounded-full transition cursor-pointer"
-            >
-              <ChevronLeft size={24} />
-            </button>
+              {/* أسهم التنقل - Glassmorphism */}
+              <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between items-center pointer-events-none z-10">
+                <motion.button
+                  whileHover={{
+                    scale: 1.1,
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handlePrev}
+                  className="pointer-events-auto bg-white/60 backdrop-blur-md text-(--color-tiger) p-3 rounded-full shadow-lg transition-all border border-white/40 cursor-pointer"
+                >
+                  <ChevronLeft size={24} strokeWidth={2.5} />
+                </motion.button>
 
-            <button
-              onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white hover:bg-opacity-90 text-(--color-tiger) p-2 rounded-full transition cursor-pointer"
-            >
-              <ChevronRight size={24} />
-            </button>
+                <motion.button
+                  whileHover={{
+                    scale: 1.1,
+                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleNext}
+                  className="pointer-events-auto bg-white/60 backdrop-blur-md text-(--color-tiger) p-3 rounded-full shadow-lg transition-all border border-white/40 cursor-pointer"
+                >
+                  <ChevronRight size={24} strokeWidth={2.5} />
+                </motion.button>
+              </div>
+            </div>
 
-            {/* الصور المصغّرة */}
-            <div className="flex justify-center flex-wrap gap-3 mt-4 pb-2">
+            {/* الصور المصغّرة - الشريط السفلي */}
+            <div className="flex justify-center flex-wrap gap-4 p-4">
               {Array.isArray(product?.images) &&
                 product?.images?.map((img: string, index: number) => (
-                  <motion.img
+                  <motion.div
                     key={index}
-                    src={img || "/photo-1495385794356-15371f348c31.jpeg"}
-                    alt={`${product?.name} perspective ${index + 1}`}
-                    width={80}
-                    height={80}
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-20 h-20 object-cover rounded-xl cursor-pointer border-2 transition ${
+                    whileHover={{ scale: 1.1, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative w-20 h-20 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all duration-300 ${
                       mainImage === img
-                        ? "border-(--color-tiger) scale-105"
-                        : "border-gray-300 hover:border-(--color-tiger)"
+                        ? "border-(--color-tiger) shadow-lg scale-110 z-10"
+                        : "border-transparent hover:border-white/60 grayscale-[0.5] hover:grayscale-0"
                     }`}
-                    whileHover={{ scale: 1.05 }}
-                  />
+                  >
+                    <img
+                      src={img || "/photo-1495385794356-15371f348c31.jpeg"}
+                      alt={`${product?.name} perspective ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    {mainImage === img && (
+                      <div className="absolute inset-0 bg-(--color-tiger)/10 mix-blend-overlay" />
+                    )}
+                  </motion.div>
                 ))}
             </div>
           </motion.div>
@@ -145,24 +166,39 @@ export default function ProductDetail() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl font-bold text-[--color-dark]">
-              {product?.name}
-            </h2>
-
-            {/* السعر */}
-            <div className="flex items-baseline gap-1 md:gap-4">
-              <p className="text-2xl font-bold text-(--color-pakistan)">
-                EGP {product?.price.toFixed(2)}
-              </p>
-              {product?.promotionalPrice !== 0 && (
-                <p className="text-lg line-through text-gray-500">
-                  EGP {product?.promotionalPrice.toFixed(2)}
-                </p>
-              )}
-
-              <span className="text-(--color-cornsilk) bg-(--color-tiger) px-2 py-0.5 rounded-full ">
-                {product?.discountPercentage.toFixed(0)}% OFF
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#BC6C25]/80">
+                {typeof product.category === "object" &&
+                product.category !== null
+                  ? (product.category as unknown as { name: string }).name
+                  : product.category || "Modeza Collection"}
               </span>
+              <h2 className="text-4xl font-black tracking-tight text-(--color-pakistan) leading-[1.1]">
+                {product?.name}
+              </h2>
+            </div>
+
+            {/* السعر بريميوم */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-baseline gap-1">
+                <span className="text-4xl font-black text-(--color-tiger)">
+                  {product?.price.toLocaleString()}
+                </span>
+                <span className="text-xs font-bold uppercase opacity-60 tracking-wider">
+                  EGP
+                </span>
+              </div>
+
+              {product?.promotionalPrice !== 0 && (
+                <div className="flex items-center gap-3 bg-red-50/50 px-3 py-1.5 rounded-2xl border border-red-100/50">
+                  <p className="text-lg font-bold text-gray-400 line-through decoration-red-500/30 decoration-2">
+                    EGP {product?.promotionalPrice.toLocaleString()}
+                  </p>
+                  <span className="text-xs font-black uppercase tracking-wider text-red-600 bg-white px-2.5 py-1 rounded-lg shadow-sm border border-red-100">
+                    {product?.discountPercentage.toFixed(0)}% OFF
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* وصف بسيط */}
@@ -174,33 +210,35 @@ export default function ProductDetail() {
               <h4 className="text-lg font-semibold mb-2 md:mb-4 text-[--color-dark]">
                 Select Size:
               </h4>
-              <div className="flex gap-3 flex-wrap">
+              <div className="flex gap-4 flex-wrap">
                 {Array.isArray(product?.sizes) &&
                   product?.sizes?.map(
                     (size: ProductSizeType, index: number) => {
                       if (!size.size) return null;
                       const isOutOfStock =
                         size.stock === 0 || product.stock === 0;
+                      const isSelected = selectedSize === size.id;
                       return (
                         <motion.button
                           key={index}
                           onClick={() => setSelectedSize(size.id ?? null)}
-                          whileTap={!isOutOfStock ? { scale: 0.9 } : {}}
-                          disabled={isOutOfStock}
-                          className={`px-4 py-2 rounded-full test-lg font-medium border-2 transition-all  ${
-                            isOutOfStock
-                              ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed opacity-60"
-                              : selectedSize === size?.id
-                              ? "bg-(--color-tiger) text-white border-(--color-tiger) cursor-pointer"
-                              : "border-gray-400 text-gray-700 hover:border-(--color-tiger) cursor-pointer"
-                          }`}
-                          title={
-                            isOutOfStock
-                              ? "Out of stock"
-                              : `Select size ${size.size}`
+                          whileHover={
+                            !isOutOfStock ? { scale: 1.05, y: -2 } : {}
                           }
+                          whileTap={!isOutOfStock ? { scale: 0.95 } : {}}
+                          disabled={isOutOfStock}
+                          className={`relative h-12 w-12 flex items-center justify-center rounded-2xl text-lg font-black transition-all duration-300 ${
+                            isOutOfStock
+                              ? "bg-gray-100 text-gray-300 cursor-not-allowed border-dashed border-2 border-gray-200"
+                              : isSelected
+                              ? "bg-(--color-tiger) text-white shadow-xl shadow-(--color-tiger)/20 border-2 border-(--color-tiger)"
+                              : "bg-white text-gray-700 border-2 border-gray-100 hover:border-(--color-tiger)/30 shadow-sm"
+                          }`}
                         >
                           {size.size}
+                          {isOutOfStock && (
+                            <div className="absolute inset-x-0 top-1/2 h-[2px] bg-gray-300 -rotate-45" />
+                          )}
                         </motion.button>
                       );
                     }
@@ -247,24 +285,28 @@ export default function ProductDetail() {
               <span className="text-lg font-semibold text-(--color-dark)">
                 Quantity:
               </span>
-              <div className="flex items-center gap-4 mt-4 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30 w-fit p-0.5">
-                <button
-                  onClick={decrease}
-                  className="w-10 h-10 flex items-center justify-center bg-(--color-tiger) text-(--color-cornsilk) rounded-full text-xl font-bold shadow hover:bg-(--color-tiger)/80 transition cursor-pointer"
-                >
-                  −
-                </button>
+              <div className="flex items-center gap-6 mt-2">
+                <div className="flex items-center p-1 bg-white border-2 border-gray-100 rounded-full shadow-sm">
+                  <motion.button
+                    whileTap={{ scale: 0.8 }}
+                    onClick={decrease}
+                    className="w-10 h-10 flex items-center justify-center bg-gray-50 text-(--color-pakistan) rounded-full text-xl font-black hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    −
+                  </motion.button>
 
-                <span className="text-xl font-semibold text-(--color-dark)">
-                  {quantity}
-                </span>
+                  <span className="w-12 text-center text-xl font-black text-(--color-pakistan)">
+                    {quantity}
+                  </span>
 
-                <button
-                  onClick={increase}
-                  className="w-10 h-10 flex items-center justify-center bg-(--color-tiger) text-(--color-cornsilk) rounded-full text-xl font-bold shadow hover:bg-(--color-tiger)/80 transition cursor-pointer"
-                >
-                  +
-                </button>
+                  <motion.button
+                    whileTap={{ scale: 0.8 }}
+                    onClick={increase}
+                    className="w-10 h-10 flex items-center justify-center bg-gray-50 text-(--color-pakistan) rounded-full text-xl font-black hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    +
+                  </motion.button>
+                </div>
               </div>
               {errors.quantity && (
                 <p className="text-red-500 text-sm">{errors.quantity}</p>
@@ -276,15 +318,15 @@ export default function ProductDetail() {
                 <span>Available Stock</span>
               </div>
 
-              <div className="w-full h-3 bg-(--color-earth) rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden border border-gray-50">
                 <motion.div
-                  className="h-3 rounded-full"
+                  className="h-full rounded-full shadow-[0_0_10px_rgba(188,108,37,0.3)]"
                   initial={{ width: 0 }}
                   animate={{
                     width: `${percentstock}%`,
                     backgroundColor: getColor(),
                   }}
-                  transition={{ duration: 0.8 }}
+                  transition={{ duration: 1.2, ease: "circOut" }}
                 />
               </div>
             </div>
@@ -295,13 +337,20 @@ export default function ProductDetail() {
               {/* زر القلب جنب الزر */}
               <motion.button
                 onClick={handleToggleWishlist}
+                whileHover={{
+                  scale: 1.1,
+                  backgroundColor: "rgba(255, 255, 255, 1)",
+                }}
                 whileTap={{ scale: 0.9 }}
-                className="p-3 rounded-full shadow-md border cursor-pointer"
+                className="p-4 rounded-[1.25rem] shadow-xl border border-white bg-white/50 backdrop-blur-md cursor-pointer transition-all duration-300"
               >
                 <Heart
                   size={26}
-                  color={isFav ? "#BC6C25" : "black"}
-                  fill={isFav ? "#BC6C25" : "transparent"}
+                  className={`transition-all duration-500 ${
+                    isFav
+                      ? "fill-[#BC6C25] stroke-[#BC6C25] drop-shadow-[0_0_8px_rgba(188,108,37,0.4)]"
+                      : "fill-transparent stroke-gray-900"
+                  }`}
                 />
               </motion.button>
             </div>

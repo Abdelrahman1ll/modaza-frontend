@@ -28,15 +28,20 @@ export default function useHeader() {
   }, []);
   const { openSignup } = useContext(SignupContext);
   const { user, logout: handleLogout } = useContext(AuthContext);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const desktopDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
   // 👇 Click-outside to close the country dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      const isOutsideDesktop =
+        !desktopDropdownRef.current ||
+        !desktopDropdownRef.current.contains(event.target as Node);
+      const isOutsideMobile =
+        !mobileDropdownRef.current ||
+        !mobileDropdownRef.current.contains(event.target as Node);
+
+      if (isOutsideDesktop && isOutsideMobile) {
         setIsOpen(false);
       }
     }
@@ -89,6 +94,8 @@ export default function useHeader() {
 
   const totalItems: number = cart?.carts?.items.length || 0;
 
+  const toggleCountryDropdown = () => setIsOpen((prev) => !prev);
+
   return {
     isMenuOpen,
     setIsMenuOpen,
@@ -108,6 +115,8 @@ export default function useHeader() {
     isSearchLocal,
     navigate,
     setIsSearchLocal,
-    dropdownRef,
+    toggleCountryDropdown,
+    desktopDropdownRef,
+    mobileDropdownRef,
   };
-}
+};

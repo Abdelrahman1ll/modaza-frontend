@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { X, Plus, Minus, ShoppingCart, AlertCircle } from "lucide-react";
+import { X, ShoppingCart } from "lucide-react";
 import type { CartItemType } from "../../types/CartType";
 import UseCart from "./useCart";
 
@@ -18,13 +18,15 @@ export default function Cart() {
     navigate,
   } = UseCart();
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2
-        className="text-3xl font-bold flex items-center justify-center mb-6"
-        style={{ color: "var(--color-dark)" }}
-      >
-        Shopping Cart
-      </h2>
+    <div className="p-6 mt-4 max-w-5xl mx-auto">
+      <div className="text-center mb-10">
+        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-(--color-tiger) block mb-2">
+          Your Selection
+        </span>
+        <h2 className="text-4xl font-black tracking-tight text-(--color-pakistan)">
+          Shopping Cart
+        </h2>
+      </div>
 
       {isLoading ? (
         <div className="flex flex-col gap-6">
@@ -64,47 +66,70 @@ export default function Cart() {
           {/* زر الدفع */}
           <div className="mt-4 mb-4 w-full py-3 rounded-2xl shadow-md bg-(--color-earth)/20 animate-pulse h-12"></div>
         </div>
-      ) : data?.carts?.items.length === 0 ? (
+      ) : isError || !data?.carts?.items?.length ? (
         <motion.div
-          className="flex flex-col items-center justify-center h-64 rounded-2xl shadow-md p-6"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative overflow-hidden bg-white/60 backdrop-blur-2xl rounded-[2.5rem] border border-white/50 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-12 text-center"
         >
-          <ShoppingCart size={60} className="text-(--color-tiger) mb-4" />
-          <p className="text-xl sm:text-2xl font-bold text-(--color-dark) mb-2">
-            Your cart is empty
-          </p>
-          <p className="text-center text-sm sm:text-base text-(--color-dark)/70 mb-4">
-            Looks like you haven’t added anything to your cart yet.
-          </p>
-          <button
-            onClick={() => navigate("/products")}
-            className="px-6 py-2 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-earth) transition"
+          {/* Decorative background circle */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-(--color-tiger)/5 rounded-full blur-3xl -z-10" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-(--color-pakistan)/5 rounded-full blur-2xl -z-10" />
+
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+              delay: 0.2,
+            }}
+            className="w-24 h-24 bg-linear-to-br from-(--color-tiger) to-(--color-earth) rounded-3xl mx-auto flex items-center justify-center text-white shadow-2xl shadow-(--color-tiger)/20 mb-8"
           >
-            Start Shopping
-          </button>
-        </motion.div>
-      ) : isError ? (
-        <motion.div
-          className="flex flex-col items-center justify-center h-64 rounded-2xl shadow-md p-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <AlertCircle size={60} className="text-(--color-tiger) mb-4" />
-          <p className="text-xl sm:text-2xl font-bold text-(--color-dark) mb-2 text-center">
-            The cart is empty
-          </p>
-          <p className="text-center text-sm sm:text-base text-(--color-dark)/70 mb-4">
-            Log in and take your first order, delivery is free.
-          </p>
-          <button
-            onClick={() => navigate("/products")}
-            className="px-6 py-2 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-earth) transition shadow-md"
+            <ShoppingCart size={40} strokeWidth={2.5} />
+          </motion.div>
+
+          <motion.h3
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-3xl font-black text-(--color-pakistan) mb-4 tracking-tight"
           >
-            Retry Now
-          </button>
+            {isError ? "Something went wrong" : "Your cart is empty"}
+          </motion.h3>
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-(--color-pakistan)/60 font-medium max-w-sm mx-auto mb-10 leading-relaxed text-sm"
+          >
+            {isError
+              ? "We couldn't load your cart right now. Please try again or head back to our collections."
+              : "Looks like you haven’t added any items to your cart yet. Explore our latest arrivals to find something you love!"}
+          </motion.p>
+
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate("/products")}
+            className="group relative inline-flex items-center gap-3 px-10 py-4 bg-(--color-pakistan) text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl transition-all"
+          >
+            <div className="absolute inset-0 bg-linear-to-r from-(--color-tiger) to-(--color-earth) opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+            <span className="relative z-10">Start Shopping</span>
+            <motion.div
+              className="relative z-10"
+              animate={{ x: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+            >
+              →
+            </motion.div>
+          </motion.button>
         </motion.div>
       ) : (
         <div className="flex flex-col gap-6">
@@ -126,15 +151,14 @@ export default function Cart() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 rounded-2xl shadow-md"
-                style={{ backgroundColor: "var(--color-cornsilk)" }}
+                className="flex flex-col md:flex-row items-center md:items-start gap-6 p-4 rounded-4xl bg-(--color-cornsilk) backdrop-blur-sm shadow-xl border border-white/30"
               >
                 <img
                   src={item?.product?.images[0]}
                   alt={item?.product?.name}
                   loading="lazy"
                   decoding="async"
-                  className="w-44 h-44 object-cover rounded-xl"
+                  className="w-44 h-44 object-cover rounded-xl md:self-center"
                   srcSet={`
                     ${item?.product?.images[0]}?w=200 200w,
                    ${item?.product?.images[0]}?w=400 400w,
@@ -146,100 +170,98 @@ export default function Cart() {
                 <div className="flex-1 flex flex-col gap-2 w-full">
                   {/* اسم المنتج + حذف */}
                   <div className="flex justify-between items-start">
-                    <h3
-                      className="text-xl font-bold"
-                      style={{ color: "var(--color-dark)" }}
-                    >
+                    <h3 className="text-2xl font-black text-(--color-pakistan) tracking-tight">
                       {item?.product?.name}
                     </h3>
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={() => removeItem(item?.id)}
-                      className="p-1 rounded-full transition cursor-pointer text-(--color-cornsilk) bg-(--color-tiger)"
+                      className="p-2 rounded-full transition cursor-pointer text-white bg-(--color-tiger) shadow-lg"
                     >
-                      <X size={20} />
-                    </button>
+                      <X size={18} strokeWidth={2.5} />
+                    </motion.button>
                   </div>
 
                   {/* السعر */}
-                  <p
-                    className="text-lg font-bold mt-2"
-                    style={{ color: "var(--color-pakistan)" }}
-                  >
-                    {item?.product?.price}.00 EGP
-                  </p>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-3xl font-black text-(--color-tiger)">
+                      {item?.product?.price}
+                    </span>
+                    <span className="text-xs font-bold uppercase opacity-60 tracking-wider">
+                      EGP
+                    </span>
+                  </div>
 
                   {/* شريط الكمية */}
-                  <div className="mt-1 w-full">
-                    <div className="flex justify-between mb-1 text-sm font-semibold text-[--color-dark]">
+                  <div className="mt-3 w-full">
+                    <div className="flex justify-between mb-2 text-xs font-bold uppercase tracking-wider text-(--color-dark)/70">
                       <span>Available Stock</span>
                     </div>
 
-                    <div className="w-full h-3 bg-(--color-earth) rounded-full overflow-hidden">
+                    <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden border border-gray-50">
                       <motion.div
-                        className="h-3 rounded-full"
+                        className="h-full rounded-full shadow-[0_0_10px_rgba(188,108,37,0.3)]"
                         initial={{ width: 0 }}
                         animate={{
                           width: `${percentstock}%`,
                           backgroundColor: getColor(),
                         }}
-                        transition={{ duration: 0.8 }}
+                        transition={{ duration: 1.2, ease: "circOut" }}
                       />
                     </div>
                   </div>
 
-                  <div className="flex flex-row max-[470px]:flex-col max-[470px]:gap-4 justify-between mt-3">
+                  <div className="flex flex-row max-[520px]:flex-col max-[520px]:gap-4 justify-between mt-4">
                     {/* المقاس */}
-                    <div className="p-2 bg-(--color-earth)/10 rounded-xl border border-(--color-earth)/30 w-fit max-[470px]:w-full">
-                      <p className="text-sm text-(--color-pakistan)">
-                        <span className="font-semibold text-(--color-tiger)">
+                    <div className="p-3 bg-(--color-earth)/10 rounded-2xl border border-(--color-earth)/20 w-fit max-[520px]:w-full">
+                      <p className="text-lg text-center text-(--color-pakistan)">
+                        <span className="font-black text-(--color-tiger) uppercase text-lg tracking-wider">
                           Size: {item?.sizes?.size}
                         </span>
-                        <span className="ml-2 text-(--color-dark)">
+                        <span className="ml-2 text-(--color-dark) text-lg">
                           (
-                          <span className="font-medium text-(--color-pakistan)">
-                            Length:
+                          <span className="font-semibold text-(--color-pakistan)">
+                            L:
                           </span>{" "}
-                          {item?.sizes.length} cm —{" "}
-                          <span className="font-medium text-(--color-pakistan)">
-                            Width:
+                          {item?.sizes.length}cm —{" "}
+                          <span className="font-semibold text-(--color-pakistan)">
+                            W:
                           </span>{" "}
-                          {item?.sizes.width} cm)
+                          {item?.sizes.width}cm)
                         </span>
                       </p>
                     </div>
 
                     {/* الكمية */}
-                    <div className="flex items-end p-0.5 gap-2 bg-(--color-earth)/10 rounded-full border border-(--color-earth)/30 max-[470px]:w-full max-[470px]:justify-between">
-                      <button
+                    <div className="flex items-center p-1 gap-3 bg-white border-2 border-gray-100 rounded-full shadow-sm max-[520px]:w-full max-[520px]:justify-between">
+                      <motion.button
+                        whileTap={{ scale: 0.8 }}
                         onClick={() =>
                           decreaseQuantity({
                             id: item?.id,
                             quantity: item?.quantity,
                           })
                         }
-                        className="w-8 h-8 flex items-center justify-center text-white rounded-full transition"
-                        style={{ backgroundColor: "var(--color-tiger)" }}
+                        className="w-10 h-10 flex items-center justify-center bg-gray-50 text-(--color-pakistan) rounded-full text-xl font-black hover:bg-gray-100 transition-colors cursor-pointer"
                       >
-                        <Minus size={18} />
-                      </button>
-                      <span
-                        className="text-lg font-semibold"
-                        style={{ color: "var(--color-dark)" }}
-                      >
+                        −
+                      </motion.button>
+                      <span className="text-xl font-black text-(--color-pakistan) min-w-8 text-center">
                         {item?.quantity}
                       </span>
-                      <button
+                      <motion.button
+                        whileTap={{ scale: 0.8 }}
                         onClick={() =>
                           increaseQuantity({
                             id: item?.id,
                             quantity: item?.quantity,
                           })
                         }
-                        className="w-8 h-8 flex items-center justify-center text-white rounded-full transition"
-                        style={{ backgroundColor: "var(--color-tiger)" }}
+                        className="w-10 h-10 flex items-center justify-center bg-gray-50 text-(--color-pakistan) rounded-full text-xl font-black hover:bg-gray-100 transition-colors cursor-pointer"
                       >
-                        <Plus size={18} />
-                      </button>
+                        +
+                      </motion.button>
                     </div>
                   </div>
                 </div>
@@ -248,12 +270,18 @@ export default function Cart() {
           })}
 
           {/* زر الدفع */}
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => navigate("/checkout")}
-            className="mt-4 mb-4 w-full py-3 text-white text-xl bg-(--color-tiger) hover:bg-(--color-earth) cursor-pointer font-semibold rounded-2xl shadow-md transition"
+            className="mt-8 mb-4 w-full py-4 text-white text-xl bg-linear-to-r from-(--color-tiger) to-(--color-earth) cursor-pointer font-black rounded-2xl shadow-2xl transition-all tracking-tight"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+            }}
           >
             Checkout
-          </button>
+          </motion.button>
         </div>
       )}
     </div>
