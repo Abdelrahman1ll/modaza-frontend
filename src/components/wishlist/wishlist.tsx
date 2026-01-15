@@ -229,10 +229,13 @@ export default function Wishlist() {
                           <motion.button
                             whileHover={{
                               scale: 1.02,
-                              backgroundColor: "#000",
                             }}
                             whileTap={{ scale: 0.98 }}
-                            className="w-full rounded-2xl bg-gray-900 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-all"
+                            className="w-full rounded-2xl py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-all"
+                            style={{
+                              background:
+                                "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+                            }}
                           >
                             Management Control
                           </motion.button>

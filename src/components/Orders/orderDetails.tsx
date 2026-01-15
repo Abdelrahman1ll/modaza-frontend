@@ -294,7 +294,7 @@ export default function OrderDetails() {
                         {order?.addresses.phone || "N/A"}
                       </p>
                       {order?.addresses.phoneOptional && (
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm text-gray-500">
                           Alt: {order.addresses.phoneOptional}
                         </p>
                       )}

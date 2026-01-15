@@ -46,19 +46,15 @@ export default function SearchInput({
   return createPortal(
     <div
       className="
-        fixed top-24 left-0 w-full flex justify-center z-40
+        fixed top-24 left-0 w-full flex justify-center z-110
         min-[1180px]:hidden
       "
     >
-      <div className="relative w-11/12 max-w-lg">
+      <div className="relative w-11/12 max-w-lg transform transition-all duration-300">
         <input
           type="text"
           placeholder="Search..."
-          className="w-full pl-12 pr-12 py-2 rounded-full text-lg focus:outline-none shadow-lg opacity-90"
-          style={{
-            backgroundColor: "var(--color-dark)",
-            color: "#000",
-          }}
+          className="w-full pl-12 pr-12 py-3 rounded-2xl text-lg focus:outline-none shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md bg-white/60 border border-white/70 text-[#606C38] placeholder-[#606C38]/60 transition-all duration-300 focus:bg-white/60 focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:scale-[1.01]"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onFocus={() => {
@@ -70,11 +66,11 @@ export default function SearchInput({
           // autoFocus
         />
         <Search
-          className="absolute left-4 top-1/2 -translate-y-1/2"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-[#606C38] opacity-80"
           size={22}
         />
         <X
-          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-black"
+          className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-[#606C38] hover:scale-110 transition-transform duration-200"
           size={22}
           onMouseDown={(e) => {
             e.preventDefault();

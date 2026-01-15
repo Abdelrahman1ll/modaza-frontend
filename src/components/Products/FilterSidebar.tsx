@@ -66,6 +66,7 @@ export default function FilterSidebar() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialized = useRef(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   const [sortOpen, setSortOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState("Featured");
@@ -74,6 +75,28 @@ export default function FilterSidebar() {
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [maxPrice, setMaxPrice] = useState(0);
+
+  const handleTrackClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!sliderRef.current || maxPrice === 0) return;
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const value = Math.round(percentage * (maxPrice - MIN_PRICE) + MIN_PRICE);
+
+    const distMin = Math.abs(value - priceRange[0]);
+    const distMax = Math.abs(value - priceRange[1]);
+
+    if (distMin < distMax) {
+      // Moves closer to min
+      const newMin = Math.min(value, priceRange[1] - 10);
+      setPriceRange([newMin, priceRange[1]]);
+    } else {
+      // Moves closer to max
+      const newMax = Math.max(value, priceRange[0] + 10);
+      setPriceRange([priceRange[0], newMax]);
+    }
+  };
 
   /* ================= API ================= */
   const { data } = useGetCategoryQuery({});
@@ -378,7 +401,11 @@ export default function FilterSidebar() {
 
                 <Accordion title="Price Range">
                   <div className="space-y-6 pt-2 pb-4 px-3">
-                    <div className="relative h-2 flex items-center">
+                    <div
+                      ref={sliderRef}
+                      onClick={handleTrackClick}
+                      className="relative h-2 flex items-center cursor-pointer touch-none"
+                    >
                       {/* Track Background */}
                       <div className="absolute left-0 right-0 h-1.5 bg-(--color-pakistan)/10 rounded-full" />
 
@@ -406,15 +433,16 @@ export default function FilterSidebar() {
                         min={MIN_PRICE}
                         max={maxPrice}
                         value={priceRange[0]}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          e.stopPropagation(); // Prevent bubbling to track click
                           setPriceRange([
                             Math.min(
                               Number(e.target.value),
                               priceRange[1] - 10
                             ),
                             priceRange[1],
-                          ])
-                        }
+                          ]);
+                        }}
                         style={{
                           zIndex: priceRange[0] > maxPrice - 100 ? "40" : "30",
                         }}
@@ -445,15 +473,16 @@ export default function FilterSidebar() {
                         min={MIN_PRICE}
                         max={maxPrice}
                         value={priceRange[1]}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                          e.stopPropagation(); // Prevent bubbling to track click
                           setPriceRange([
                             priceRange[0],
                             Math.max(
                               Number(e.target.value),
                               priceRange[0] + 10
                             ),
-                          ])
-                        }
+                          ]);
+                        }}
                         className="absolute w-full h-2 appearance-none cursor-pointer bg-transparent pointer-events-none z-20
               [&::-webkit-slider-thumb]:pointer-events-auto
               [&::-webkit-slider-thumb]:appearance-none
@@ -554,7 +583,11 @@ export default function FilterSidebar() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleClearAll}
-                  className="w-full mt-8 py-4 px-4 bg-(--color-pakistan) text-(--color-cornsilk) rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-(--color-tiger) shadow-lg shadow-(--color-pakistan)/20 transition-all cursor-pointer"
+                  className="w-full mt-8 py-4 px-4 text-(--color-cornsilk) rounded-2xl text-sm font-black uppercase tracking-widest shadow-lg shadow-(--color-pakistan)/20 transition-all cursor-pointer"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+                  }}
                 >
                   Clear All Filters
                 </motion.button>

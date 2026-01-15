@@ -56,7 +56,7 @@ export default function Signup({ onClose }: { onClose: () => void }) {
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="relative p-8 rounded-3xl shadow-2xl max-w-md w-full text-center bg-(--color-cornsilk) border border-white/20"
+        className="relative p-6 sm:p-8 rounded-3xl shadow-2xl max-w-md w-full text-center bg-(--color-cornsilk) border border-white/20"
       >
         <motion.button
           whileHover={{ scale: 1.1, rotate: 90 }}
@@ -132,8 +132,13 @@ export default function Signup({ onClose }: { onClose: () => void }) {
                     ${
                       isLoading
                         ? "bg-(--color-earth)/70 cursor-not-allowed"
-                        : "bg-(--color-tiger) hover:bg-(--color-tiger)/90 hover:shadow-xl cursor-pointer"
+                        : "hover:shadow-xl cursor-pointer"
                     }`}
+                    style={{
+                      background: !isLoading
+                        ? "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)"
+                        : undefined,
+                    }}
                   >
                     {isLoading ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -197,7 +202,7 @@ export default function Signup({ onClose }: { onClose: () => void }) {
                           onChange={(e) => handleChange(e, i)}
                           onKeyDown={(e) => handleKeyDown(e, i)}
                           onPaste={handlePaste}
-                          className="w-12 h-14 text-center text-2xl font-bold border border-(--color-earth)/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-(--color-tiger) focus:border-transparent transition-all bg-white/50"
+                          className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border border-(--color-earth)/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-(--color-tiger) focus:border-transparent transition-all bg-white/50"
                         />
                       ))}
                     </div>
@@ -227,8 +232,13 @@ export default function Signup({ onClose }: { onClose: () => void }) {
                     ${
                       isLoadingUser
                         ? "bg-(--color-earth)/70 cursor-not-allowed"
-                        : "bg-(--color-tiger) hover:bg-(--color-tiger)/90 hover:shadow-xl cursor-pointer"
+                        : "hover:shadow-xl cursor-pointer"
                     }`}
+                    style={{
+                      background: !isLoadingUser
+                        ? "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)"
+                        : undefined,
+                    }}
                   >
                     {isLoadingUser ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

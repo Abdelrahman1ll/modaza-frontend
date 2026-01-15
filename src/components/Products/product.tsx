@@ -168,7 +168,7 @@ const ProductCard = memo(
 
           {/* Out of Stock - Sophisticated Overlay */}
           {isOutOfStock && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[3px]">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[3px] pointer-events-none">
               <div className="overflow-hidden rounded-full border border-white/30 bg-white/10 px-8 py-3 shadow-2xl backdrop-blur-xl">
                 <span className="text-sm font-black uppercase tracking-[0.2em] text-white">
                   Sold Out

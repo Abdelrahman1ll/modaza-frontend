@@ -174,7 +174,11 @@ export default function Footer() {
                 value={""}
               />
               <button
-                className="bg-(--color-tiger) hover:bg-(--color-tiger)/90 text-white px-6 rounded-r-xl text-sm font-bold transition-all active:scale-95"
+                className="hover:opacity-90 text-white px-6 rounded-r-xl text-sm font-bold transition-all active:scale-95"
+                style={{
+                  background:
+                    "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+                }}
                 onClick={() => openSignup()}
               >
                 Join

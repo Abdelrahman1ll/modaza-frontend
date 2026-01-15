@@ -142,7 +142,11 @@ export default function Reviews() {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={handleSubmitReview}
-                className="w-full py-4 rounded-xl bg-(--color-pakistan) text-white font-black uppercase tracking-[0.2em] text-sm shadow-xl hover:bg-(--color-dark) transition-colors relative overflow-hidden group"
+                className="w-full py-4 rounded-xl text-white font-black uppercase tracking-[0.2em] text-sm shadow-xl transition-all relative overflow-hidden group"
+                style={{
+                  background:
+                    "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+                }}
               >
                 <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 {editingReview ? "Submit Changes" : "Post Review"}

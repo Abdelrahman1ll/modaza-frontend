@@ -238,9 +238,12 @@ export default function Profile() {
                 whileTap={!isLoading ? { scale: 0.99 } : {}}
                 disabled={isLoading}
                 type="submit"
-                className="w-full relative group overflow-hidden bg-(--color-pakistan) text-white font-black uppercase tracking-[0.2em] py-4 rounded-xl shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed text-sm"
+                className="w-full relative group overflow-hidden text-white font-black uppercase tracking-[0.2em] py-4 rounded-xl shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed text-sm"
+                style={{
+                  background:
+                    "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+                }}
               >
-                <div className="absolute inset-0 bg-linear-to-r from-(--color-tiger) to-(--color-earth) opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative z-10 flex items-center justify-center">
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

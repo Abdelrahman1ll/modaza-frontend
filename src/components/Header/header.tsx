@@ -7,6 +7,7 @@ import {
   Menu,
   House,
   Heart,
+  ChevronDown,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import SearchInput from "./search";
@@ -127,69 +128,97 @@ export default function Header() {
               className="relative inline-block text-left"
               ref={desktopDropdownRef}
             >
-              <span
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={toggleCountryDropdown}
-                className="inline-flex justify-center items-center px-4 py-2 bg-white/60 hover:bg-white text-(--color-dark) font-medium shadow-sm active:scale-95 transition-all duration-200 cursor-pointer rounded-full select-none"
-                style={{
-                  border:
-                    "1px solid color-mix(in srgb, var(--color-pakistan), transparent 90%)",
-                }}
-                role="button"
+                className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full transition-all duration-300 select-none border border-white/40 shadow-[0_4px_12px_rgba(0,0,0,0.05)] ${
+                  isOpen
+                    ? "bg-white shadow-md border-(--color-tiger)/20"
+                    : "bg-white/40 backdrop-blur-md hover:bg-white/80"
+                }`}
                 aria-label="Select country"
                 aria-expanded={isOpen}
-                tabIndex={0}
               >
-                <img
-                  src={selected.flag}
-                  alt={`Flag of ${selected.name}`}
-                  loading="lazy"
-                  decoding="async"
-                  width="18"
-                  height="18"
-                  className="w-4.5 h-4.5 rounded-full mr-2.5 object-cover shadow-sm"
-                />
-                <span className="text-sm">{selected.name}</span>
-              </span>
+                <div className="relative">
+                  <img
+                    src={selected.flag}
+                    alt={selected.name}
+                    className="w-5 h-5 rounded-full object-cover shadow-sm ring-1 ring-black/5"
+                  />
+                  {isOpen && (
+                    <motion.div
+                      layoutId="active-indicator"
+                      className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-(--color-tiger) rounded-full border border-white"
+                    />
+                  )}
+                </div>
+                <span className="text-sm font-black text-(--color-pakistan) tracking-tight">
+                  {selected.name}
+                </span>
+                <motion.div
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ChevronDown
+                    size={14}
+                    className="text-(--color-pakistan)/40"
+                  />
+                </motion.div>
+              </motion.button>
 
               <AnimatePresence>
                 {isOpen && (
-                  <motion.ul
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  <motion.div
+                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-5 w-48 backdrop-blur-xl rounded-xl shadow-xl z-50 overflow-hidden py-1"
-                    style={{
-                      backgroundColor:
-                        "color-mix(in srgb, var(--color-cornsilk), transparent 5%)",
-                      border:
-                        "1px solid color-mix(in srgb, var(--color-earth), transparent 80%)",
-                    }}
+                    exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                    className="absolute right-0 mt-5 w-56 bg-white/80 backdrop-blur-2xl rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white z-50 overflow-hidden p-2"
                   >
-                    {countries.map((country) => (
-                      <li
+                    <div className="px-3 py-2 border-b border-black/5 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-(--color-pakistan)/40">
+                        Choose Style Domain
+                      </span>
+                    </div>
+                    {countries.map((country, idx) => (
+                      <motion.button
                         key={country.name}
-                        className="flex items-center px-3 py-1 cursor-pointer hover:bg-(--color-earth)/10 border-b border-black/5 last:border-0"
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{
+                          opacity: 1,
+                          x: 0,
+                          transition: { delay: idx * 0.05 },
+                        }}
+                        className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all duration-200 group ${
+                          selected.name === country.name
+                            ? "bg-(--color-tiger) text-white shadow-lg shadow-(--color-tiger)/20"
+                            : "hover:bg-(--color-tiger)/5 text-(--color-pakistan)"
+                        }`}
                         onClick={() => {
                           setSelected(country);
                           setIsOpen(false);
                         }}
                       >
-                        <img
-                          src={country.flag}
-                          alt={`Flag of ${country.name}`}
-                          loading="lazy"
-                          decoding="async"
-                          width="20"
-                          height="20"
-                          className="w-5 h-5 rounded-full mr-3 object-cover shadow-sm"
-                        />
-                        <span className="text-lg font-medium">
-                          {country.name}
-                        </span>
-                      </li>
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={country.flag}
+                            alt={country.name}
+                            className={`w-6 h-6 rounded-full object-cover shadow-sm ring-1 ${
+                              selected.name === country.name
+                                ? "ring-white/20"
+                                : "ring-black/5"
+                            }`}
+                          />
+                          <span className="text-sm font-bold tracking-tight">
+                            {country.name}
+                          </span>
+                        </div>
+                        {selected.name === country.name && (
+                          <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                        )}
+                      </motion.button>
                     ))}
-                  </motion.ul>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
@@ -364,38 +393,45 @@ export default function Header() {
             className="relative inline-block text-left"
             ref={mobileDropdownRef}
           >
-            <span
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={toggleCountryDropdown}
-              className="inline-flex justify-center items-center p-2 rounded-full hover:bg-black/5 transition-colors"
-              role="button"
+              className={`flex items-center justify-center p-1.5 rounded-full transition-all duration-300 ring-1 ${
+                isOpen
+                  ? "bg-white shadow-lg ring-(--color-tiger)/20"
+                  : "bg-white/40 ring-black/5"
+              }`}
               aria-label="Select country"
               aria-expanded={isOpen}
-              tabIndex={0}
             >
               <img
                 src={selected.flag}
-                alt={`Flag of ${selected.name}`}
-                loading="lazy"
-                decoding="async"
-                width="20"
-                height="20"
-                className="w-6 h-6 rounded-full object-cover shadow-sm ring-2 ring-white/50"
+                alt={selected.name}
+                className="w-6 h-6 rounded-full object-cover shadow-sm"
               />
-            </span>
+            </motion.button>
 
             <AnimatePresence>
               {isOpen && (
-                <motion.ul
-                  initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                <motion.div
+                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute top-14 right-0 w-44 bg-(--color-cornsilk)/95 backdrop-blur-xl rounded-xl shadow-xl border border-(--color-earth)/20 z-50 overflow-hidden py-1"
+                  exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                  className="absolute top-14 right-0 w-48 bg-white/90 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white z-50 overflow-hidden p-2"
                 >
-                  {countries.map((country) => (
-                    <li
-                      key={country.name}
-                      className="flex items-center px-3 py-1 cursor-pointer hover:bg-(--color-earth)/10 border-b border-black/5 last:border-0"
+                  <div className="px-3 py-2 border-b border-black/5 mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-(--color-pakistan)/40 text-left block">
+                      Region
+                    </span>
+                  </div>
+                  {countries.map((country, i) => (
+                    <button
+                      key={i}
+                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 ${
+                        selected.name === country.name
+                          ? "bg-(--color-tiger) text-white shadow-lg shadow-(--color-tiger)/20 font-bold"
+                          : "hover:bg-(--color-tiger)/5 text-(--color-pakistan)"
+                      }`}
                       onClick={() => {
                         setSelected(country);
                         setIsOpen(false);
@@ -403,19 +439,17 @@ export default function Header() {
                     >
                       <img
                         src={country.flag}
-                        alt={`Flag of ${country.name}`}
-                        loading="lazy"
-                        decoding="async"
-                        width="20"
-                        height="20"
-                        className="w-5 h-5 rounded-full mr-3 object-cover shadow-sm"
+                        alt={country.name}
+                        className={`w-5 h-5 rounded-full object-cover shadow-sm ring-1 ${
+                          selected.name === country.name
+                            ? "ring-white/20"
+                            : "ring-black/5"
+                        }`}
                       />
-                      <span className="text-lg font-medium">
-                        {country.name}
-                      </span>
-                    </li>
+                      <span className="text-sm">{country.name}</span>
+                    </button>
                   ))}
-                </motion.ul>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>

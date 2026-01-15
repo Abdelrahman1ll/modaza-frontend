@@ -26,12 +26,17 @@ export default function Orders() {
   const getStatusStyles = (order: OrderType) => {
     if (order?.isDelivered)
       return "bg-green-100 text-green-700 border-green-200";
+
     if (order?.isShipped)
       return "bg-orange-100 text-orange-700 border-orange-200";
+
     if (order?.isPaid)
       return "bg-emerald-100 text-emerald-700 border-emerald-200";
+
     if (order?.isConfirmed) return "bg-blue-100 text-blue-700 border-blue-200";
+
     if (order?.isCanceled) return "bg-red-100 text-red-700 border-red-200";
+
     return "bg-gray-100 text-gray-700 border-gray-200";
   };
 
@@ -82,7 +87,11 @@ export default function Orders() {
             </p>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 bg-(--color-pakistan) text-white px-8 py-4 rounded-2xl font-bold hover:bg-(--color-pakistan)/80 transition-all active:scale-95 shadow-lg shadow-gray-900/20"
+              className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-xl transition-all active:scale-95 shadow-lg shadow-gray-900/20"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+              }}
             >
               Start Shopping
               <ChevronRight size={20} />

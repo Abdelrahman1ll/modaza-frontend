@@ -118,9 +118,12 @@ export default function Cart() {
             whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => navigate("/products")}
-            className="group relative inline-flex items-center gap-3 px-10 py-4 bg-(--color-pakistan) text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl transition-all"
+            className="group relative inline-flex items-center gap-3 px-10 py-4 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl transition-all"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+            }}
           >
-            <div className="absolute inset-0 bg-linear-to-r from-(--color-tiger) to-(--color-earth) opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
             <span className="relative z-10">Start Shopping</span>
             <motion.div
               className="relative z-10"
