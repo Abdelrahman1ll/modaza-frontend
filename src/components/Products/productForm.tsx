@@ -170,7 +170,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
               </div>
 
               {/* Selections - Categories & Colors */}
-              <div className="grid grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 <div className="space-y-1.5 focus-within:z-10">
                   <label className="text-xs font-black text-(--color-pakistan)/70 uppercase tracking-widest ml-1">
                     Category
@@ -376,7 +376,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                 </h3>
               </div>
 
-              <div className="p-6 bg-white/40 border border-white/60 rounded-4xl shadow-sm space-y-4">
+              <div className="p-4 bg-white/40 border border-white/60 rounded-4xl shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <h4 className="text-sm font-black text-(--color-pakistan) uppercase tracking-wider">

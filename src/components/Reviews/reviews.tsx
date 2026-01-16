@@ -2,6 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Star, MessageSquarePlus, X, Edit3, Trash2 } from "lucide-react";
 import type { ReviewType } from "../../types/ReviewsType";
 import useReviews from "./useReviews";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 /**
  * Reviews: Interface for viewing and managing product reviews/ratings.
@@ -24,6 +26,8 @@ export default function Reviews() {
     reviewFormRef,
     editingReview,
   } = useReviews();
+
+  const { user } = useContext(AuthContext);
 
   return (
     <section className="py-8 px-4 relative overflow-hidden">
@@ -220,22 +224,24 @@ export default function Reviews() {
                       </p>
 
                       {/* Actions */}
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => handleEditReview(review)}
-                          className="p-2 rounded-lg text-gray-400 hover:text-(--color-tiger) bg-gray-50 hover:bg-(--color-tiger)/10 transition-all"
-                          title="Edit Review"
-                        >
-                          <Edit3 size={18} strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteReview(review.id)}
-                          className="p-2 rounded-lg text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 transition-all"
-                          title="Delete Review"
-                        >
-                          <Trash2 size={18} strokeWidth={2.5} />
-                        </button>
-                      </div>
+                      {user?.id === review?.user?.id && (
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handleEditReview(review)}
+                            className="p-2 rounded-lg text-gray-400 hover:text-(--color-tiger) bg-gray-50 hover:bg-(--color-tiger)/10 transition-all"
+                            title="Edit Review"
+                          >
+                            <Edit3 size={18} strokeWidth={2.5} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteReview(review.id)}
+                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 transition-all"
+                            title="Delete Review"
+                          >
+                            <Trash2 size={18} strokeWidth={2.5} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))}

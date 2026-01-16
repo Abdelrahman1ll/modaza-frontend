@@ -30,7 +30,7 @@ export default function AllUsers() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,var(--color-tiger-10),transparent),radial-gradient(circle_at_bottom_left,var(--color-pakistan-10),transparent)] flex flex-col items-center py-2 px-4 md:px-8 mt-18">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,var(--color-tiger-10),transparent),radial-gradient(circle_at_bottom_left,var(--color-pakistan-10),transparent)] flex flex-col items-center py-2 px-4 md:px-8 mt-18 overflow-x-hidden">
       {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -56,7 +56,7 @@ export default function AllUsers() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-2xl mb-12 relative group"
+        className="w-full max-w-2xl px-4 sm:px-0 mb-8 relative group mx-auto"
       >
         <div className="absolute inset-0 bg-(--color-tiger)/5 blur-2xl -z-10 group-focus-within:bg-(--color-tiger)/10 transition-colors" />
         <div className="relative">
@@ -65,7 +65,7 @@ export default function AllUsers() {
             placeholder="Filter by email address..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-14 py-5 bg-white/60 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl shadow-gray-200/20 focus:outline-none focus:ring-2 focus:ring-(--color-tiger)/20 focus:bg-white transition-all font-bold text-(--color-pakistan)"
+            className="w-full px-14 py-5 bg-white/60 backdrop-blur-xl border border-white/40 rounded-3xl shadow-xl shadow-gray-200/20 focus:outline-none focus:ring-2 focus:ring-(--color-tiger)/20 focus:bg-white transition-all font-bold text-(--color-pakistan) text-center sm:text-left"
           />
           <Search
             className="absolute left-6 top-1/2 -translate-y-1/2 text-(--color-pakistan)/40 transition-colors group-focus-within:text-(--color-tiger)"
@@ -109,30 +109,49 @@ export default function AllUsers() {
               className="grid gap-4"
             >
               {filteredUsers.map((user: UserType) => (
-                <motion.div key={user.id}>
-                  <Link to={`/edit-user-owner/${user?.id}`}>
-                    <div className="bg-white/40 backdrop-blur-xl border border-white/60 p-4 rounded-4xl shadow-xl shadow-gray-200/10 flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-4 hover:shadow-2xl hover:bg-white/80 transition-all duration-300 group">
-                      <div className="flex items-center gap-5 w-full sm:w-auto">
-                        <div className="w-12 h-12 bg-linear-to-br from-(--color-tiger) to-(--color-earth) rounded-2xl flex items-center justify-center text-white shadow-lg shadow-(--color-tiger)/20 transform group-hover:rotate-6 transition-transform">
-                          <User size={24} strokeWidth={2.5} />
+                <motion.div
+                  key={user.id}
+                  className="w-full flex justify-center px-4"
+                >
+                  <Link
+                    to={`/edit-user-owner/${user?.id}`}
+                    className="w-full max-w-[420px] sm:max-w-4xl"
+                  >
+                    <div className="bg-white/40 backdrop-blur-xl border border-white/60 p-4 sm:p-5 rounded-4xl shadow-xl shadow-gray-200/5 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-6 hover:shadow-2xl hover:bg-white/80 transition-all duration-300 group overflow-hidden">
+                      {/* Left: Icon & User Info */}
+                      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 w-full sm:w-auto">
+                        <div className="w-14 h-14 sm:w-12 sm:h-12 bg-linear-to-br from-(--color-tiger) to-(--color-earth) rounded-2xl flex items-center justify-center text-white shadow-lg shadow-(--color-tiger)/20 transform group-hover:rotate-6 transition-transform shrink-0">
+                          <User
+                            size={28}
+                            className="sm:w-6 sm:h-6"
+                            strokeWidth={2.5}
+                          />
                         </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Mail size={12} className="text-(--color-tiger)" />
-                            <p className="font-black text-(--color-pakistan) tracking-tight">
+
+                        <div className="flex flex-col items-center sm:items-start text-center sm:text-left min-w-0 flex-1">
+                          <div className="flex items-center gap-2 justify-center sm:justify-start w-full">
+                            <Mail
+                              size={12}
+                              className="text-(--color-tiger) shrink-0"
+                            />
+                            <p className="font-black text-(--color-pakistan) tracking-tight break-all line-clamp-1 sm:line-clamp-none max-w-[240px] sm:max-w-none">
                               {user.email}
                             </p>
                           </div>
-                          <p className="text-[10px] font-bold text-(--color-pakistan)/40 uppercase tracking-widest mt-0.5">
+                          <p className="text-[10px] font-bold text-(--color-pakistan)/40 uppercase tracking-widest mt-1">
                             ID: #{String(user.id).slice(-8)}
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-8 w-full sm:w-auto justify-between sm:justify-end">
-                        <div className="flex flex-col items-end">
+                      {/* Right: Date & Arrow */}
+                      <div className="flex flex-row sm:flex-row items-center gap-6 sm:gap-8 w-full sm:w-auto justify-center sm:justify-end pt-4 sm:pt-0 border-t border-white/40 sm:border-none">
+                        <div className="flex flex-col items-center sm:items-end">
                           <div className="flex items-center gap-2 text-xs font-black text-(--color-pakistan)/60">
-                            <Calendar size={14} />
+                            <Calendar
+                              size={14}
+                              className="text-(--color-tiger)/60"
+                            />
                             <span>
                               {user.createdAt
                                 ? new Date(user.createdAt).toLocaleDateString(
@@ -146,11 +165,12 @@ export default function AllUsers() {
                                 : "N/A"}
                             </span>
                           </div>
-                          <span className="text-[9px] font-black uppercase tracking-widest text-(--color-tiger)/60 mt-0.5">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-(--color-tiger)/40 mt-0.5">
                             Member Since
                           </span>
                         </div>
-                        <div className="w-10 h-10 rounded-full bg-(--color-pakistan)/5 flex items-center justify-center text-(--color-pakistan) transform group-hover:translate-x-1 transition-transform">
+
+                        <div className="w-10 h-10 rounded-full bg-(--color-pakistan)/5 flex items-center justify-center text-(--color-pakistan) transform group-hover:translate-x-1 transition-transform shrink-0 ring-4 ring-white/20">
                           <ArrowRight size={20} />
                         </div>
                       </div>
