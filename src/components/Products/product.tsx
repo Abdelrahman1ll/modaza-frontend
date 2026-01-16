@@ -205,9 +205,12 @@ const ProductCard = memo(
           {user && user.role !== "user" && (
             <Link to={`/edit-product/${product.id}`} className="mt-4 w-full">
               <motion.button
-                whileHover={{ scale: 1.02, backgroundColor: "#000" }}
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: "0 10px 20px -10px rgba(188, 108, 37, 0.4)",
+                }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full rounded-2xl bg-gray-900 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-all"
+                className="w-full rounded-2xl bg-linear-to-r from-(--color-tiger) to-(--color-earth) py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg transition-all"
               >
                 Management Control
               </motion.button>

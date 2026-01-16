@@ -43,7 +43,6 @@ export default function useProductForm(mode: "add" | "edit") {
     isLoading: isLoadingCategory,
     isError: isErrorCategory,
   } = useGetCategoryQuery({});
-  const [openCategory, setOpenCategory] = useState(false);
   const [nameCategory, setNameCategory] = useState("");
   // Get Colors
   const {
@@ -51,7 +50,6 @@ export default function useProductForm(mode: "add" | "edit") {
     isLoading: isLoadingColors,
     isError: isErrorColors,
   } = useGetColorsQuery({});
-  const [openColors, setOpenColors] = useState(false);
   const [nameColors, setNameColors] = useState("");
 
   // Add Product
@@ -405,6 +403,7 @@ export default function useProductForm(mode: "add" | "edit") {
         ? err.data.message[0]
         : err?.data?.message;
       toast.error(message || "Failed to add product");
+      console.log(err)
     }
   };
 
@@ -423,15 +422,11 @@ export default function useProductForm(mode: "add" | "edit") {
     categories,
     isLoadingCategory,
     isErrorCategory,
-    openCategory,
-    setOpenCategory,
     nameCategory,
     setNameCategory,
     colors,
     isLoadingColors,
     isErrorColors,
-    openColors,
-    setOpenColors,
     nameColors,
     setNameColors,
   };

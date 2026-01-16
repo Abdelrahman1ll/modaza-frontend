@@ -96,127 +96,155 @@ export default function Color() {
 
   /* ===================== UI ===================== */
   return (
-    <div className="max-w-4xl mx-auto mt-12 p-4">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-center"
-      >
-        <h1 className="text-3xl font-bold">Colors</h1>
-        <p className="text-gray-500 mt-1">Manage product colors</p>
-      </motion.div>
+    <div className="relative min-h-screen py-10 px-4">
+      {/* Dynamic Radial Background */}
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(188,108,37,0.1)_0%,transparent_50%),radial-gradient(circle_at_100%_100%,rgba(96,108,56,0.05)_0%,transparent_50%)]" />
 
-      {/* Form */}
-      <motion.form
-        onSubmit={handleSubmit}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col sm:flex-row items-center gap-3 mb-8 bg-(--color-cornsilk) p-4 rounded-2xl shadow"
-      >
-        {/* حاوية الاسم + اللون للشاشات الصغيرة */}
-        <div className="flex w-full gap-3 items-center">
-          {/* اسم اللون */}
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Color name"
-            className="flex-1 px-4 py-3 rounded-full border focus:outline-none focus:ring-1 focus:ring-(--color-tiger)"
-          />
-
-          {/* زر اختيار اللون */}
-          <div>
-            <button
-              type="button"
-              onClick={() => colorInputRef.current?.click()}
-              className="w-12 h-12 rounded-xl border-2 border-gray-200 hover:border-[--color-tiger] flex items-center justify-center cursor-pointer transition-all shadow-sm hover:shadow-md relative overflow-hidden group"
-              style={{ backgroundColor: color }}
-              title="Pick color"
-            >
-              <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors" />
-              <svg
-                className="w-5 h-5 text-white drop-shadow-md"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-                />
-              </svg>
-            </button>
-
-            <input
-              ref={colorInputRef}
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="absolute w-2 h-2 opacity-0"
-            />
-          </div>
-        </div>
-
-        {/* زر الإضافة أو التعديل */}
-        <button
-          type="submit"
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-(--color-tiger) text-white font-semibold hover:bg-(--color-tiger)/80 transition"
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10 text-center"
         >
-          <Plus size={18} />
-          {editId ? "Update" : "Add"}
-        </button>
-      </motion.form>
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/40 backdrop-blur-md border border-white/60 text-(--color-tiger) font-black text-xs uppercase tracking-widest mb-4">
+            <Palette size={14} />
+            Visual Identity
+          </div>
+          <h1 className="text-4xl font-black text-(--color-pakistan) tracking-tight mb-2">
+            Color Palette
+          </h1>
+          <p className="text-(--color-pakistan)/60 font-medium">
+            Define and manage the aesthetic spectrum of your products
+          </p>
+        </motion.div>
 
-      {/* Empty State */}
-      {colors?.colors?.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20">
-          <Palette
-            size={90}
-            className="text-(--color-tiger) mb-6 animate-bounce"
-          />
-          <p className="text-gray-500 text-lg">No colors found</p>
-        </div>
-      )}
-
-      {/* List */}
-      <div className="grid gap-4">
-        {colors?.colors?.map((colorItem: ColorType, index: number) => (
-          <motion.div
-            key={colorItem.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="flex items-center justify-between p-4 rounded-2xl bg-(--color-cornsilk) shadow hover:shadow-lg transition"
+        {/* Management Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative rounded-3xl overflow-hidden border border-white/60 bg-white/40 backdrop-blur-xl shadow-2xl p-6 mb-10"
+        >
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row gap-4 items-center"
           >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-6 h-6 rounded-full border"
-                style={{ backgroundColor: colorItem.color }}
+            <div className="flex flex-1 w-full gap-3 items-center">
+              <div className="relative flex-1 group">
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ex: Midnight Black"
+                  className="w-full pl-6 pr-4 py-4 rounded-2xl bg-white/50 border border-white/60 focus:bg-white/80 focus:border-(--color-tiger) outline-none transition-all font-bold text-(--color-pakistan) placeholder:text-(--color-pakistan)/30 shadow-inner"
+                />
+              </div>
+
+              {/* Glassmorphic Color Picker */}
+              <div className="relative">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  onClick={() => colorInputRef.current?.click()}
+                  className="w-14 h-14 rounded-2xl border border-white/60 bg-white/40 backdrop-blur-md flex items-center justify-center cursor-pointer transition-all shadow-lg relative overflow-hidden group"
+                  style={{ backgroundColor: color }}
+                >
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/20 transition-colors shadow-inner" />
+                  <Palette size={20} className="text-white drop-shadow-md" />
+                </motion.button>
+
+                <input
+                  ref={colorInputRef}
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              className="w-full sm:w-auto px-10 py-4 rounded-2xl bg-linear-to-r from-(--color-tiger) to-(--color-earth) text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-(--color-tiger)/20 transition-all flex items-center justify-center gap-2"
+            >
+              {editId ? <Edit size={16} /> : <Plus size={16} />}
+              {editId ? "Update" : "Register"}
+            </motion.button>
+          </form>
+        </motion.div>
+
+        {/* Colors List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {colors?.colors?.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="col-span-full text-center py-20 bg-white/20 backdrop-blur-sm rounded-3xl border border-dashed border-white/60"
+            >
+              <Palette
+                size={60}
+                className="mx-auto text-(--color-pakistan)/20 mb-4"
               />
-              <span className="text-lg font-medium text-[--color-dark]">
-                {colorItem.name}
-              </span>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEdit(colorItem)}
-                className="p-2 rounded-full border hover:bg-gray-100 transition"
+              <p className="text-(--color-pakistan)/40 font-black uppercase tracking-widest text-xs">
+                The palette is currently empty
+              </p>
+            </motion.div>
+          ) : (
+            colors?.colors?.map((colorItem: ColorType, index: number) => (
+              <motion.div
+                key={colorItem.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                className="group flex items-center justify-between p-4 rounded-2xl bg-white/30 backdrop-blur-md border border-white/60 hover:bg-white/50 hover:shadow-xl transition-all duration-300"
               >
-                <Edit size={18} />
-              </button>
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-10 h-10 rounded-xl shadow-lg border border-white/60"
+                    style={{ backgroundColor: colorItem.color }}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-lg font-bold text-(--color-pakistan) tracking-tight leading-tight">
+                      {colorItem.name}
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-(--color-pakistan)/40">
+                      {colorItem.color}
+                    </span>
+                  </div>
+                </div>
 
-              <button
-                onClick={() => handleDelete(colorItem.id)}
-                className="p-2 rounded-full border text-red-500 hover:bg-red-50 transition"
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
-          </motion.div>
-        ))}
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <motion.button
+                    whileHover={{
+                      scale: 1.1,
+                      backgroundColor: "rgba(255,255,255,0.8)",
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleEdit(colorItem)}
+                    className="p-2.5 rounded-xl bg-white/40 border border-white/60 text-(--color-pakistan) hover:text-(--color-tiger) transition-colors"
+                  >
+                    <Edit size={16} />
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{
+                      scale: 1.1,
+                      backgroundColor: "rgba(255,0,0,0.1)",
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleDelete(colorItem.id)}
+                    className="p-2.5 rounded-xl bg-white/40 border border-white/60 text-red-500/60 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

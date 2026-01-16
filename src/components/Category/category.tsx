@@ -91,97 +91,125 @@ export default function Category() {
 
   /* ===================== UI ===================== */
   return (
-    <div className="max-w-4xl mx-auto mt-12 p-4">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-8 text-center"
-      >
-        <h1 className="text-3xl font-bold text-[--color-dark]">Categories</h1>
-        <p className="text-gray-500 mt-1">Manage your product categories</p>
-      </motion.div>
+    <div className="relative min-h-screen py-10 px-4">
+      {/* Dynamic Radial Background */}
+      <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(188,108,37,0.1)_0%,transparent_50%),radial-gradient(circle_at_100%_100%,rgba(96,108,56,0.05)_0%,transparent_50%)]" />
 
-      {/* Form */}
-      <motion.form
-        onSubmit={handleSubmit}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="
-    flex flex-col sm:flex-row
-    gap-3 mb-8
-    bg-(--color-cornsilk) p-4 rounded-2xl shadow
-  "
-      >
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Category name"
-          className="
-      w-full sm:flex-1
-      px-4 py-3 rounded-full border
-      focus:outline-none
-      focus:ring-1 focus:ring-(--color-tiger)
-    "
-        />
-
-        <button
-          type="submit"
-          className="
-      w-full sm:w-auto
-      flex items-center justify-center gap-2
-      px-6 py-3 rounded-full
-      bg-(--color-tiger) text-white font-semibold
-      hover:bg-(--color-tiger)/80 transition
-    "
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10 text-center"
         >
-          <Plus size={18} />
-          {editId ? "Update" : "Add"}
-        </button>
-      </motion.form>
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/40 backdrop-blur-md border border-white/60 text-(--color-tiger) font-black text-xs uppercase tracking-widest mb-4">
+            <PackageSearch size={14} />
+            Inventory Control
+          </div>
+          <h1 className="text-4xl font-black text-(--color-pakistan) tracking-tight mb-2">
+            Categories
+          </h1>
+          <p className="text-(--color-pakistan)/60 font-medium">
+            Organize and manage your product classification system
+          </p>
+        </motion.div>
 
-      {/* Empty State */}
-      {categories?.categories?.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20">
-          <PackageSearch
-            size={90}
-            className="text-(--color-tiger) mb-6 animate-bounce"
-          />
-          <p className="text-gray-500 text-lg">No categories found</p>
-        </div>
-      )}
-
-      {/* Categories List */}
-      <div className="grid gap-4">
-        {categories?.categories?.map((cat: CategoryType, index: number) => (
-          <motion.div
-            key={cat.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="flex items-center justify-between p-4 rounded-2xl bg-(--color-cornsilk) shadow hover:shadow-lg transition"
+        {/* Management Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative rounded-3xl overflow-hidden border border-white/60 bg-white/40 backdrop-blur-xl shadow-2xl p-6 mb-10"
+        >
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row gap-4"
           >
-            <span className="text-lg font-medium text-[--color-dark]">
-              {cat.name}
-            </span>
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => handleEdit(cat)}
-                className="p-2 rounded-full border hover:bg-gray-100 transition"
-              >
-                <Edit size={18} />
-              </button>
-
-              <button
-                onClick={() => handleDelete(cat.id)}
-                className="p-2 rounded-full border text-red-500 hover:bg-red-50 transition"
-              >
-                <Trash2 size={18} />
-              </button>
+            <div className="relative flex-1 group">
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Ex: Luxury Collection"
+                className="w-full pl-6 pr-4 py-4 rounded-2xl bg-white/50 border border-white/60 focus:bg-white/80 focus:border-(--color-tiger) outline-none transition-all font-bold text-(--color-pakistan) placeholder:text-(--color-pakistan)/30 shadow-inner"
+              />
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-(--color-pakistan)/20 group-focus-within:text-(--color-tiger) transition-colors">
+                <Plus size={20} />
+              </div>
             </div>
-          </motion.div>
-        ))}
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              className="px-10 py-4 rounded-2xl bg-linear-to-r from-(--color-tiger) to-(--color-earth) text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-(--color-tiger)/20 transition-all flex items-center justify-center gap-2"
+            >
+              {editId ? <Edit size={16} /> : <Plus size={16} />}
+              {editId ? "Update" : "Create"}
+            </motion.button>
+          </form>
+        </motion.div>
+
+        {/* Categories List */}
+        <div className="space-y-4">
+          {categories?.categories?.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-20 bg-white/20 backdrop-blur-sm rounded-3xl border border-dashed border-white/60"
+            >
+              <PackageSearch
+                size={60}
+                className="mx-auto text-(--color-pakistan)/20 mb-4"
+              />
+              <p className="text-(--color-pakistan)/40 font-black uppercase tracking-widest text-xs">
+                Classification vault is empty
+              </p>
+            </motion.div>
+          ) : (
+            categories?.categories?.map((cat: CategoryType, index: number) => (
+              <motion.div
+                key={cat.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="group flex items-center justify-between p-4 rounded-2xl bg-white/30 backdrop-blur-md border border-white/60 hover:bg-white/50 hover:shadow-xl transition-all duration-300"
+              >
+                <div className="flex items-center gap-4 pl-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-(--color-tiger)" />
+                  <span className="text-lg font-bold text-(--color-pakistan) tracking-tight">
+                    {cat.name}
+                  </span>
+                </div>
+
+                <div className="flex gap-2">
+                  <motion.button
+                    whileHover={{
+                      scale: 1.1,
+                      backgroundColor: "rgba(255,255,255,0.8)",
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleEdit(cat)}
+                    className="p-3 rounded-xl bg-white/40 border border-white/60 text-(--color-pakistan) hover:text-(--color-tiger) transition-colors"
+                  >
+                    <Edit size={18} />
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{
+                      scale: 1.1,
+                      backgroundColor: "rgba(255,0,0,0.1)",
+                    }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleDelete(cat.id)}
+                    className="p-3 rounded-xl bg-white/40 border border-white/60 text-red-500/60 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 size={18} />
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
