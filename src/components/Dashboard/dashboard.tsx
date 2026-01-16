@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -21,6 +19,8 @@ import {
   Users,
   ShoppingBag,
   DollarSign,
+  ArrowBigLeft,
+  ArrowRightLeft,
 } from "lucide-react";
 import { useGetDashboardOrdersQuery } from "../../redux/Orders/apiOrders";
 import Loading from "../Loading";
@@ -68,12 +68,63 @@ interface DashboardStats {
     deliveryPrice?: number;
     totalNetProfit?: number;
   };
+  monthlyStats: {
+    [year: string]: number[];
+  };
 }
 
-/**
- * Dashboard: Main administrative overview showing key metrics and system status.
- * لوحة التحكم: نظرة إدارية عامة تعرض المؤشرات الرئيسية وحالة النظام.
- */
+//  * لوحة التحكم: نظرة إدارية عامة تعرض المؤشرات الرئيسية وحالة النظام.
+
+const monthNames = [
+  "Jan 1",
+  "Feb 2",
+  "Mar 3",
+  "Apr 4",
+  "May 5",
+  "Jun 6",
+  "Jul 7",
+  "Aug 8",
+  "Sep 9",
+  "Oct 10",
+  "Nov 11",
+  "Dec 12",
+];
+
+const CustomTick = (props: any) => {
+  const { x, y, payload } = props;
+  const index = Number(payload.value) - 1;
+  const name = monthNames[index];
+
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="middle"
+        fill="#606C38"
+        fontWeight={700}
+        fontSize={13}
+        className="md:hidden"
+      >
+        {payload.value}
+      </text>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="middle"
+        fill="#606C38"
+        fontWeight={700}
+        fontSize={13}
+        className="hidden md:block"
+      >
+        {name}
+      </text>
+    </g>
+  );
+};
+
 export default function Dashboard() {
   const {
     data: dashboardOrders,
@@ -86,12 +137,11 @@ export default function Dashboard() {
   const {
     totals = {},
     discounts = {},
-    changes = {},
     ordersByStatus = [],
     topCustomers = [],
     costs = {},
+    monthlyStats = {},
   } = stats;
-
   const COLORS = [
     "#BC6C25", // Tiger
     "#DDA15E", // Earth
@@ -104,6 +154,7 @@ export default function Dashboard() {
     {
       title: "Total Orders",
       value: totals.totalOrders,
+      length: totals.ordersLength,
       icon: <ShoppingBag />,
     },
     { title: "Today Orders", value: totals.totalToday, icon: <TrendingUp /> },
@@ -123,19 +174,299 @@ export default function Dashboard() {
     { name: "Without Discount", value: discounts.withoutDiscount },
   ];
 
-  // Line chart
-  const lineData = [
-    { name: "Daily", value: parseFloat(changes.daily || "0") || 0 },
-    { name: "Weekly", value: parseFloat(changes.weekly || "0") || 0 },
-    { name: "Monthly", value: parseFloat(changes.monthly || "0") || 0 },
-    { name: "Yearly", value: parseFloat(changes.yearly || "0") || 0 },
+  // Status Chart Data
+  const deliveredCount =
+    ordersByStatus.find((i) => i.status === "Delivered")?.count || 0;
+  const canceledCount =
+    ordersByStatus.find((i) => i.status === "Canceled")?.count || 0;
+  const visaPaidCount =
+    ordersByStatus.find((i) => i.status === "Paid")?.count || 0;
+
+  const statusData = [
+    {
+      name: "Delivered",
+      value: deliveredCount,
+      color: "#16a34a",
+      fill: "#dcfce7",
+    }, // Green-600 stroke, Green-100 fill
+    {
+      name: "Canceled",
+      value: canceledCount,
+      color: "#dc2626",
+      fill: "#fee2e2",
+    }, // Red-600 stroke, Red-100 fill
+    {
+      name: "Visa Paid",
+      value: visaPaidCount,
+      color: "#3b82f6",
+      fill: "#dbeafe",
+    }, // Blue-500 stroke, Blue-100 fill
   ];
 
-  // Bar Chart – API returns ARRAY not object
-  const barData = ordersByStatus.map((item: OrderByStatusItem) => ({
-    status: item.status,
-    count: item.count,
-  }));
+  const [selectedYear, setSelectedYear] = React.useState<string | null>(null);
+  const [compareYear, setCompareYear] = React.useState<string | null>(null);
+
+  const years = Object.keys(monthlyStats).sort((a, b) => Number(b) - Number(a));
+
+  const getYearTotal = (year: string) => {
+    return monthlyStats[year]?.reduce((acc, curr) => acc + curr, 0) || 0;
+  };
+
+  const getMonthlyData = (year: string) => {
+    return (
+      monthlyStats[year]?.map((val, idx) => ({
+        month: `${idx + 1}`,
+        name: monthNames[idx],
+        value: val,
+      })) || []
+    );
+  };
+
+  const renderYearGrid = () => (
+    <div className="flex flex-wrap gap-6 mb-10">
+      {years.map((year) => (
+        <div
+          key={year}
+          onClick={() => setSelectedYear(year)}
+          className="group cursor-pointer flex-1 min-w-[250px] relative p-6 rounded-3xl bg-white/40 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:bg-white/60 transition-all duration-300"
+        >
+          <div className="flex justify-between items-center mb-4">
+            <div className="p-3 rounded-2xl bg-[#BC6C25]/10 text-[#BC6C25]">
+              <TrendingUp size={24} />
+            </div>
+            <span className="text-2xl font-black text-[#283618]">{year}</span>
+          </div>
+          <div>
+            <p className="text-[#606C38] text-xs font-bold uppercase tracking-widest mb-1">
+              Annual Revenue
+            </p>
+            <p className="text-2xl font-black text-[#BC6C25]">
+              EGP {getYearTotal(year).toLocaleString()}
+            </p>
+          </div>
+          <div className="mt-4 flex items-center gap-2 text-[#606C38] text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+            <span>View Details</span>
+            <TrendingUp size={14} />
+          </div>
+        </div>
+      ))}
+
+      {years.length > 1 && (
+        <div
+          onClick={() => {
+            if (years.length >= 2) {
+              setSelectedYear(years[0]);
+              setCompareYear(years[1]);
+            }
+          }}
+          className="group cursor-pointer flex-1 min-w-[250px] relative p-6 rounded-3xl bg-[#283618]/80 backdrop-blur-xl shadow-lg hover:shadow-2xl hover:bg-[#283618] transition-all duration-300 flex flex-col justify-center items-center text-center text-white"
+        >
+          <ArrowRightLeft size={32} className="mb-2 text-[#DDA15E]" />
+          <p className="text-lg font-black uppercase tracking-widest">
+            Compare Years
+          </p>
+          <p className="text-xs font-medium opacity-60">
+            Compare performance over time
+          </p>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderYearDetail = (year: string) => {
+    const data = getMonthlyData(year);
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <button
+            onClick={() => {
+              setSelectedYear(null);
+              setCompareYear(null);
+            }}
+            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white/50 border border-white/50 text-[#606C38] font-bold hover:bg-white/80 transition-all active:scale-95"
+          >
+            <ArrowBigLeft size={20} />
+            Back to Overview
+          </button>
+          <div className="text-left md:text-right w-full md:w-auto">
+            <h2 className="text-3xl font-black text-[#283618]">
+              {year} Performance
+            </h2>
+            <p className="text-[#606C38] font-bold">
+              Monthly breakdown of revenue
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-3xl shadow-xl p-4 bg-white/40 backdrop-blur-md border border-white/60">
+          <div className="h-[400px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={data}
+                margin={{ left: -20, right: 0, top: 0, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#000"
+                  strokeOpacity={0.05}
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="month"
+                  axisLine={false}
+                  tickLine={true}
+                  tick={<CustomTick />}
+                  interval={0}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#606C38", fontSize: 13, fontWeight: 700 }}
+                  tickFormatter={(val) => `${val.toLocaleString()}`}
+                />
+                <Tooltip
+                  cursor={{ fill: "#BC6C25", opacity: 0.1 }}
+                  contentStyle={{
+                    backgroundColor: "rgba(255, 255, 255, 0.95)",
+                    borderRadius: "16px",
+                    border: "none",
+                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Bar
+                  dataKey="value"
+                  fill="#BC6C25"
+                  radius={[10, 10, 0, 0]}
+                  animationDuration={1500}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderComparison = (y1: string, y2: string) => {
+    const data1 = getMonthlyData(y1);
+    const data2 = getMonthlyData(y2);
+    const total1 = getYearTotal(y1);
+    const total2 = getYearTotal(y2);
+    const growth = total1 !== 0 ? ((total1 - total2) / total2) * 100 : 0;
+
+    const chartData = data1.map((item, idx) => ({
+      month: item.month,
+      name: item.name,
+      [y1]: item.value,
+      [y2]: data2[idx].value,
+    }));
+
+    return (
+      <div className="space-y-8 animate-in fade-in zoom-in duration-500">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <button
+            onClick={() => {
+              setSelectedYear(null);
+              setCompareYear(null);
+            }}
+            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white/50 border border-white/50 text-[#606C38] font-bold hover:bg-white/80 transition-all active:scale-95"
+          >
+            <ArrowBigLeft size={20} />
+            Back to Overview
+          </button>
+          <div className="text-left md:text-right w-full md:w-auto">
+            <h2 className="text-3xl font-black text-[#283618]">
+              {y2} vs {y1}
+            </h2>
+            <p className="text-[#606C38] font-bold">Comparative analysis</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 rounded-3xl bg-white/40 backdrop-blur-md text-center">
+            <p className="text-[#606C38] text-xs font-black uppercase tracking-widest mb-1">
+              {y2} Revenue
+            </p>
+            <p className="text-3xl font-black text-[#283618]">
+              EGP {total2.toLocaleString()}
+            </p>
+          </div>
+          <div className="p-6 rounded-3xl bg-[#BC6C25] text-white shadow-xl flex flex-col justify-center items-center">
+            <p className="text-xs font-black uppercase tracking-widest mb-1 opacity-80">
+              Growth
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-4xl font-black">
+                {growth > 0 ? "+" : ""}
+                {growth.toFixed(1)}%
+              </span>
+              <TrendingUp size={32} />
+            </div>
+          </div>
+          <div className="p-6 rounded-3xl bg-white/40 backdrop-blur-md text-center">
+            <p className="text-[#606C38] text-xs font-black uppercase tracking-widest mb-1">
+              {y1} Revenue
+            </p>
+            <p className="text-3xl font-black text-[#283618]">
+              EGP {total1.toLocaleString()}
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-3xl shadow-xl p-6 bg-white/40 backdrop-blur-md border border-white/60">
+          <div className="h-[400px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={chartData}
+                margin={{ left: -20, right: 0, top: 0, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#000"
+                  strokeOpacity={0.05}
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="month"
+                  axisLine={false}
+                  tickLine={true}
+                  tick={<CustomTick />}
+                  interval={0}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#606C38" }}
+                />
+                <Tooltip
+                  cursor={{ fill: "#BC6C25", opacity: 0.1 }}
+                  contentStyle={{
+                    backgroundColor: "rgba(255, 255, 255, 0.95)",
+                    borderRadius: "16px",
+                    border: "none",
+                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Legend />
+                <Bar
+                  dataKey={y2}
+                  fill="#DDA15E"
+                  radius={[10, 10, 0, 0]}
+                  animationDuration={1500}
+                />
+                <Bar
+                  dataKey={y1}
+                  fill="#BC6C25"
+                  radius={[10, 10, 0, 0]}
+                  animationDuration={1500}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+    );
+  };
   return (
     <>
       {isLoading ? (
@@ -147,15 +478,27 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        <div className="p-4 md:p-8 min-h-screen space-y-8 bg-[#FEFAE0]">
+        <div className="p-4 md:p-8 min-h-screen space-y-8 bg-[#FEFAE0] overflow-x-hidden">
           {/* Header */}
-          <div className="relative mb-10 text-center">
-            <h1 className="text-4xl md:text-5xl font-black text-[#283618] mb-2 font-display tracking-tight">
-              Dashboard Overview
-            </h1>
-            <p className="text-[#606C38] font-medium tracking-widest uppercase text-sm opacity-80">
-              Welcome back to your control center
-            </p>
+          <div className="relative mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h1 className="text-3xl md:text-5xl font-black text-[#283618] mb-2 font-display tracking-tight">
+                Dashboard Overview
+              </h1>
+              <p className="text-[#606C38] font-medium tracking-widest uppercase text-xs md:text-sm opacity-80">
+                Welcome back to your control center
+              </p>
+            </div>
+            {!selectedYear && !compareYear && (
+              <div className="bg-[#BC6C25]/10 px-4 py-3 rounded-2xl border border-[#BC6C25]/20 w-full md:w-auto">
+                <p className="text-[#BC6C25] font-black text-xs uppercase tracking-tighter mb-1">
+                  Current Stats
+                </p>
+                <p className="text-[#283618] font-bold text-lg">
+                  {new Date().getFullYear()} Target: EGP 10M
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Totals Cards */}
@@ -176,8 +519,15 @@ export default function Dashboard() {
                 </div>
 
                 <div className="relative z-10 flex flex-col items-start gap-4">
-                  <div className="p-3 rounded-2xl bg-white/50 text-[#BC6C25] shadow-sm">
-                    {item.icon}
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-2xl bg-white/50 text-[#BC6C25] shadow-sm relative">
+                      {item.icon}
+                      {item.length !== undefined && (
+                        <span className="absolute -top-2 -right-2 bg-[#BC6C25] text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                          {item.length}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <h3 className="text-[#606C38] text-sm font-bold uppercase tracking-wider mb-1">
@@ -251,154 +601,92 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Line Chart */}
+            {/* Order Status Chart */}
             <div className="rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 sm:p-6 bg-white/40 backdrop-blur-md border border-white/60">
               <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-[#283618]">
                 <div className="p-2 rounded-xl bg-[#BC6C25]/10 text-[#BC6C25]">
                   <TrendingUp size={20} />
                 </div>
-                Performance Trends
+                Orders Status
               </h3>
 
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={lineData}
-                    margin={{ left: 0, right: 10, top: 10, bottom: 10 }}
+              <div className="h-[300px] w-full" style={{ minHeight: "300px" }}>
+                <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                  <BarChart
+                    data={statusData}
+                    margin={{ left: -20, right: 0, top: 0, bottom: 0 }}
                   >
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke="#000000"
+                      stroke="#000"
                       strokeOpacity={0.05}
                       vertical={false}
                     />
                     <XAxis
                       dataKey="name"
-                      stroke="#606C38"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#606C38", fontSize: 12, fontWeight: 600 }}
-                      dy={10}
+                      tick={{ fill: "#606C38", fontWeight: 700, fontSize: 12 }}
                       interval={0}
-                      padding={{ left: 10, right: 10 }}
                     />
-                    <YAxis hide domain={["auto", "auto"]} />
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: "#606C38", fontSize: 12, fontWeight: 700 }}
+                    />
                     <Tooltip
-                      cursor={{
-                        stroke: "#BC6C25",
-                        strokeWidth: 2,
-                        strokeDasharray: "5 5",
-                      }}
+                      cursor={{ fill: "#BC6C25", opacity: 0.1 }}
                       contentStyle={{
-                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
                         borderRadius: "16px",
                         border: "none",
-                        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                         color: "#283618",
+                        fontWeight: "bold",
                       }}
                     />
-                    <Line
-                      type="monotone"
+                    <Bar
                       dataKey="value"
-                      stroke="#BC6C25"
-                      strokeWidth={6}
-                      dot={{
-                        r: 6,
-                        fill: "#BC6C25",
-                        strokeWidth: 4,
-                        stroke: "#fff",
-                      }}
-                      activeDot={{
-                        r: 8,
-                        fill: "#BC6C25",
-                        stroke: "#fff",
-                        strokeWidth: 4,
-                      }}
-                    />
-                  </LineChart>
+                      radius={[10, 10, 0, 0]}
+                      animationDuration={1500}
+                      barSize={40}
+                    >
+                      {statusData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.fill}
+                          stroke={entry.color}
+                          strokeWidth={2}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
 
-          {/* Orders by Status */}
-          <div className="rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 md:p-8 bg-white/40 backdrop-blur-md border border-white/60">
-            <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-[#283618]">
-              <div className="p-2 rounded-xl bg-[#BC6C25]/10 text-[#BC6C25]">
-                <BarChart3 size={20} />
-              </div>
-              Orders Distribution
-            </h3>
-
-            <div className="h-[350px] w-full mb-8">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={barData}
-                  margin={{ left: 0, right: 0, top: 10, bottom: 20 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="#000000"
-                    strokeOpacity={0.05}
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="status"
-                    stroke="#606C38"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#606C38", fontSize: 12, fontWeight: 700 }}
-                    dy={10}
-                    padding={{ left: 20, right: 20 }}
-                    tickFormatter={(status) =>
-                      window.innerWidth < 768
-                        ? status.slice(0, 3).toUpperCase()
-                        : status
-                    }
-                  />
-                  <YAxis
-                    stroke="#606C38"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#606C38", fontSize: 12 }}
-                    width={30}
-                  />
-                  <Tooltip
-                    cursor={{ fill: "#BC6C25", opacity: 0.1 }}
-                    contentStyle={{
-                      backgroundColor: "rgba(255, 255, 255, 0.95)",
-                      borderRadius: "12px",
-                      border: "none",
-                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      color: "#283618",
-                    }}
-                  />
-                  <Bar
-                    dataKey="count"
-                    fill="#BC6C25"
-                    radius={[8, 8, 0, 0]}
-                    maxBarSize={60}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-              {barData?.map((item: OrderByStatusItem, i: number) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-2 bg-white/50 px-4 py-2 rounded-full border border-white/50 shadow-sm"
-                >
-                  <div className="w-2 h-2 rounded-full bg-[#BC6C25]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#606C38]">
-                    {item.status}:
-                  </span>
-                  <span className="text-sm font-black text-[#283618]">
-                    {item.count}
-                  </span>
+          {/* Year Over Year Stats */}
+          <div className="space-y-6">
+            {!selectedYear && !compareYear && (
+              <>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 rounded-xl bg-[#BC6C25]/10 text-[#BC6C25]">
+                    <TrendingUp size={20} />
+                  </div>
+                  <h3 className="text-xl font-black text-[#283618]">
+                    Annual Performance
+                  </h3>
                 </div>
-              ))}
-            </div>
+                {renderYearGrid()}
+              </>
+            )}
+
+            {selectedYear && !compareYear && renderYearDetail(selectedYear)}
+
+            {selectedYear &&
+              compareYear &&
+              renderComparison(selectedYear, compareYear)}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

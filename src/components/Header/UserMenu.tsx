@@ -125,7 +125,7 @@ export default function UserMenu({
             animate="visible"
             exit="exit"
             className="absolute right-0 w-64 bg-white/85 backdrop-blur-xl text-(--color-pakistan) shadow-2xl rounded-3xl overflow-hidden border border-(--color-tiger)/20 z-50 p-1.5
-                  max-[1180px]:fixed max-[1180px]:bottom-24 max-[1180px]:right-4 max-[1180px]:w-[calc(100%-2rem)] max-[1180px]:max-w-xs max-[1180px]:top-auto max-[1180px]:mt-0
+                  max-[1180px]:fixed max-[1180px]:bottom-[4.8rem] max-[1180px]:right-4 max-[1180px]:w-[calc(100%-2rem)] max-[1180px]:max-w-xs max-[1180px]:top-auto max-[1180px]:mt-0
                   min-[1180px]:mt-6 min-[1180px]:top-full
               "
           >
