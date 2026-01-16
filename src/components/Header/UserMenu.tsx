@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   User,
@@ -44,7 +45,7 @@ export default function UserMenu({
     };
   }, [openMenu]);
 
-  const menuVariants = {
+  const menuVariants: Variants = {
     hidden: {
       opacity: 0,
       scale: 0.95,
@@ -61,7 +62,7 @@ export default function UserMenu({
         ease: "easeOut",
         staggerChildren: 0.05,
         when: "beforeChildren",
-      } as any,
+      },
     },
     exit: {
       opacity: 0,
@@ -71,9 +72,9 @@ export default function UserMenu({
       transition: {
         duration: 0.15,
         ease: "easeIn",
-      } as any,
+      },
     },
-  } as any;
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, x: -10 },

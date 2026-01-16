@@ -19,7 +19,6 @@ import {
   Zap,
   Loader2,
 } from "lucide-react";
-import type { ProductSizeType } from "../../types/ProductType";
 import useProductForm, {
   type ErrorProductType,
   type SizeErrorType,
@@ -468,12 +467,16 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                           <input
                             type={field === "size" ? "text" : "number"}
                             min={field !== "size" ? 0 : undefined}
-                            value={(size as any)[field]}
+                            value={
+                              size[field as keyof SizeErrorType] as
+                                | string
+                                | number
+                            }
                             placeholder={field}
                             onChange={(e) =>
                               handleSizeChange(
                                 index,
-                                field as keyof ProductSizeType,
+                                field as keyof SizeErrorType,
                                 e.target.value
                               )
                             }
@@ -559,7 +562,6 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
             </motion.div>
           </form>
         </motion.div>
-
       </motion.div>
     </div>
   );

@@ -6,7 +6,6 @@ import {
   usePostProductMutation,
 } from "../../redux/products/apiProducts";
 import { toast } from "react-toastify";
-import type { ProductSizeType } from "../../types/ProductType";
 import { useGetCategoryQuery } from "../../redux/category/apiCategory";
 import { useGetColorsQuery } from "../../redux/color/apiColor";
 
@@ -127,7 +126,7 @@ export default function useProductForm(mode: "add" | "edit") {
 
   const handleSizeChange = (
     index: number,
-    field: keyof ProductSizeType,
+    field: keyof SizeErrorType,
     value: string
   ) => {
     const updated = [...formData.sizes];
@@ -403,7 +402,6 @@ export default function useProductForm(mode: "add" | "edit") {
         ? err.data.message[0]
         : err?.data?.message;
       toast.error(message || "Failed to add product");
-      console.log(err)
     }
   };
 

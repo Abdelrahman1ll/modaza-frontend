@@ -51,17 +51,19 @@ export default function useProfile() {
     }
   }, [user]);
 
+  // Completion check variables
+  // ... (keeping comments if needed, but these are unused now)
+
   /**
    * Effect to calculate profile completion percentage and check for eligible rewards.
    * تأثير برمجي لحساب نسبة اكتمال الملف الشخصي والتحقق من الاستحقاق للمكافأة.
    */
   useEffect(() => {
+    const { firstName, lastName, phone, birthday, PROFILE } = userData;
+
     // Calculate progress based on filled fields | حساب التقدم بناءً على الحقول المكتملة
-    const fields = ["firstName", "lastName", "phone", "birthday"] as const;
-    const filledCount = fields.reduce(
-      (count, field) => (userData[field] ? count + 1 : count),
-      0
-    );
+    const fields = { firstName, lastName, phone, birthday };
+    const filledCount = Object.values(fields).filter(Boolean).length;
     const completion = 20 + filledCount * 20;
     setProgress(completion);
 
@@ -71,11 +73,7 @@ export default function useProfile() {
      */
     const checkReward = async () => {
       const isProfileComplete =
-        userData.firstName &&
-        userData.lastName &&
-        userData.phone &&
-        userData.birthday &&
-        userData.PROFILE === true;
+        firstName && lastName && phone && birthday && PROFILE === true;
 
       if (!isProfileComplete) {
         setRewardVisible(false);
@@ -103,15 +101,7 @@ export default function useProfile() {
     };
 
     checkReward();
-  }, [
-    !!userData.firstName,
-    !!userData.lastName,
-    !!userData.phone,
-    !!userData.birthday,
-    userData.PROFILE,
-    validateDiscountCode,
-    rewardVisible, // Necessary to prevent redundant calls based on visibility
-  ]);
+  }, [userData, validateDiscountCode, rewardVisible]);
 
   const [patchUsers, { isLoading }] = usePatchUsersByIdMutation();
 
