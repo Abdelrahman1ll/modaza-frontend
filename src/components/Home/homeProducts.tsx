@@ -39,7 +39,7 @@ export default function HomeProducts() {
   };
 
   return (
-    <section className="py-16 md:py-24 overflow-hidden relative">
+    <section className="py-10 md:py-12 overflow-hidden relative">
       {/* Decorative background elements */}
       <div className="absolute top-1/4 -right-24 w-64 h-64 bg-(--color-tiger)/5 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-1/4 -left-24 w-64 h-64 bg-(--color-pakistan)/5 rounded-full blur-[100px] pointer-events-none" />

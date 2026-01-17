@@ -63,7 +63,7 @@ export default function Main() {
               scale: 1.01,
               transition: { duration: 0.6, ease: "easeOut" },
             }}
-            className="relative overflow-hidden rounded-[2.5rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] w-full h-[65vh] md:h-[80vh] lg:h-[88vh] group"
+            className="relative overflow-hidden rounded-[2.5rem] w-full h-[65vh] md:h-[80vh] lg:h-[88vh] group"
           >
             {/* Image with subtle hover parallax-like ease */}
             <motion.img

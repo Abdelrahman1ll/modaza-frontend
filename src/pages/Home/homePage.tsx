@@ -1,6 +1,7 @@
 import BackButton from "../../components/BackButton";
 import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
+import Game from "../../components/Game/Game";
 import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";
 import HomeProducts from "../../components/Home/homeProducts";
@@ -17,6 +18,8 @@ export default function HomePage() {
       <BackButton />
 
       <Main />
+
+      <Game />
 
       <HomeProducts />
 
