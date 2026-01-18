@@ -135,7 +135,7 @@ export default function HomeProducts() {
                   {/* Glassmorphism Badge */}
                   {product.discountPercentage && (
                     <div className="absolute top-4 left-4 bg-red-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full shadow-lg z-10">
-                      {product.discountPercentage} OFF
+                      {product.discountPercentage}% OFF
                     </div>
                   )}
 
@@ -152,24 +152,24 @@ export default function HomeProducts() {
                             EGP {product.price.toLocaleString()}
                           </p>
                           <Link to={`/products-details/${product.id}`}>
-                          <motion.div
-                            whileHover={{ x: 5 }}
-                            className="bg-(--color-pakistan) text-white p-2 rounded-full shadow-lg"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                            <motion.div
+                              whileHover={{ x: 5 }}
+                              className="bg-(--color-pakistan) text-white p-2 rounded-full shadow-lg"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="3"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"
-                              />
-                            </svg>
-                          </motion.div>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="3"
+                                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                                />
+                              </svg>
+                            </motion.div>
                           </Link>
                         </div>
                       </div>

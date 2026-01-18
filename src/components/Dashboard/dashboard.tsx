@@ -90,9 +90,17 @@ const monthNames = [
   "Dec 12",
 ];
 
-const CustomTick = (props: any) => {
+interface CustomTickProps {
+  x?: number;
+  y?: number;
+  payload?: {
+    value: string | number;
+  };
+}
+
+const CustomTick = (props: CustomTickProps) => {
   const { x, y, payload } = props;
-  const index = Number(payload.value) - 1;
+  const index = Number(payload?.value) - 1;
   const name = monthNames[index];
 
   return (
@@ -107,7 +115,7 @@ const CustomTick = (props: any) => {
         fontSize={13}
         className="md:hidden"
       >
-        {payload.value}
+        {payload?.value}
       </text>
       <text
         x={0}
@@ -471,7 +479,7 @@ export default function Dashboard() {
     <>
       {isLoading ? (
         <Loading />
-      ) : isError && !stats ? (
+      ) : isError && (!dashboardOrders || !dashboardOrders.stats) ? (
         <div className="flex justify-center items-center h-screen bg-[#FEFAE0]">
           <div className="flex gap-2 text-[#BC6C25] font-bold text-xl">
             <div>An error occurred while fetching data. Try again.</div>
@@ -514,7 +522,7 @@ export default function Dashboard() {
                     item.icon as React.ReactElement<{ size: number | string }>,
                     {
                       size: 100,
-                    }
+                    },
                   )}
                 </div>
 

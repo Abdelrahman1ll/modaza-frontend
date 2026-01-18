@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -124,6 +125,14 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
+    },
+    // Vitest configuration
+    // إعدادات Vitest للاختبارات
+    test: {
+      globals: true, // Allow using 'describe', 'it', 'expect' without importing - السماح باستخدام دوال الاختبار بدون استيرادها
+      environment: "jsdom", // Use jsdom for React component testing - استخدام بيئة jsdom لاختبار المكونات
+      setupFiles: "./src/test/setup.ts", // Path to global setup file - مسار ملف الإعداد العالمي
+      css: true, // Process CSS in tests - معالجة ملفات CSS في الاختبارات
     },
   };
 });
