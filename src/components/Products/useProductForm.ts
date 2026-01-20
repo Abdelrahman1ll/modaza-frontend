@@ -94,7 +94,7 @@ export default function useProductForm(mode: "add" | "edit") {
   useEffect(() => {
     if (mode === "edit" && Number(id)) {
       const found = products?.products?.find(
-        (p: { id: number }) => p.id === Number(id)
+        (p: { id: number }) => p.id === Number(id),
       );
 
       if (found) {
@@ -115,7 +115,7 @@ export default function useProductForm(mode: "add" | "edit") {
   }, [mode, id, products]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -127,11 +127,13 @@ export default function useProductForm(mode: "add" | "edit") {
   const handleSizeChange = (
     index: number,
     field: keyof SizeErrorType,
-    value: string
+    value: string,
   ) => {
-    const updated = [...formData.sizes];
-    updated[index] = { ...updated[index], [field]: value };
-    setFormData({ ...formData, sizes: updated });
+    setFormData((prev) => {
+      const updated = [...prev.sizes];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, sizes: updated };
+    });
   };
 
   const addSizeField = () =>
@@ -141,8 +143,10 @@ export default function useProductForm(mode: "add" | "edit") {
     }));
 
   const removeSizeField = (index: number) => {
-    const updated = formData.sizes.filter((_, i) => i !== index);
-    setFormData({ ...formData, sizes: updated });
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((_, i) => i !== index),
+    }));
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -225,7 +229,7 @@ export default function useProductForm(mode: "add" | "edit") {
     if (Number(formData.promotionalPrice) <= Number(formData.price)) {
       isValid = false;
       newErrors.promotionalPrice =
-        "Promotional price must be less than the regular price.";
+        "The promotional price must be higher than the regular price.";
     }
 
     if (mode === "add") {
@@ -276,7 +280,7 @@ export default function useProductForm(mode: "add" | "edit") {
       });
 
       const hasErrors = sizeErrors.some(
-        (err) => err.size || err.length || err.width || err.stock
+        (err) => err.size || err.length || err.width || err.stock,
       );
       if (hasErrors) isValid = false;
     }
@@ -294,7 +298,7 @@ export default function useProductForm(mode: "add" | "edit") {
     formDataToSend.append("price", String(formData.price));
     formDataToSend.append(
       "promotionalPrice",
-      String(formData.promotionalPrice)
+      String(formData.promotionalPrice),
     );
     formDataToSend.append("category", formData.category);
     formDataToSend.append("stock", String(formData.stock));
@@ -313,7 +317,7 @@ export default function useProductForm(mode: "add" | "edit") {
       if (formData.removedImages.length > 0) {
         formDataToSend.append(
           "removedImages",
-          formData.removedImages.join(",")
+          formData.removedImages.join(","),
         );
       }
     }

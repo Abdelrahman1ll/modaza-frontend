@@ -36,7 +36,7 @@ function getPublicId(urlOrId: string): string {
  */
 export function getCloudinaryUrl(
   publicIdOrUrl: string,
-  options: CloudinaryOptions = {}
+  options: CloudinaryOptions = {},
 ): string {
   const publicId = getPublicId(publicIdOrUrl);
   const { width, quality = "auto", format = "auto", crop = "fill" } = options;
@@ -44,7 +44,7 @@ export function getCloudinaryUrl(
   const transformations: string[] = [];
 
   if (width) transformations.push(`w_${width}`);
-  if (quality) transformations.push(`q_${quality}`);
+  if (quality || quality === 0) transformations.push(`q_${quality || "auto"}`);
   if (format) transformations.push(`f_${format}`);
   if (crop && width) transformations.push(`c_${crop}`);
 
@@ -60,7 +60,7 @@ export function getCloudinaryUrl(
  */
 export function getCloudinarySrcSet(
   publicIdOrUrl: string,
-  widths: number[] = [400, 800, 1200]
+  widths: number[] = [400, 800, 1200],
 ): string {
   return widths
     .map((width) => {

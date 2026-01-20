@@ -59,7 +59,7 @@ export default function useDiscountCodes() {
         await patchDiscountCodes({
           id: editingId,
           data: {
-            code: newCode.toUpperCase(),
+            code: code,
             discount: Number(newDiscount),
             EndDate: newExpiry,
           },
@@ -67,7 +67,7 @@ export default function useDiscountCodes() {
       } else {
         // إضافة
         await postDiscountCodes({
-          code: newCode.toUpperCase(),
+          code: code,
           discount: Number(newDiscount),
           EndDate: newExpiry,
         }).unwrap();
