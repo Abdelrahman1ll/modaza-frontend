@@ -14,9 +14,6 @@ test.describe("Profile and Orders", () => {
 
     // Let's assume we want to test that the pages exist and have basic structure
     await page.goto("/orders");
-    const ordersHeading = page
-      .getByRole("heading", { name: /Orders/i })
-      .first();
     // Since it's protected, we might just verify we don't get a 404
     await expect(page).not.toHaveURL(/.*404.*/);
   });

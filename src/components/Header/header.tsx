@@ -292,12 +292,12 @@ export default function Header() {
 
       {/* Top Mobile Header | ترويسة الهاتف العلوية */}
       <header
-        className="sticky top-0 z-40 transition-all duration-300 backdrop-blur-md shadow-sm py-3 px-4 min-[1180px]:hidden"
+        className="sticky top-0 z-40 transition-all duration-300 backdrop-blur-lg shadow-md py-3 px-4 min-[1180px]:hidden"
         style={{
           backgroundColor:
-            "color-mix(in srgb, var(--color-cornsilk), transparent 10%)",
+            "color-mix(in srgb, var(--color-cornsilk), transparent 15%)",
           borderBottom:
-            "1px solid color-mix(in srgb, var(--color-dark), transparent 95%)",
+            "1px solid color-mix(in srgb, var(--color-dark), transparent 92%)",
         }}
       >
         <div className="w-full flex items-center justify-between">
@@ -457,19 +457,22 @@ export default function Header() {
       </header>
 
       {/* Floating Bottom Mobile Header | ترويسة الهاتف العائمة السفلية */}
-
       <header
         className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 
-             flex items-center justify-between shadow-2xl shadow-black/10
-             border border-white/40 py-3 px-8 rounded-full w-[90%] max-w-sm
+             flex items-center justify-between shadow-2xl shadow-black/20
+             border border-white/50 py-3 px-8 rounded-full w-[90%] max-w-sm
              backdrop-blur-xl min-[1180px]:hidden ring-1 ring-black/5"
+        style={{
+          backgroundColor:
+            "color-mix(in srgb, var(--color-cornsilk)/10, transparent 20%)",
+        }}
       >
         <motion.div whileTap={{ scale: 0.9 }} className="relative">
           <div
             className={`p-2 rounded-full transition-all ${
               isSearch
                 ? "bg-(--color-tiger) text-white shadow-lg shadow-(--color-tiger)/30"
-                : "text-(--color-dark) hover:bg-white hover:shadow-md transition-all"
+                : "text-(--color-dark) hover:bg-(--color-tiger)/30 hover:shadow-md transition-all"
             }`}
             onClick={() => {
               setSearch(!isSearch);
@@ -491,7 +494,7 @@ export default function Header() {
         <motion.div whileTap={{ scale: 0.9 }}>
           <Link
             to="/cart"
-            className="block p-2 rounded-full relative text-(--color-dark) hover:bg-white hover:shadow-md transition-all"
+            className="block p-2 rounded-full relative text-(--color-dark) hover:bg-(--color-tiger)/30 hover:shadow-md transition-all"
             title="عربة التسوق"
           >
             <ShoppingCart size={24} strokeWidth={2.5} />
@@ -504,7 +507,7 @@ export default function Header() {
         <motion.div whileTap={{ scale: 0.9 }}>
           <Link
             to="/wishlist"
-            className="block p-2 rounded-full text-(--color-dark) hover:bg-white hover:shadow-md transition-all"
+            className="block p-2 rounded-full text-(--color-dark) hover:bg-(--color-tiger)/30 hover:shadow-md transition-all"
             title="قائمة المفضلة"
           >
             <Heart size={24} strokeWidth={2.5} />
@@ -516,7 +519,7 @@ export default function Header() {
         ) : (
           <motion.div whileTap={{ scale: 0.9 }}>
             <div
-              className="block p-2 rounded-full text-(--color-dark) hover:bg-white hover:shadow-md transition-all cursor-pointer"
+              className="block p-2 rounded-full text-(--color-dark) hover:bg-(--color-tiger)/30 hover:shadow-md transition-all cursor-pointer"
               title="تسجيل الدخول"
               onClick={() => openSignup()}
               role="button"
@@ -531,7 +534,7 @@ export default function Header() {
         <motion.div whileTap={{ scale: 0.9 }}>
           <Link
             to="/"
-            className="block p-2 rounded-full text-(--color-dark) hover:bg-white hover:shadow-md transition-all"
+            className="block p-2 rounded-full text-(--color-dark) hover:bg-(--color-tiger)/30 hover:shadow-md transition-all"
             title="الصفحة الرئيسية"
           >
             <House size={24} strokeWidth={2.5} />

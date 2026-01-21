@@ -26,7 +26,7 @@ vi.mock("framer-motion", () => ({
   motion: new Proxy(
     {},
     {
-      get: (_target, _prop) => {
+      get: () => {
         return ({
           children,
           ...props
@@ -70,11 +70,11 @@ describe("HomeProducts Component", () => {
   });
 
   it("renders loading state correctly", () => {
-    (useGetProductsQuery as any).mockReturnValue({
+    vi.mocked(useGetProductsQuery).mockReturnValue({
       data: null,
       isLoading: true,
       isError: false,
-    });
+    } as unknown as ReturnType<typeof useGetProductsQuery>);
 
     render(
       <BrowserRouter>
@@ -88,11 +88,11 @@ describe("HomeProducts Component", () => {
   });
 
   it("renders error state correctly", () => {
-    (useGetProductsQuery as any).mockReturnValue({
+    vi.mocked(useGetProductsQuery).mockReturnValue({
       data: null,
       isLoading: false,
       isError: true,
-    });
+    } as unknown as ReturnType<typeof useGetProductsQuery>);
 
     render(
       <BrowserRouter>
@@ -105,11 +105,11 @@ describe("HomeProducts Component", () => {
   });
 
   it("renders empty state correctly", () => {
-    (useGetProductsQuery as any).mockReturnValue({
+    vi.mocked(useGetProductsQuery).mockReturnValue({
       data: { products: [] },
       isLoading: false,
       isError: false,
-    });
+    } as unknown as ReturnType<typeof useGetProductsQuery>);
 
     render(
       <BrowserRouter>
@@ -121,11 +121,11 @@ describe("HomeProducts Component", () => {
   });
 
   it("renders products correctly when data is fetched", async () => {
-    (useGetProductsQuery as any).mockReturnValue({
+    vi.mocked(useGetProductsQuery).mockReturnValue({
       data: mockProducts,
       isLoading: false,
       isError: false,
-    });
+    } as unknown as ReturnType<typeof useGetProductsQuery>);
 
     render(
       <BrowserRouter>

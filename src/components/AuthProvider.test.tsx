@@ -64,8 +64,7 @@ describe("AuthProvider Component", () => {
   };
 
   it("initializes with null user if no cookie exists", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Cookies.get as any).mockReturnValue(undefined);
+    vi.mocked(Cookies.get).mockReturnValue(undefined as any);
 
     render(
       <AuthProvider>

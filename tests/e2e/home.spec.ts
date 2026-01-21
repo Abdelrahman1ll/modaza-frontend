@@ -18,7 +18,6 @@ test.describe("Home Page", () => {
 
   test("should show main heading or banner", async ({ page }) => {
     // Home pages usually have an h1 or some hero section
-    const heading = page.locator("h1");
     // We expect at least one h1 to be present for SEO, which exists in index.html (actually index.html doesn't have h1, it's in App.tsx)
     // Let's check for any meaningful content
     const body = page.locator("body");

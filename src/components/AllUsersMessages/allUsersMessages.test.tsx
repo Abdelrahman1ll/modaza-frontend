@@ -57,8 +57,8 @@ describe("AllUsersMessages Component", () => {
     vi.clearAllMocks();
     vi.mocked(useSendEmailMutation).mockReturnValue([
       mockSendEmail,
-      { isLoading: false } as any,
-    ]);
+      { isLoading: false } as unknown as { isLoading: boolean },
+    ] as unknown as ReturnType<typeof useSendEmailMutation>);
   });
 
   it("renders the form elements correctly", () => {
@@ -151,8 +151,8 @@ describe("AllUsersMessages Component", () => {
   it("shows loading state while sending", () => {
     vi.mocked(useSendEmailMutation).mockReturnValue([
       mockSendEmail,
-      { isLoading: true } as any,
-    ]);
+      { isLoading: true } as unknown as { isLoading: boolean },
+    ] as unknown as ReturnType<typeof useSendEmailMutation>);
 
     render(<AllUsersMessages />);
 

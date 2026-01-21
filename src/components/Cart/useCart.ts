@@ -14,6 +14,7 @@ export default function UseCart() {
   const { data, isLoading, refetch, isError } = useGetCartQuery({});
   const [deleteCart] = useDeleteCartMutation();
   const [patchCart] = usePatchCartMutation();
+  
   const decreaseQuantity = async ({
     id,
     quantity,

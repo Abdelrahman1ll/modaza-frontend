@@ -20,13 +20,18 @@
 body {
   background-color: var(--color-cornsilk);
   color: var(--color-dark);
-  font-family: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    "Cairo",
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   margin: 0;
   padding: 0;
   font-display: swap;
   /* Hide scrollbar visually but maintain functionality */
   -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none;    /* Firefox */
+  scrollbar-width: none; /* Firefox */
 }
 body::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Edge */
@@ -53,7 +58,9 @@ body::-webkit-scrollbar {
 }
 
 @keyframes dot {
-  0%, 80%, 100% {
+  0%,
+  80%,
+  100% {
     transform: scale(0);
   }
   40% {
@@ -71,5 +78,12 @@ body::-webkit-scrollbar {
 }
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none;    /* Firefox */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Toast Container - Mobile spacing from bottom */
+.premium-toast-body {
+  @media (max-width: 768px) {
+    bottom: 10px !important; /* Space for bottom navigation bar */
+  }
 }
