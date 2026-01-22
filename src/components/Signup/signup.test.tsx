@@ -15,42 +15,35 @@ vi.mock("./googleSignup", () => ({
   default: () => <div data-testid="google-signup">Google Signup Component</div>,
 }));
 
-// Mock framer-motion to render children directly
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({
+// Mock framer-motion to render children directly without warnings
+vi.mock("framer-motion", () => {
+  const motionComponent = (Tag: string) => {
+    return ({
       children,
+      whileHover,
+      whileTap,
+      whileInView,
+      whileFocus,
+      initial,
+      animate,
+      exit,
+      transition,
+      variants,
       ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <button {...props}>{children}</button>,
-    p: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <p {...props}>{children}</p>,
-    input: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <input {...props}>{children}</input>,
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-}));
+    }: any) => React.createElement(Tag, props, children);
+  };
+
+  return {
+    motion: {
+      div: motionComponent("div"),
+      button: motionComponent("button"),
+      p: motionComponent("p"),
+      input: motionComponent("input"),
+      span: motionComponent("span"),
+    },
+    AnimatePresence: ({ children }: any) => <>{children}</>,
+  };
+});
 
 // Mock icons
 vi.mock("lucide-react", () => ({

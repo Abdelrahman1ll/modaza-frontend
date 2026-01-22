@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
     // Content Security Policy (CSP): Protect against XSS and data injection
     // سياسة أمان المحتوى: حماية الموقع من هجمات حقن الأكواد الضارة (XSS)
     "Content-Security-Policy":
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://accounts.google.com https://*.cloudinary.com https://formspree.io ws: wss:; frame-src 'self' https://accounts.google.com; worker-src 'self' blob:; media-src 'self' data:;",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://cdn.jsdelivr.net https://js.stripe.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://accounts.google.com https://*.cloudinary.com https://*.paymob.com https://api.stripe.com https://formspree.io ws: wss:; frame-src 'self' https://accounts.google.com https://*.paymob.com https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; worker-src 'self' blob:; media-src 'self' data:;",
   };
 
   return {
@@ -133,6 +133,8 @@ export default defineConfig(({ mode }) => {
       environment: "jsdom", // Use jsdom for React component testing - استخدام بيئة jsdom لاختبار المكونات
       setupFiles: "./src/test/setup.ts", // Path to global setup file - مسار ملف الإعداد العالمي
       css: true, // Process CSS in tests - معالجة ملفات CSS في الاختبارات
+      include: ["src/**/*.{test,spec}.{ts,tsx}"], // Only include tests in src - تشمل فقط الاختبارات الموجودة في src
+      exclude: ["**/node_modules/**", "**/dist/**", "**/tests/e2e/**"], // Exclude E2E tests and other folders - استبعاد اختبارات E2E والمجلدات الأخرى
     },
   };
 });

@@ -15,22 +15,22 @@ const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const AboutUsPage = lazy(() => import("./pages/QuickLinks/aboutUsPage"));
 const FAQsPage = lazy(() => import("./pages/QuickLinks/FAQsPage"));
 const ShippingDeliveryPage = lazy(
-  () => import("./pages/QuickLinks/ShippingDeliveryPage")
+  () => import("./pages/QuickLinks/ShippingDeliveryPage"),
 );
 const SecurePaymentPage = lazy(
-  () => import("./pages/QuickLinks/SecurePaymentPage")
+  () => import("./pages/QuickLinks/SecurePaymentPage"),
 );
 const WorldwideShippingPage = lazy(
-  () => import("./pages/QuickLinks/WorldwideShippingPage")
+  () => import("./pages/QuickLinks/WorldwideShippingPage"),
 );
 const BackgroundEffectPage = lazy(
-  () => import("./pages/BackgroundEffect/BackgroundEffectPage")
+  () => import("./pages/BackgroundEffect/BackgroundEffectPage"),
 );
 
 const HomePage = lazy(() => import("./pages/Home/homePage"));
 const ProductsPage = lazy(() => import("./pages/products/productPage"));
 const ProductDetailsPage = lazy(
-  () => import("./pages/products/productDetailsPage")
+  () => import("./pages/products/productDetailsPage"),
 );
 const CartPage = lazy(() => import("./pages/Cart/cartPage"));
 const WishlistPage = lazy(() => import("./pages/Wishlist/wishlistPage"));
@@ -41,28 +41,28 @@ const AddProductPage = lazy(() => import("./pages/products/addProductPage"));
 const EditProductPage = lazy(() => import("./pages/products/editProductPage"));
 const AddDeliveryPage = lazy(() => import("./pages/Delivery/addDeliveryPage"));
 const DiscountCodesPage = lazy(
-  () => import("./pages/DiscountCodes/DiscountCodesPage")
+  () => import("./pages/DiscountCodes/DiscountCodesPage"),
 );
 const AllUsersMessagesPage = lazy(
-  () => import("./pages/AllUsersMessages/allUsersMessagesPage")
+  () => import("./pages/AllUsersMessages/allUsersMessagesPage"),
 );
 const EmailOrderDispatcherPage = lazy(
-  () => import("./pages/EmailOrderDispatcher/emailOrderDispatcherPage")
+  () => import("./pages/EmailOrderDispatcher/emailOrderDispatcherPage"),
 );
 const DashboardPage = lazy(() => import("./pages/Dashboard/dashboardPage"));
 const UsersPage = lazy(() => import("./pages/Users/usersPage"));
 const EditUserOwnerPage = lazy(() => import("./pages/Users/editUserOwnerPage"));
 const PrivacyPolicyPage = lazy(
-  () => import("./pages/Policies/privacyPolicyPage")
+  () => import("./pages/Policies/privacyPolicyPage"),
 );
 const ReturnExchangePolicyPage = lazy(
-  () => import("./pages/Policies/returnExchangePolicyPage")
+  () => import("./pages/Policies/returnExchangePolicyPage"),
 );
 const SalesPaymentPolicyPage = lazy(
-  () => import("./pages/Policies/salesPaymentPolicyPage")
+  () => import("./pages/Policies/salesPaymentPolicyPage"),
 );
 const TermsConditionsPage = lazy(
-  () => import("./pages/Policies/termsConditionsPage")
+  () => import("./pages/Policies/termsConditionsPage"),
 );
 const CheckoutPage = lazy(() => import("./pages/Orders/CheckoutPage"));
 const ContactUsPage = lazy(() => import("./pages/QuickLinks/contactUsPage"));
@@ -77,6 +77,7 @@ function App() {
    * Defines the routes and protected layouts for different user roles.
    * يتم هنا تعريف المسارات والتنسيقات المحمية لكل دور مستخدم.
    */
+
   return (
     <div>
       <ToastContainer
@@ -100,16 +101,22 @@ function App() {
         <NetworkStatus />
 
         <Routes>
+          {/* E2E: Covered (home.spec.ts, auth.spec.ts, owner.spec.ts) */}
           <Route path="/" element={<HomePage />} />
+          {/* E2E: Covered (products.spec.ts, cart.spec.ts, checkout.spec.ts, owner.spec.ts, roles.spec.ts) */}
           <Route path="/products" element={<ProductsPage />} />
+          {/* E2E: Covered (details.spec.ts, cart.spec.ts, owner.spec.ts) */}
           <Route
             path="/products-details/:id"
             element={<ProductDetailsPage />}
           />
+          {/* E2E: Covered (cart.spec.ts, owner.spec.ts) */}
           <Route path="/cart" element={<CartPage />} />
 
+          {/* E2E: Covered (wishlist.spec.ts, owner.spec.ts) */}
           <Route path="/wishlist" element={<WishlistPage />} />
 
+          {/* E2E: Covered (profile.spec.ts, roles.spec.ts, owner.spec.ts) */}
           <Route
             path="/profile"
             element={
@@ -119,6 +126,7 @@ function App() {
             }
           />
 
+          {/* E2E: Covered (profile.spec.ts, roles.spec.ts, owner.spec.ts) */}
           <Route
             path="/orders"
             element={
@@ -128,6 +136,7 @@ function App() {
             }
           />
 
+          {/* E2E: Covered (details.spec.ts, owner.spec.ts) */}
           <Route
             path="/orders/:id"
             element={
@@ -136,30 +145,43 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route
             path="/sales-payment-policy"
             element={<SalesPaymentPolicyPage />}
           />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route
             path="/return-exchange-policy"
             element={<ReturnExchangePolicyPage />}
           />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+          {/* E2E: Covered (checkout.spec.ts, owner.spec.ts) */}
           <Route path="/checkout" element={<CheckoutPage />} />
 
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route path="/contact-us" element={<ContactUsPage />} />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route path="/about-us" element={<AboutUsPage />} />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route path="/faqs" element={<FAQsPage />} />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route path="/shipping-delivery" element={<ShippingDeliveryPage />} />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route path="/secure-payment" element={<SecurePaymentPage />} />
+          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
           <Route
             path="/shipping-in-egypt"
             element={<WorldwideShippingPage />}
           />
+          {/* E2E: Covered (notfound.spec.ts, owner.spec.ts) */}
           <Route path="*" element={<NotFound />} />
 
           {/* Protected Routes */}
+          {/* E2E: Covered (roles.spec.ts, owner.spec.ts) */}
           <Route
             path="/edit-product/:id"
             element={
@@ -168,6 +190,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/add-product"
             element={
@@ -176,6 +199,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/add-delivery"
             element={
@@ -185,6 +209,7 @@ function App() {
             }
           />
 
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/discount-codes"
             element={
@@ -194,6 +219,7 @@ function App() {
             }
           />
 
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/all-users-messages"
             element={
@@ -202,6 +228,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/email-order-dispatcher"
             element={
@@ -210,6 +237,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* E2E: Covered (roles.spec.ts, owner.spec.ts) */}
           <Route
             path="/dashboard"
             element={
@@ -218,6 +246,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* E2E: Covered (roles.spec.ts, owner.spec.ts) */}
           <Route
             path="/all-users"
             element={
@@ -226,6 +255,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/edit-user-owner/:id"
             element={
@@ -235,6 +265,7 @@ function App() {
             }
           />
 
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/category"
             element={
@@ -244,6 +275,7 @@ function App() {
             }
           />
 
+          {/* E2E: Covered (owner.spec.ts) */}
           <Route
             path="/color"
             element={

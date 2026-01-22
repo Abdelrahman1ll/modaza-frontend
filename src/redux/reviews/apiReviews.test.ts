@@ -1,32 +1,82 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ApiReviews } from "./apiReviews";
+import { setupApiStore } from "../../test/setupApiStore";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+
+vi.mock("../auth/baseQueryWithReauth", () => ({
+  baseQueryWithReauth: vi.fn().mockResolvedValue({ data: {} }),
+}));
 
 describe("ApiReviews", () => {
+  let store: ReturnType<typeof setupApiStore>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = setupApiStore(ApiReviews);
+  });
+
   it("should have the correct reducer path", () => {
     expect(ApiReviews.reducerPath).toBe("apiReviews");
   });
 
-  it("should define required endpoints", () => {
-    expect(ApiReviews.endpoints.postReviews).toBeDefined();
-    expect(ApiReviews.endpoints.getReviews).toBeDefined();
-    expect(ApiReviews.endpoints.patchReviews).toBeDefined();
-    expect(ApiReviews.endpoints.deleteReviews).toBeDefined();
-  });
-
-  it("getReviews query should return the correct URL and method", () => {
+  it("getReviews query should return the correct URL and method", async () => {
     const id = "prod123";
-    const { query } = ApiReviews.endpoints.getReviews as any;
-    const result = query(id);
-    expect(result.url).toBe(`/reviews/${id}`);
-    expect(result.method).toBe("GET");
+    await store.dispatch(ApiReviews.endpoints.getReviews.initiate(id));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/reviews/${id}`,
+        method: "GET",
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("postReviews mutation should return the correct URL, method, and body", () => {
+  it("postReviews mutation should return the correct URL, method, and body", async () => {
     const data = { comment: "Great!", rating: 5 };
-    const { query } = ApiReviews.endpoints.postReviews as any;
-    const result = query(data);
-    expect(result.url).toBe("/reviews");
-    expect(result.method).toBe("POST");
-    expect(result.body).toEqual(data);
+    await store.dispatch(ApiReviews.endpoints.postReviews.initiate(data));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/reviews",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
+  });
+
+  it("patchReviews mutation should return the correct URL and body", async () => {
+    const data = { comment: "Updated!" };
+    const id = "rev123";
+    await store.dispatch(
+      ApiReviews.endpoints.patchReviews.initiate({ data, id }),
+    );
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/reviews/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
+  });
+
+  it("deleteReviews mutation should return the correct URL and method", async () => {
+    const id = "rev123";
+    await store.dispatch(ApiReviews.endpoints.deleteReviews.initiate(id));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/reviews/${id}`,
+        method: "DELETE",
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 });

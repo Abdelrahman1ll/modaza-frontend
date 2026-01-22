@@ -183,7 +183,7 @@ export default function useCheckout() {
           addressDetails,
           phone1,
           phone2,
-        })
+        }),
       );
     } else {
       localStorage.removeItem("checkoutAddress");
@@ -200,7 +200,7 @@ export default function useCheckout() {
   ]);
 
   const deliveryData = delivery?.deliveries?.find(
-    (d: { id: number }) => d.id === 1
+    (d: { id: number }) => d.id === 1,
   );
   const isFirstOrder: boolean = data?.carts?.thIsIsYourFirstOrder;
   const freeDelivery: boolean = deliveryData?.freeDelivery;
@@ -220,7 +220,7 @@ export default function useCheckout() {
    * تصفية قائمة المحافظات المصرية بناءً على بحث المستخدم.
    */
   const filteredStates = egyptGovernorates.filter((gov) =>
-    gov.toLowerCase().includes(search.toLowerCase())
+    gov.toLowerCase().includes(search.toLowerCase()),
   );
 
   /**

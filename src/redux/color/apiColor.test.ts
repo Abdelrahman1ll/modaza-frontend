@@ -1,56 +1,76 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ApiColor } from "./apiColor";
+import { setupApiStore } from "../../test/setupApiStore";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+
+vi.mock("../auth/baseQueryWithReauth", () => ({
+  baseQueryWithReauth: vi.fn().mockResolvedValue({ data: {} }),
+}));
 
 describe("ApiColor", () => {
+  let store: ReturnType<typeof setupApiStore>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = setupApiStore(ApiColor);
+  });
+
   it("should have the correct reducer path", () => {
     expect(ApiColor.reducerPath).toBe("apiColor");
   });
 
-  it("should define the getColors endpoint", () => {
-    expect(ApiColor.endpoints.getColors).toBeDefined();
+  it("getColors query should return the correct URL", async () => {
+    await store.dispatch(ApiColor.endpoints.getColors.initiate(undefined));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      "/color",
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("should define the postColor endpoint", () => {
-    expect(ApiColor.endpoints.postColor).toBeDefined();
-  });
-
-  it("should define the patchColor endpoint", () => {
-    expect(ApiColor.endpoints.patchColor).toBeDefined();
-  });
-
-  it("should define the deleteColor endpoint", () => {
-    expect(ApiColor.endpoints.deleteColor).toBeDefined();
-  });
-
-  it("getColors query should return the correct URL", () => {
-    const { query } = ApiColor.endpoints.getColors as any;
-    expect(query()).toBe("/color");
-  });
-
-  it("postColor query should return the correct method and body", () => {
+  it("postColor query should return the correct method and body", async () => {
     const data = { name: "Red", hex: "#FF0000" };
-    const { query } = ApiColor.endpoints.postColor as any;
-    const result = query(data);
-    expect(result.url).toBe("/color");
-    expect(result.method).toBe("POST");
-    expect(result.body).toEqual(data);
+    await store.dispatch(ApiColor.endpoints.postColor.initiate(data));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/color",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("patchColor query should return the correct URL, method and body", () => {
+  it("patchColor query should return the correct URL, method and body", async () => {
     const data = { name: "Blue" };
     const id = "123";
-    const { query } = ApiColor.endpoints.patchColor as any;
-    const result = query({ data, id });
-    expect(result.url).toBe(`/color/${id}`);
-    expect(result.method).toBe("PATCH");
-    expect(result.body).toEqual(data);
+    await store.dispatch(ApiColor.endpoints.patchColor.initiate({ data, id }));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/color/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("deleteColor query should return the correct URL and method", () => {
+  it("deleteColor query should return the correct URL and method", async () => {
     const id = "123";
-    const { query } = ApiColor.endpoints.deleteColor as any;
-    const result = query(id);
-    expect(result.url).toBe(`/color/${id}`);
-    expect(result.method).toBe("DELETE");
+    await store.dispatch(ApiColor.endpoints.deleteColor.initiate(id));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/color/${id}`,
+        method: "DELETE",
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 });

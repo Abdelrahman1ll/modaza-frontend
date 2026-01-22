@@ -1,43 +1,104 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ApiDiscountCodes } from "./apiDiscountCodes";
+import { setupApiStore } from "../../test/setupApiStore";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+
+vi.mock("../auth/baseQueryWithReauth", () => ({
+  baseQueryWithReauth: vi.fn().mockResolvedValue({ data: {} }),
+}));
 
 describe("ApiDiscountCodes", () => {
+  let store: ReturnType<typeof setupApiStore>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = setupApiStore(ApiDiscountCodes);
+  });
+
   it("should have the correct reducer path", () => {
     expect(ApiDiscountCodes.reducerPath).toBe("apiDiscountCodes");
   });
 
-  it("should define required endpoints", () => {
-    expect(ApiDiscountCodes.endpoints.GetDiscountCodes).toBeDefined();
-    expect(ApiDiscountCodes.endpoints.PostValidateDiscountCode).toBeDefined();
-    expect(ApiDiscountCodes.endpoints.PostDiscountCodes).toBeDefined();
-    expect(ApiDiscountCodes.endpoints.PatchDiscountCodes).toBeDefined();
-    expect(ApiDiscountCodes.endpoints.DeleteDiscountCodes).toBeDefined();
+  it("GetDiscountCodes query should return the correct URL and method", async () => {
+    await store.dispatch(
+      ApiDiscountCodes.endpoints.GetDiscountCodes.initiate(undefined),
+    );
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/discount-codes",
+        method: "GET",
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("GetDiscountCodes query should return the correct URL and method", () => {
-    const { query } = ApiDiscountCodes.endpoints.GetDiscountCodes as any;
-    const result = query();
-    expect(result.url).toBe("/discount-codes");
-    expect(result.method).toBe("GET");
-  });
-
-  it("PostValidateDiscountCode query should return the correct URL, method, and body", () => {
+  it("PostValidateDiscountCode query should return the correct URL, method, and body", async () => {
     const data = { code: "SAVE10" };
-    const { query } = ApiDiscountCodes.endpoints
-      .PostValidateDiscountCode as any;
-    const result = query(data);
-    expect(result.url).toBe("/discount-codes/user");
-    expect(result.method).toBe("POST");
-    expect(result.body).toEqual(data);
+    await store.dispatch(
+      ApiDiscountCodes.endpoints.PostValidateDiscountCode.initiate(data),
+    );
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/discount-codes/user",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("PatchDiscountCodes query should return the correct URL, method, and body", () => {
+  it("PostDiscountCodes query should return the correct URL, method, and body", async () => {
+    const data = { code: "NEW20", discount: 20 };
+    await store.dispatch(
+      ApiDiscountCodes.endpoints.PostDiscountCodes.initiate(data),
+    );
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/discount-codes",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
+  });
+
+  it("PatchDiscountCodes query should return the correct URL, method, and body", async () => {
     const data = { discount: 20 };
     const id = "456";
-    const { query } = ApiDiscountCodes.endpoints.PatchDiscountCodes as any;
-    const result = query({ data, id });
-    expect(result.url).toBe(`/discount-codes/${id}`);
-    expect(result.method).toBe("PATCH");
-    expect(result.body).toEqual(data);
+    await store.dispatch(
+      ApiDiscountCodes.endpoints.PatchDiscountCodes.initiate({ data, id }),
+    );
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/discount-codes/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
+  });
+
+  it("DeleteDiscountCodes query should return the correct URL and method", async () => {
+    const id = "456";
+    await store.dispatch(
+      ApiDiscountCodes.endpoints.DeleteDiscountCodes.initiate(id),
+    );
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/discount-codes/${id}`,
+        method: "DELETE",
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 });

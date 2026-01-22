@@ -39,7 +39,9 @@ vi.mock("../../api/baseUrl", () => ({
 }));
 
 /* Mock fetchBaseQuery */
-const mockBaseQuery = vi.fn();
+const { mockBaseQuery } = vi.hoisted(() => ({
+  mockBaseQuery: vi.fn(),
+}));
 
 vi.mock("@reduxjs/toolkit/query/react", async () => {
   const actual = await vi.importActual<

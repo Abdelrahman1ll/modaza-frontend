@@ -1,21 +1,36 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { paymentApi } from "./apiPayment";
+import { setupApiStore } from "../../test/setupApiStore";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+
+vi.mock("../auth/baseQueryWithReauth", () => ({
+  baseQueryWithReauth: vi.fn().mockResolvedValue({ data: {} }),
+}));
 
 describe("paymentApi", () => {
+  let store: ReturnType<typeof setupApiStore>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = setupApiStore(paymentApi);
+  });
+
   it("should have the correct reducer path", () => {
     expect(paymentApi.reducerPath).toBe("paymentApi");
   });
 
-  it("should define the postPayment endpoint", () => {
-    expect(paymentApi.endpoints.postPayment).toBeDefined();
-  });
-
-  it("postPayment mutation should return the correct URL, method, and body", () => {
+  it("postPayment mutation should return the correct URL, method, and body", async () => {
     const data = { amount: 100, currency: "USD" };
-    const { query } = paymentApi.endpoints.postPayment as any;
-    const result = query(data);
-    expect(result.url).toBe("/payment/init-payment");
-    expect(result.method).toBe("POST");
-    expect(result.body).toEqual(data);
+    await store.dispatch(paymentApi.endpoints.postPayment.initiate(data));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/payment/init-payment",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 });

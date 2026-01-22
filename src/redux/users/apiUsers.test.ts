@@ -1,33 +1,82 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ApiUsers } from "./apiUsers";
+import { setupApiStore } from "../../test/setupApiStore";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+
+vi.mock("../auth/baseQueryWithReauth", () => ({
+  baseQueryWithReauth: vi.fn().mockResolvedValue({ data: {} }),
+}));
 
 describe("ApiUsers", () => {
+  let store: ReturnType<typeof setupApiStore>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = setupApiStore(ApiUsers);
+  });
+
   it("should have the correct reducer path", () => {
     expect(ApiUsers.reducerPath).toBe("apiUsers");
   });
 
-  it("should define required endpoints", () => {
-    expect(ApiUsers.endpoints.UsersCheckEmail).toBeDefined();
-    expect(ApiUsers.endpoints.PostUsers).toBeDefined();
-    expect(ApiUsers.endpoints.UsersSignupGoogle).toBeDefined();
-    expect(ApiUsers.endpoints.GetUsers).toBeDefined();
-    expect(ApiUsers.endpoints.PatchUsersById).toBeDefined();
-    expect(ApiUsers.endpoints.PatchUsersOwnerById).toBeDefined();
-  });
-
-  it("UsersCheckEmail mutation should return the correct URL, method, and body", () => {
+  it("UsersCheckEmail mutation should return the correct URL, method, and body", async () => {
     const data = { email: "test@example.com" };
-    const { query } = ApiUsers.endpoints.UsersCheckEmail as any;
-    const result = query(data);
-    expect(result.url).toBe("/users/check-email");
-    expect(result.method).toBe("POST");
-    expect(result.body).toEqual(data);
+    await store.dispatch(ApiUsers.endpoints.UsersCheckEmail.initiate(data));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/users/check-email",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("GetUsers query should return the correct URL and method", () => {
-    const { query } = ApiUsers.endpoints.GetUsers as any;
-    const result = query();
-    expect(result.url).toBe("/users");
-    expect(result.method).toBe("GET");
+  it("GetUsers query should return the correct URL and method", async () => {
+    await store.dispatch(ApiUsers.endpoints.GetUsers.initiate(undefined));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/users",
+        method: "GET",
+      }),
+      expect.any(Object),
+      undefined,
+    );
+  });
+
+  it("PostUsers mutation should return the correct URL, method, and body", async () => {
+    const data = { email: "test@example.com", code: 123456 };
+    await store.dispatch(ApiUsers.endpoints.PostUsers.initiate(data));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/users",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
+  });
+
+  it("PatchUsersById mutation should return the correct URL and body", async () => {
+    const data = { name: "New Name" };
+    const id = "user123";
+    await store.dispatch(
+      ApiUsers.endpoints.PatchUsersById.initiate({ data, id }),
+    );
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/users/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 });

@@ -23,24 +23,36 @@ vi.mock("../../redux/products/apiProducts", () => ({
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
 
 // Mock Framer Motion
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({
+vi.mock("framer-motion", () => {
+  const motionComponent = (Tag: string) => {
+    return ({
       children,
+      whileHover,
+      whileTap,
+      whileInView,
+      whileFocus,
+      initial,
+      animate,
+      exit,
+      transition,
+      variants,
       ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <button {...props}>{children}</button>,
-  },
-}));
+    }: any) => React.createElement(Tag, props, children);
+  };
+
+  return {
+    motion: {
+      div: motionComponent("div"),
+      button: motionComponent("button"),
+      span: motionComponent("span"),
+      h1: motionComponent("h1"),
+      h2: motionComponent("h2"),
+      p: motionComponent("p"),
+      section: motionComponent("section"),
+    },
+    AnimatePresence: ({ children }: any) => <>{children}</>,
+  };
+});
 
 // Mock Lucide Icons
 vi.mock("lucide-react", () => ({

@@ -1,21 +1,36 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ApiEmail } from "./apiEmail";
+import { setupApiStore } from "../../test/setupApiStore";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+
+vi.mock("../auth/baseQueryWithReauth", () => ({
+  baseQueryWithReauth: vi.fn().mockResolvedValue({ data: {} }),
+}));
 
 describe("ApiEmail", () => {
+  let store: ReturnType<typeof setupApiStore>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = setupApiStore(ApiEmail);
+  });
+
   it("should have the correct reducer path", () => {
     expect(ApiEmail.reducerPath).toBe("apiEmail");
   });
 
-  it("should define required endpoints", () => {
-    expect(ApiEmail.endpoints.sendEmail).toBeDefined();
-  });
-
-  it("sendEmail mutation should return the correct URL, method, and body", () => {
+  it("sendEmail mutation should return the correct URL, method, and body", async () => {
     const data = { to: "test@example.com", subject: "Hello", body: "World" };
-    const { query } = ApiEmail.endpoints.sendEmail as any;
-    const result = query(data);
-    expect(result.url).toBe("/email");
-    expect(result.method).toBe("POST");
-    expect(result.body).toEqual(data);
+    await store.dispatch(ApiEmail.endpoints.sendEmail.initiate(data));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/email",
+        method: "POST",
+        body: data,
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 });

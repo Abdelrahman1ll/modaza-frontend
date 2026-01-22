@@ -16,6 +16,7 @@ import useCheckout from "./useCheckout";
 import { BRAND_PHONE } from "../../BrandText";
 import PaymobIframe from "./PaymobIframe";
 import { Link } from "react-router-dom";
+import { PaymentElement } from "@stripe/react-stripe-js/checkout";
 
 /**
  * Checkout: Multi-step process for shipping info, payment, and order completion.
@@ -494,21 +495,25 @@ export default function Checkout() {
                         first.
                       </div>
                     ) : (
-                      <div className="rounded-3xl overflow-hidden border border-white/60 bg-white/20">
-                        <PaymobIframe
-                          paymentData={{
-                            amount: finalTotal,
-                            first_name: firstName,
-                            last_name: lastName,
-                            email: email,
-                            phone_number: phone1,
-                            city: state,
-                          }}
-                          setIsPaying={() => setIsPaying(false)}
-                          onCardValidityChange={(v) => setIsCardValid(v)}
-                          triggerPayRef={payRef}
-                          handlePayment={handlePayment}
-                        />
+                      // <PaymobIframe
+                      //   paymentData={{
+                      //     amount: finalTotal,
+                      //     first_name: firstName,
+                      //     last_name: lastName,
+                      //     email: email,
+                      //     phone_number: phone1,
+                      //     city: state,
+                      //   }}
+                      //   setIsPaying={() => setIsPaying(false)}
+                      //   onCardValidityChange={(v) => setIsCardValid(v)}
+                      //   triggerPayRef={payRef}
+                      //   handlePayment={handlePayment}
+                      // />
+                      <div>
+                        <form>
+                          <PaymentElement />
+                          <button>Submit</button>
+                        </form>
                       </div>
                     )}
                   </motion.div>

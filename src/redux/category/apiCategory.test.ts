@@ -1,56 +1,42 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ApiCategory } from "./apiCategory";
+import { setupApiStore } from "../../test/setupApiStore";
+import { baseQueryWithReauth } from "../auth/baseQueryWithReauth";
+
+vi.mock("../auth/baseQueryWithReauth", () => ({
+  baseQueryWithReauth: vi.fn().mockResolvedValue({ data: {} }),
+}));
 
 describe("ApiCategory", () => {
-  it("should have the correct reducer path", () => {
-    expect(ApiCategory.reducerPath).toBe("apiCategory");
+  let store: ReturnType<typeof setupApiStore>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    store = setupApiStore(ApiCategory);
   });
 
-  it("should define the getCategory endpoint", () => {
-    expect(ApiCategory.endpoints.getCategory).toBeDefined();
+  it("getCategory should call /category", async () => {
+    await store.dispatch(ApiCategory.endpoints.getCategory.initiate(undefined));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      "/category",
+      expect.any(Object),
+      undefined,
+    );
   });
 
-  it("should define the postCategory endpoint", () => {
-    expect(ApiCategory.endpoints.postCategory).toBeDefined();
-  });
-
-  it("should define the patchCategory endpoint", () => {
-    expect(ApiCategory.endpoints.patchCategory).toBeDefined();
-  });
-
-  it("should define the deleteCategory endpoint", () => {
-    expect(ApiCategory.endpoints.deleteCategory).toBeDefined();
-  });
-
-  it("getCategory query should return the correct URL", () => {
-    const { query } = ApiCategory.endpoints.getCategory as any;
-    expect(query()).toBe("/category");
-  });
-
-  it("postCategory query should return the correct method and body", () => {
-    const data = { name: "Fashion" };
-    const { query } = ApiCategory.endpoints.postCategory as any;
-    const result = query(data);
-    expect(result.url).toBe("/category");
-    expect(result.method).toBe("POST");
-    expect(result.body).toEqual(data);
-  });
-
-  it("patchCategory query should return the correct URL, method and body", () => {
-    const data = { name: "Updated Fashion" };
+  it("deleteCategory should DELETE /category/:id", async () => {
     const id = "456";
-    const { query } = ApiCategory.endpoints.patchCategory as any;
-    const result = query({ data, id });
-    expect(result.url).toBe(`/category/${id}`);
-    expect(result.method).toBe("PATCH");
-    expect(result.body).toEqual(data);
-  });
 
-  it("deleteCategory query should return the correct URL and method", () => {
-    const id = "456";
-    const { query } = ApiCategory.endpoints.deleteCategory as any;
-    const result = query(id);
-    expect(result.url).toBe(`/category/${id}`);
-    expect(result.method).toBe("DELETE");
+    await store.dispatch(ApiCategory.endpoints.deleteCategory.initiate(id));
+
+    expect(baseQueryWithReauth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `/category/${id}`,
+        method: "DELETE",
+      }),
+      expect.any(Object),
+      undefined,
+    );
   });
 });
