@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { CreditCard } from "lucide-react";
 import { usePostPaymentMutation } from "../../redux/Payment/apiPayment";
 
 const paymentCache = new Map<
@@ -122,9 +123,18 @@ export default function PaymobIframe({
 
   /* ================= Render ================= */
   if (isLoading) {
+    const dots = Array.from({ length: 4 });
     return (
-      <div className="flex items-center justify-center h-48">
-        <div className="w-10 h-10 border-4 border-(--color-tiger)/20 border-t-(--color-tiger) rounded-full animate-spin" />
+      <div className="flex justify-center items-center h-48">
+        <div className="flex gap-2">
+          {dots.map((_, i) => (
+            <span
+              key={i}
+              className="w-3 h-3 rounded-full bg-[#BC6C25] animate-dot"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            ></span>
+          ))}
+        </div>
       </div>
     );
   }
@@ -141,11 +151,20 @@ export default function PaymobIframe({
 
   return (
     <div className="w-full">
-      <div className="bg-white/40 backdrop-blur-xl rounded-3xl border border-white/60 shadow-lg p-4">
+      <div className="p-4 md:p-6 sm:p-8 rounded-3xl shadow-xl bg-white/40 backdrop-blur-xl border border-white/60 hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-2.5 rounded-2xl bg-(--color-pakistan)/5 text-(--color-pakistan)">
+            <CreditCard size={24} />
+          </div>
+          <h2 className="text-2xl font-black text-(--color-pakistan)">
+            Card Selection
+          </h2>
+        </div>
+
         <iframe
           ref={iframeRef}
           key={clientSecret + publicKey}
-          style={{ width: "100%", height: "420px", border: "none" }}
+          style={{ width: "100%", height: "290px", border: "none" }}
           srcDoc={`
 <!DOCTYPE html>
 <html>
@@ -153,68 +172,27 @@ export default function PaymobIframe({
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <script type="module" src="https://cdn.jsdelivr.net/npm/paymob-pixel@latest/main.js"></script>
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: transparent;
-      padding: 12px;
-    }
-
-    #paymob-elements {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .field-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #283618; /* var(--color-pakistan) */
-    }
-
-    /* Target the injected iframes */
-    iframe {
-      width: 100% !important;
-      height: 48px !important;
-      border-radius: 16px !important;
-      border: 1px solid rgba(96, 108, 56, 0.3) !important; /* var(--color-earth)/30 */
-      background: rgba(255, 255, 255, 0.5) !important;
-      padding: 10px !important;
-      transition: all 0.3s ease !important;
-    }
-
-    iframe:focus-within {
-      border-color: #dda15e !important; /* var(--color-tiger) */
-      box-shadow: 0 0 0 4px rgba(221, 161, 94, 0.1) !important;
-      background: rgba(255, 255, 255, 0.8) !important;
-    }
-  </style>
+  
 </head>
 <body>
   <div id="paymob-elements">
-    <div>
-      <label class="field-label">Card Number</label>
+    <label class="main-label">Card Information</label>
+    
+    <div class="field-container">
       <div class="card-number"></div>
     </div>
     
     <div class="row">
-      <div>
-        <label class="field-label">Expiry Date</label>
+      <div class="field-container">
         <div class="expiry"></div>
       </div>
-      <div>
-        <label class="field-label">CVV / CVC</label>
+      <div class="field-container">
         <div class="cvv"></div>
       </div>
+    </div>
+
+    <div class="field-container">
+      <div class="card-holder"></div>
     </div>
   </div>
 
@@ -228,11 +206,31 @@ export default function PaymobIframe({
       cardNumber: ".card-number",
       cardExpiry: ".expiry",
       cardCvv: ".cvv",
+      cardHolder: ".card-holder",
 
       disablePay: true,
-      enableSpinner: true,
+      enableSpinner: false,
       redirect: true,
       redirectUrl: "${window.location.origin}/orders",
+       customStyle: {
+                        Font_Family: "Cairo, sans-serif",
+                        Font_Size_Label: "18",
+                        Font_Size_Input_Fields: "18",
+                        Font_Size_Payment_Button: "16",
+                        Font_Weight_Label: 500,
+                        Font_Weight_Input_Fields: 500,
+                        Font_Weight_Payment_Button: 300,
+                        Color_Text: "#283618",
+                        Color_Text_Headings: "#283618",
+                        Color_Text_Payment_Button: "#FEFAE0",
+                        Color_Background_Input_Fields: "rgba(255, 255, 255, 0.5)",
+                        Color_Border_Input_Fields: "rgba(188, 108, 37, 0.3)",
+                        Color_Background_Payment_Button: "#BC6C25",
+                        Color_Primary: "#BC6C25",
+                        Radius_Border: "16",
+                        Color_Input_Fields: "rgba(255, 255, 255, 0.5)",
+                        Color_Border_Payment_Button: "rgba(188, 108, 37, 0.3)",
+                      },
 
       cardValidationChanged: (isValid) => {
         window.parent.postMessage({ type: "CARD_VALID", isValid }, "*");

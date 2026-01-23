@@ -16,15 +16,7 @@ export const paymentApi = createApi({
         body: data,
       }),
     }),
-    initStripePayment: builder.mutation({
-      query: (data) => ({
-        url: "/payment/init-stripe-payment",
-        method: "POST",
-        body: data,
-      }),
-    }),
   }),
 });
 
-export const { usePostPaymentMutation, useInitStripePaymentMutation } =
-  paymentApi;
+export const { usePostPaymentMutation } = paymentApi;

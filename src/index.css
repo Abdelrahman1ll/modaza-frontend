@@ -72,6 +72,71 @@ body::-webkit-scrollbar {
   animation: dot 1.4s infinite ease-in-out both;
 }
 
+@keyframes orb-float {
+  0%, 100% {
+    transform: translateY(0) scale(1.05);
+  }
+  50% {
+    transform: translateY(-25px) scale(0.95);
+  }
+}
+
+@keyframes orb-glow {
+  0%, 100% {
+    box-shadow: 0 0 40px rgba(188, 108, 37, 0.4), 0 0 80px rgba(188, 108, 37, 0.2);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(188, 108, 37, 0.6), 0 0 120px rgba(188, 108, 37, 0.3);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes orb-morph {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
+@keyframes echo-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.animate-orb-float {
+  animation: orb-float 3s ease-in-out infinite;
+}
+
+.animate-orb-glow {
+  animation: orb-glow 4s ease-in-out infinite;
+}
+
+.animate-orb-morph {
+  animation: orb-morph 8s ease-in-out infinite;
+}
+
+.animate-echo-ring {
+  animation: echo-ring 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.full-screen-loader {
+  background: radial-gradient(
+    circle at center,
+    var(--color-cornsilk) 0%,
+    rgba(221, 161, 94, 0.1) 50%,
+    rgba(96, 108, 56, 0.05) 100%
+  );
+}
+
 /* global.css أو أي ملف CSS */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

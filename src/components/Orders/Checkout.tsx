@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   Loader2,
@@ -10,14 +11,13 @@ import {
   Info,
   ShieldCheck,
   Tag,
+  MapPin,
 } from "lucide-react";
 import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
 import { BRAND_PHONE } from "../../BrandText";
 import PaymobIframe from "./PaymobIframe";
 import { Link } from "react-router-dom";
-import { PaymentElement } from "@stripe/react-stripe-js/checkout";
-
 /**
  * Checkout: Multi-step process for shipping info, payment, and order completion.
  * الدفع: عملية متعددة الخطوات لبيانات الشحن والدفع وإتمام الطلب.
@@ -67,7 +67,21 @@ export default function Checkout() {
     setIsPaying,
     isPaying,
     payRef,
+    isDetectingLocation,
+    handleAutoLocation,
+    rawDeliveryFee,
+    freeDelivery,
   } = useCheckout();
+
+  /**
+   * Automatically redirects the user to the cart page if the cart becomes empty.
+   * يقوم تلقائياً بتوجيه المستخدم لصفحة السلة إذا أصبحت السلة فارغة.
+   */
+  useEffect(() => {
+    if (!isLoading && data?.carts?.items.length === 0) {
+      navigate("/cart");
+    }
+  }, [data, isLoading, navigate]);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -192,10 +206,30 @@ export default function Checkout() {
                 </div>
 
                 <div className="flex flex-col relative">
-                  <label className={labelClasses}>State / City</label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className={labelClasses + " mb-0"}>
+                      State / City
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAutoLocation}
+                      disabled={isDetectingLocation}
+                      className="text-[10px] font-black uppercase tracking-widest text-(--color-tiger) hover:text-(--color-pakistan) transition-colors flex items-center gap-1"
+                    >
+                      {isDetectingLocation ? (
+                        <Loader2 size={10} className="animate-spin" />
+                      ) : (
+                        <MapPin size={10} />
+                      )}
+                      Detect Location
+                    </button>
+                  </div>
                   <button
                     type="button"
-                    className={`${inputClasses} flex items-center justify-between text-left`}
+                    disabled={isDetectingLocation}
+                    className={`${inputClasses} flex items-center justify-between text-left ${
+                      isDetectingLocation ? "opacity-50 cursor-wait" : ""
+                    }`}
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
                     <span
@@ -205,14 +239,23 @@ export default function Checkout() {
                           : "text-(--color-dark)/40"
                       }
                     >
-                      {state || "Select State"}
+                      {isDetectingLocation
+                        ? "Detecting..."
+                        : state || "Select State"}
                     </span>
-                    <ChevronDown
-                      size={18}
-                      className={`transition-transform duration-300 ${
-                        isDropdownOpen ? "rotate-180" : ""
-                      }`}
-                    />
+                    {isDetectingLocation ? (
+                      <Loader2
+                        size={18}
+                        className="animate-spin text-(--color-tiger)"
+                      />
+                    ) : (
+                      <ChevronDown
+                        size={18}
+                        className={`transition-transform duration-300 ${
+                          isDropdownOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    )}
                   </button>
 
                   <AnimatePresence>
@@ -495,26 +538,20 @@ export default function Checkout() {
                         first.
                       </div>
                     ) : (
-                      // <PaymobIframe
-                      //   paymentData={{
-                      //     amount: finalTotal,
-                      //     first_name: firstName,
-                      //     last_name: lastName,
-                      //     email: email,
-                      //     phone_number: phone1,
-                      //     city: state,
-                      //   }}
-                      //   setIsPaying={() => setIsPaying(false)}
-                      //   onCardValidityChange={(v) => setIsCardValid(v)}
-                      //   triggerPayRef={payRef}
-                      //   handlePayment={handlePayment}
-                      // />
-                      <div>
-                        <form>
-                          <PaymentElement />
-                          <button>Submit</button>
-                        </form>
-                      </div>
+                      <PaymobIframe
+                        paymentData={{
+                          amount: finalTotal,
+                          first_name: firstName,
+                          last_name: lastName,
+                          email: email,
+                          phone_number: phone1,
+                          city: state,
+                        }}
+                        setIsPaying={() => setIsPaying(false)}
+                        onCardValidityChange={(v) => setIsCardValid(v)}
+                        triggerPayRef={payRef}
+                        handlePayment={handlePayment}
+                      />
                     )}
                   </motion.div>
                 ) : null}
@@ -677,10 +714,17 @@ export default function Checkout() {
                         </span>
                       )}
                     </div>
-                    {isFirstOrder ? (
-                      <span className="text-lg font-black text-green-600">
-                        FREE
-                      </span>
+                    {isFirstOrder || freeDelivery ? (
+                      <div className="flex items-center gap-2">
+                        {rawDeliveryFee > 0 && (
+                          <span className="text-sm font-bold text-(--color-pakistan)/40 line-through">
+                            EGP {rawDeliveryFee.toLocaleString()}
+                          </span>
+                        )}
+                        <span className="text-lg font-black text-green-600">
+                          FREE
+                        </span>
+                      </div>
                     ) : (
                       <span className="text-lg font-black text-(--color-pakistan)">
                         EGP {(deliveryFee || 0).toLocaleString()}

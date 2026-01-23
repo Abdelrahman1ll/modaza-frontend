@@ -7,12 +7,19 @@ import {
   AlertCircle,
   CircleDot,
 } from "lucide-react";
+import { useGetDeliveryQuery } from "../../redux/Delivery/apiDelivery";
 
 /**
  * ReturnExchangePolicy: Rules for returns, exchanges, and refunds.
  * سياسة الاستبدال والاسترجاع: قواعد الإرجاع والاستبدال واسترداد الأموال.
  */
 export default function ReturnExchangePolicy() {
+  const { data, isLoading } = useGetDeliveryQuery({});
+
+  const deliveryData = data?.deliveries?.find(
+    (d: { id: number }) => d.id === 1,
+  );
+
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
@@ -210,7 +217,9 @@ export default function ReturnExchangePolicy() {
               <div className="p-4 bg-orange-50/30 rounded-2xl border border-orange-100/50 flex items-center gap-3">
                 <AlertCircle size={18} className="text-orange-500 shrink-0" />
                 <p className="text-xs font-bold text-orange-900 leading-tight">
-                  Refusing the order at the door incurs a 80 EGP fee.
+                  Refusing the order at the door incurs a{" "}
+                  {isLoading ? "..." : deliveryData?.deliveryPriceFar || 80} EGP
+                  fee.
                 </p>
               </div>
             </div>

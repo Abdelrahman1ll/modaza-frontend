@@ -7,11 +7,11 @@ import {
   usePostOrdersMutation,
 } from "../../redux/Orders/apiOrders";
 import { toast } from "react-toastify";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useContext } from "react";
 import egyptGovernorates from "../../data/egyptGovernorates.json";
 import { AuthContext } from "../../context/AuthContext";
-import { useContext } from "react";
 import { EGYPTIAN_PHONE_REGEX } from "../../utils/validators";
+import { detectUserGovernorate } from "../../utils/location";
 import ttsMP3 from "/ttsMP3.com_VoiceText_2025-11-19_2-28-51.mp3";
 const audio = new Audio(ttsMP3);
 const close = [
@@ -73,6 +73,7 @@ export default function useCheckout() {
   const [search, setSearch] = useState(""); // Search term for governorates | كلمة البحث للمحافظات
   const [isCardValid, setIsCardValid] = useState(false); // Validation for credit card | صحة بيانات البطاقة الائتمانية
   const [isPaying, setIsPaying] = useState(false); // Payment processing status | حالة معالجة الدفع
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false); // State for location detection | حالة الكشف عن الموقع
   const payRef = useRef<(() => void) | null>(null); // Ref for triggering payment iframe | مرجع لتشغيل إطار الدفع
 
   const [errors, setErrors] = useState({
@@ -99,6 +100,7 @@ export default function useCheckout() {
   const [postOrders, { isLoading: orderLoading }] = usePostOrdersMutation();
   const { refetch } = useGetUserOrdersQuery(undefined);
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [rawDeliveryFee, setRawDeliveryFee] = useState(0);
 
   /**
    * Internal check for form validity without updating UI errors.
@@ -163,8 +165,31 @@ export default function useCheckout() {
       setPhone1(data.phone1 || "");
       setPhone2(data.phone2 || "");
       setSaveAddress(true);
+    } else {
+      // If no saved address, try to detect location
+      handleAutoLocation();
     }
   }, []);
+
+  /**
+   * Automatically detects the user's governorate and updates the state.
+   * يقوم تلقائياً بالكشف عن محافظة المستخدم وتحديث الحالة.
+   */
+  const handleAutoLocation = useCallback(async () => {
+    if (state && addressDetails) return; // Don't overwrite if both are already set
+    setIsDetectingLocation(true);
+    try {
+      const result = await detectUserGovernorate();
+      if (result) {
+        if (!state && result.state) {
+          setState(result.state);
+          setErrors((prev) => ({ ...prev, state: "" }));
+        }
+      }
+    } finally {
+      setIsDetectingLocation(false);
+    }
+  }, [state, addressDetails]);
 
   /**
    * Automatically saves or removes address data in localStorage based on 'saveAddress' state.
@@ -228,17 +253,23 @@ export default function useCheckout() {
    * حساب مصاريف التوصيل بناءً على المحافظة المختارة (القاهرة والجيزة مقابل المحافظات البعيدة).
    */
   useEffect(() => {
+    if (!deliveryData) return;
+
+    let fee = 0;
+    if (close.includes(state)) {
+      fee = deliveryData.deliveryPriceClose;
+    } else if (farAway.includes(state)) {
+      fee = deliveryData.deliveryPriceFar;
+    } else {
+      fee = deliveryData.deliveryPriceClose;
+    }
+
+    setRawDeliveryFee(fee);
+
     if (isFirstOrder || freeDelivery) {
       setDeliveryFee(0);
-      return;
-    }
-    if (!deliveryData) return;
-    if (close.includes(state)) {
-      setDeliveryFee(deliveryData.deliveryPriceClose);
-    } else if (farAway.includes(state)) {
-      setDeliveryFee(deliveryData.deliveryPriceFar);
     } else {
-      setDeliveryFee(deliveryData.deliveryPriceClose);
+      setDeliveryFee(fee);
     }
   }, [state, deliveryData, isFirstOrder, freeDelivery]);
 
@@ -414,5 +445,9 @@ export default function useCheckout() {
     setIsPaying,
     isPaying,
     payRef,
+    isDetectingLocation,
+    handleAutoLocation,
+    rawDeliveryFee,
+    freeDelivery,
   };
 }

@@ -1,11 +1,18 @@
 import { motion } from "framer-motion";
 import { Truck, MapPin, Clock, CreditCard } from "lucide-react";
+import { useGetDeliveryQuery } from "../../redux/Delivery/apiDelivery";
 
 /**
  * ShippingDelivery: Details on shipping rates and delivery times.
  * الشحن والتوصيل: تفاصيل عن أسعار الشحن ومواعيد التسليم.
  */
 export default function ShippingDelivery() {
+  const { data, isLoading } = useGetDeliveryQuery({});
+
+  const deliveryData = data?.deliveries?.find(
+    (d: { id: number }) => d.id === 1,
+  );
+
   const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
@@ -28,7 +35,9 @@ export default function ShippingDelivery() {
       icon: Truck,
       en: "Standard Shipping: Nationwide coverage across all governorates.",
       ar: "الشحن القياسي: تغطية شاملة لجميع محافظات الجمهورية.",
-      price: "60 EGP",
+      price: isLoading
+        ? "..."
+        : `${deliveryData?.deliveryPriceClose || 60} EGP`,
       type: "Most Governorates",
       color: "var(--color-pakistan)",
     },
@@ -36,7 +45,7 @@ export default function ShippingDelivery() {
       icon: MapPin,
       en: "Southern Governorates & South Sinai (Upper Egypt, Sharm El Sheikh).",
       ar: "محافظات الجنوب وسيناء الجنوبية (صعيد مصر، شرم الشيخ).",
-      price: "80 EGP",
+      price: isLoading ? "..." : `${deliveryData?.deliveryPriceFar || 80} EGP`,
       type: "Southern Areas",
       color: "var(--color-tiger)",
     },

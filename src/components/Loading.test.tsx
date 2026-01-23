@@ -20,10 +20,21 @@ describe("Loading Component", () => {
     const outerDiv = container.firstChild as HTMLElement;
 
     expect(outerDiv).toHaveClass(
+      "fixed",
+      "inset-0",
       "flex",
       "justify-center",
       "items-center",
-      "h-screen",
     );
+  });
+
+  it("does not render the brand name MODEZA", () => {
+    const { queryByText } = render(<Loading />);
+    expect(queryByText("MODEZA")).not.toBeInTheDocument();
+  });
+
+  it("renders the loading text", () => {
+    const { getByText } = render(<Loading />);
+    expect(getByText("Loading Excellence")).toBeInTheDocument();
   });
 });
