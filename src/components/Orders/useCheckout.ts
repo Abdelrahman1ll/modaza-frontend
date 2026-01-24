@@ -231,6 +231,7 @@ export default function useCheckout() {
   const freeDelivery: boolean = deliveryData?.freeDelivery;
   const PROFILE: boolean = data?.carts?.user.PROFILE;
   const BIRTHDAY: boolean = data?.carts?.user.BIRTHDAY;
+  const LIGHTMASTER: boolean = data?.carts?.user.LIGHTMASTER;
 
   /**
    * Calculates the final total amount after applying discounts and delivery fees.
@@ -292,6 +293,12 @@ export default function useCheckout() {
       if (response?.discountCode.code === "BIRTHDAY" && BIRTHDAY === false) {
         setDiscount(0);
         setErrorMsg("The BIRTHDAY code has already been used");
+        return;
+      }
+
+       if (response?.discountCode.code === "LIGHTMASTER" && LIGHTMASTER === false) {
+        setDiscount(0);
+        setErrorMsg("The LIGHTMASTER code has already been used");
         return;
       }
 

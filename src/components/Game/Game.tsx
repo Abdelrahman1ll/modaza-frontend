@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
+import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
 
 const Game = () => {
   const [cursorPosition, setCursorPosition] = useState(50);
@@ -8,6 +9,31 @@ const Game = () => {
   const [gameState, setGameState] = useState<
     "IDLE" | "PLAYING" | "WON" | "LOST" | "LEVEL_COMPLETE"
   >("IDLE");
+
+  const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
+  const [discountInfo, setDiscountInfo] = useState<{
+    code: string;
+    discount: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const fetchDiscount = async () => {
+      try {
+        const response = await validateDiscountCode({
+          code: "LIGHTMASTER",
+        }).unwrap();
+        if (response?.discountCode) {
+          setDiscountInfo({
+            code: response.discountCode.code,
+            discount: response.discountCode.discount,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch LIGHTMASTER discount:", error);
+      }
+    };
+    fetchDiscount();
+  }, [validateDiscountCode]);
 
   const requestRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -262,10 +288,10 @@ const Game = () => {
                       Your Reward
                     </p>
                     <p className="font-mono font-black text-2xl text-(--color-tiger)">
-                      LIGHTMASTER5
+                      {discountInfo?.code || "LIGHTMASTER"}
                     </p>
                     <p className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full mt-1 inline-block">
-                      5% Discount
+                      {discountInfo?.discount || 5}% Discount
                     </p>
                   </div>
                 </div>

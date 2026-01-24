@@ -16,7 +16,7 @@ import {
 import type { CartItemType } from "../../types/CartType";
 import useCheckout from "./useCheckout";
 import { BRAND_PHONE } from "../../BrandText";
-import PaymobIframe from "./PaymobIframe";
+import PaymobPayment from "./PaymobPayment";
 import { Link } from "react-router-dom";
 /**
  * Checkout: Multi-step process for shipping info, payment, and order completion.
@@ -206,22 +206,24 @@ export default function Checkout() {
                 </div>
 
                 <div className="flex flex-col relative">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between">
                     <label className={labelClasses + " mb-0"}>
-                      State / City
+                      <span className="hidden sm:inline">State / City</span>
+                      <span className="sm:hidden">State</span>
                     </label>
                     <button
                       type="button"
                       onClick={handleAutoLocation}
                       disabled={isDetectingLocation}
-                      className="text-[10px] font-black uppercase tracking-widest text-(--color-tiger) hover:text-(--color-pakistan) transition-colors flex items-center gap-1"
+                      className="text-[10px] font-black uppercase tracking-widest text-(--color-tiger) hover:text-(--color-pakistan) transition-colors flex items-center gap-1 whitespace-nowrap"
                     >
                       {isDetectingLocation ? (
                         <Loader2 size={10} className="animate-spin" />
                       ) : (
                         <MapPin size={10} />
                       )}
-                      Detect Location
+                      <span className="hidden sm:inline">Detect Location</span>
+                      <span className="sm:hidden">Detect</span>
                     </button>
                   </div>
                   <button
@@ -538,7 +540,7 @@ export default function Checkout() {
                         first.
                       </div>
                     ) : (
-                      <PaymobIframe
+                      <PaymobPayment
                         paymentData={{
                           amount: finalTotal,
                           first_name: firstName,

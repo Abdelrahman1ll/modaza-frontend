@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import PaymobIframe from "./PaymobIframe";
+import PaymobPayment from "./PaymobPayment";
 import { usePostPaymentMutation } from "../../redux/Payment/apiPayment";
 import "@testing-library/jest-dom";
 
@@ -9,7 +9,7 @@ vi.mock("../../redux/Payment/apiPayment", () => ({
   usePostPaymentMutation: vi.fn(),
 }));
 
-describe("PaymobIframe Component", () => {
+describe("PaymobPayment Component", () => {
   const mockPaymentData = {
     amount: 1000,
     first_name: "John",
@@ -40,7 +40,7 @@ describe("PaymobIframe Component", () => {
     });
 
     render(
-      <PaymobIframe
+      <PaymobPayment
         paymentData={mockPaymentData}
         onCardValidityChange={mockOnCardValidityChange}
         triggerPayRef={mockTriggerPayRef}
@@ -63,7 +63,7 @@ describe("PaymobIframe Component", () => {
     });
 
     render(
-      <PaymobIframe
+      <PaymobPayment
         paymentData={mockPaymentData}
         onCardValidityChange={mockOnCardValidityChange}
         triggerPayRef={mockTriggerPayRef}
@@ -88,7 +88,7 @@ describe("PaymobIframe Component", () => {
     });
 
     render(
-      <PaymobIframe
+      <PaymobPayment
         paymentData={mockPaymentData}
         onCardValidityChange={mockOnCardValidityChange}
         triggerPayRef={mockTriggerPayRef}
@@ -111,7 +111,7 @@ describe("PaymobIframe Component", () => {
     });
 
     render(
-      <PaymobIframe
+      <PaymobPayment
         paymentData={mockPaymentData}
         onCardValidityChange={mockOnCardValidityChange}
         triggerPayRef={mockTriggerPayRef}

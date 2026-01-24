@@ -185,6 +185,6 @@ describe("Game Component", () => {
 
     // Win check
     expect(screen.getByText(/Congratulations!/i)).toBeInTheDocument();
-    expect(screen.getByText(/LIGHTMASTER5/i)).toBeInTheDocument();
+    expect(screen.getByText(/LIGHTMASTER/i)).toBeInTheDocument();
   });
 });

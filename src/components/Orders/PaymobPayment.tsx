@@ -16,7 +16,7 @@ interface PaymentData {
   city: string;
 }
 
-export default function PaymobIframe({
+export default function PaymobPayment({
   paymentData,
   onCardValidityChange,
   triggerPayRef,
@@ -151,8 +151,8 @@ export default function PaymobIframe({
 
   return (
     <div className="w-full">
-      <div className="p-4 md:p-6 sm:p-8 rounded-3xl shadow-xl bg-white/40 backdrop-blur-xl border border-white/60 hover:shadow-2xl transition-all duration-300">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="p-2 md:p-4 sm:p-6 rounded-3xl shadow-xl bg-white/40 backdrop-blur-xl border border-white/60 hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-center gap-3 mb-6">
           <div className="p-2.5 rounded-2xl bg-(--color-pakistan)/5 text-(--color-pakistan)">
             <CreditCard size={24} />
           </div>
@@ -164,7 +164,7 @@ export default function PaymobIframe({
         <iframe
           ref={iframeRef}
           key={clientSecret + publicKey}
-          style={{ width: "100%", height: "290px", border: "none" }}
+          style={{ width: "100%", height: "315px", border: "none" }}
           srcDoc={`
 <!DOCTYPE html>
 <html>
