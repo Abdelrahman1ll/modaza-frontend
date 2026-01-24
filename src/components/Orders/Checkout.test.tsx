@@ -75,6 +75,7 @@ vi.mock("lucide-react", () => ({
   Info: () => <div data-testid="info-icon" />,
   ShieldCheck: () => <div data-testid="shield-icon" />,
   Tag: () => <div data-testid="tag-icon" />,
+  MapPin: () => <div data-testid="map-pin-icon" />,
 }));
 
 // Mock PaymobIframe

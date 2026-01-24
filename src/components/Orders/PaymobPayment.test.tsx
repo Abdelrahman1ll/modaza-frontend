@@ -49,7 +49,7 @@ describe("PaymobPayment Component", () => {
       />,
     );
 
-    expect(document.querySelector(".animate-spin")).toBeInTheDocument();
+    expect(document.querySelector(".animate-dot")).toBeInTheDocument();
   });
 
   it("renders iframe when payment initialization succeeds", async () => {
@@ -97,7 +97,9 @@ describe("PaymobPayment Component", () => {
       />,
     );
 
-    expect(await screen.findByText(/An error occurred/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Something went wrong/i),
+    ).toBeInTheDocument();
   });
 
   it("listens for window messages correctly", async () => {

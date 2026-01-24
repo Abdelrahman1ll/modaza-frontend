@@ -1,5 +1,13 @@
 import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  BufferGeometry,
+  PointsMaterial,
+  Points,
+  BufferAttribute,
+} from "three";
 
 export default function BackgroundEffect() {
   const mountRef = useRef<HTMLDivElement | null>(null);
@@ -8,18 +16,20 @@ export default function BackgroundEffect() {
     const mount = mountRef.current;
     if (!mount) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(
       100,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      1000,
     );
-    const renderer = new THREE.WebGLRenderer({ alpha: true });
+    const renderer = new WebGLRenderer({
+      alpha: true,
+    });
     renderer.setSize(window.innerWidth, window.innerHeight);
     mount.appendChild(renderer.domElement);
 
-    const geometry = new THREE.BufferGeometry();
+    const geometry = new BufferGeometry();
     const particlesCount = 5000;
     const positions = new Float32Array(particlesCount * 3);
 
@@ -27,16 +37,16 @@ export default function BackgroundEffect() {
       positions[i] = (Math.random() - 0.5) * 10;
     }
 
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("position", new BufferAttribute(positions, 3));
 
-    const material = new THREE.PointsMaterial({
+    const material = new PointsMaterial({
       color: 0x2d6136,
       size: 0.01,
       transparent: true,
       opacity: 0.4,
     });
 
-    const particles = new THREE.Points(geometry, material);
+    const particles = new Points(geometry, material);
     scene.add(particles);
 
     camera.position.z = 3;
@@ -72,8 +82,3 @@ export default function BackgroundEffect() {
 
   return <div ref={mountRef} className="fixed inset-0 -z-10"></div>;
 }
-
-
-
-
-

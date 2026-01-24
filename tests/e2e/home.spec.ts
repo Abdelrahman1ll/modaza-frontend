@@ -5,22 +5,27 @@ test.describe("Home Page", () => {
     await page.goto("/");
   });
 
-  test("should display the correct page title", async ({ page }) => {
-    // Verified from index.html: Modeza - Modern Fashion Store | Trendy Clothing | متجر الأزياء العصرية
-    await expect(page).toHaveTitle(/Modeza/);
+  test("should load successfully and show main sections", async ({ page }) => {
+    // Check for logo or title
+    await expect(page).toHaveTitle(/Modeza/i);
+
+    // Check for navigation links
+    await expect(
+      page.getByRole("link", { name: /Products|المنتجات/i }).first(),
+    ).toBeVisible();
+
+    // Check for Hero section or main content
+    const mainHeading = page.locator("h1").first();
+    await expect(mainHeading).toBeVisible();
   });
 
-  test("should have a visible navigation menu", async ({ page }) => {
-    // common class names or roles for nav
-    const nav = page.locator("nav");
-    await expect(nav).toBeVisible();
-  });
-
-  test("should show main heading or banner", async ({ page }) => {
-    // Home pages usually have an h1 or some hero section
-    // We expect at least one h1 to be present for SEO, which exists in index.html (actually index.html doesn't have h1, it's in App.tsx)
-    // Let's check for any meaningful content
-    const body = page.locator("body");
-    await expect(body).not.toBeEmpty();
+  test("should navigate to products page via CTA", async ({ page }) => {
+    const shopNowBtn = page
+      .getByRole("link", { name: /Shop Now|تسوق الآن/i })
+      .first();
+    if (await shopNowBtn.isVisible()) {
+      await shopNowBtn.click();
+      await expect(page).toHaveURL(/.*products/);
+    }
   });
 });

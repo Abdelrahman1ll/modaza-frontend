@@ -1,6 +1,14 @@
-import { configureStore } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  type Reducer,
+  type Middleware,
+} from "@reduxjs/toolkit";
 
-export function setupApiStore(api: any) {
+export function setupApiStore(api: {
+  reducerPath: string;
+  reducer: Reducer;
+  middleware: Middleware;
+}) {
   const store = configureStore({
     reducer: {
       [api.reducerPath]: api.reducer,

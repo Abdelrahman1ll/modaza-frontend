@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import OrderDetails from "./OrderDetails";
@@ -13,50 +12,15 @@ vi.mock("./useOrderDetails", () => ({
 }));
 
 // Mock Framer Motion
+// Mock Framer Motion
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    h2: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <h2 {...props}>{children}</h2>,
-    h3: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <h3 {...props}>{children}</h3>,
-    h4: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <h4 {...props}>{children}</h4>,
-    p: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <p {...props}>{children}</p>,
-    span: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <span {...props}>{children}</span>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    h2: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
+    h3: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
+    h4: ({ children, ...props }: any) => <h4 {...props}>{children}</h4>,
+    p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+    span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
   },
 }));
 

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import React, { memo } from "react";
 import type { ProductType } from "../../types/ProductType";
 import type { UserType } from "../../types/UserType";
+import { getCloudinaryUrl, getCloudinarySrcSet } from "../../utils/cloudinary";
 import useProduct from "./useProduct";
 
 // Variants for staggered children animation
@@ -98,7 +99,9 @@ const ProductCard = memo(
               {/* Primary Image */}
               <motion.img
                 loading="lazy"
-                src={product.images[0]}
+                src={getCloudinaryUrl(product.images[0], { width: 600 })}
+                srcSet={getCloudinarySrcSet(product.images[0])}
+                sizes="(max-width: 640px) 400px, 600px"
                 alt={product.name}
                 className="absolute inset-0 h-full w-full object-cover p-0"
                 animate={{
@@ -110,7 +113,13 @@ const ProductCard = memo(
 
               {/* Secondary Image - Seamless Crossfade */}
               <motion.img
-                src={product.images[1] || product.images[0]}
+                src={getCloudinaryUrl(product.images[1] || product.images[0], {
+                  width: 600,
+                })}
+                srcSet={getCloudinarySrcSet(
+                  product.images[1] || product.images[0],
+                )}
+                sizes="(max-width: 640px) 400px, 600px"
                 alt={`${product.name} alternate`}
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover"
@@ -124,7 +133,10 @@ const ProductCard = memo(
 
               {/* Floating "See Details" Glass Bar */}
               <div className="absolute inset-x-4 bottom-4 z-20 flex translate-y-8 items-center justify-center opacity-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/card:translate-y-0 group-hover/card:opacity-100">
-                <div className="w-full flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/40 py-3 text-sm font-bold text-gray-900 shadow-xl backdrop-blur-md">
+                <div
+                  className="w-full flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/40 py-3 text-sm font-bold text-gray-900 shadow-xl backdrop-blur-md"
+                  aria-label="View Product Details"
+                >
                   <span>Explore Details</span>
                   <PackageSearch size={16} />
                 </div>
@@ -219,7 +231,7 @@ const ProductCard = memo(
         </div>
       </motion.div>
     );
-  }
+  },
 );
 
 ProductCard.displayName = "ProductCard";

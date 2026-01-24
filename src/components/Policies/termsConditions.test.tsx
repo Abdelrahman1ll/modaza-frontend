@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import TermsConditions from "./termsConditions";
@@ -7,34 +6,12 @@ import "@testing-library/jest-dom";
 // Mock Framer Motion
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    span: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <span {...props}>{children}</span>,
-    h1: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <h1 {...props}>{children}</h1>,
-    section: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <section {...props}>{children}</section>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+    h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
+    section: ({ children, ...props }: any) => (
+      <section {...props}>{children}</section>
+    ),
   },
 }));
 

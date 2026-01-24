@@ -25,7 +25,9 @@ export default function useSignup(onClose: () => void) {
         await localStorage.setItem("email", email);
         setEmail("");
         setShowCodeInput(true);
-        console.log(response);
+        if (response && import.meta.env.MODE === "development") {
+          console.log(response);
+        }
       }
     } catch {
       toast.error("Error checking email");
@@ -35,7 +37,7 @@ export default function useSignup(onClose: () => void) {
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     const value = e.target.value;
 
@@ -49,7 +51,7 @@ export default function useSignup(onClose: () => void) {
         // Auto-focus next input
         if (value && index < 5) {
           const nextInput = document.getElementById(
-            `code-${index + 1}`
+            `code-${index + 1}`,
           ) as HTMLInputElement;
           nextInput?.focus();
         }
@@ -75,7 +77,7 @@ export default function useSignup(onClose: () => void) {
       // Focus the last filled input
       const nextIndex = Math.min(index + numbers.length, 5);
       const nextInput = document.getElementById(
-        `code-${nextIndex}`
+        `code-${nextIndex}`,
       ) as HTMLInputElement;
       if (nextIndex < 5 && numbers.length > 0) {
         // Focus next empty or the last one if full
@@ -94,14 +96,14 @@ export default function useSignup(onClose: () => void) {
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     if (e.key === "Backspace") {
       // If current field is empty and we hit backspace, move to prev
       if (!code[index] && index > 0) {
         e.preventDefault();
         const prevInput = document.getElementById(
-          `code-${index - 1}`
+          `code-${index - 1}`,
         ) as HTMLInputElement;
         prevInput?.focus();
         // Optional: delete prev value too on backspace
@@ -140,7 +142,7 @@ export default function useSignup(onClose: () => void) {
       const targetIndex = numbers.length === 6 ? 5 : lastIndex;
 
       const lastInput = document.getElementById(
-        `code-${targetIndex}`
+        `code-${targetIndex}`,
       ) as HTMLInputElement;
       lastInput?.focus();
     }
@@ -168,8 +170,9 @@ export default function useSignup(onClose: () => void) {
         setCode(["", "", "", "", "", ""]);
         localStorage.removeItem("email");
       }
-    } catch {
-      toast.error("Invalid code");
+    } catch (error: any) {
+      const errorMsg = error?.data?.message || error?.message || "Invalid code";
+      toast.error(errorMsg);
     }
   };
 

@@ -162,9 +162,9 @@ const Game = () => {
         {/* Top Instructions Row */}
         <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-black/5 pb-6">
           <div className="flex flex-col gap-1">
-            <h3 className="text-sm font-bold text-(--color-tiger) uppercase tracking-widest">
+            <h2 className="text-sm font-bold text-(--color-tiger) uppercase tracking-widest">
               How to Play
-            </h3>
+            </h2>
             <p className="text-xs text-(--color-pakistan)/70 max-w-sm leading-relaxed">
               1. Click <strong>START</strong> to begin.
               <br />

@@ -81,15 +81,15 @@ export default function Footer() {
               "Shipping in Egypt",
             ].map((item) => (
               <li key={item}>
-                <a
-                  href={`/${item
+                <Link
+                  to={`/${item
                     .toLowerCase()
                     .replace(/ & /g, "-")
                     .replace(/ /g, "-")}`}
                   className="text-(--color-earth) hover:text-(--color-cornsilk) hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   {item}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -110,12 +110,12 @@ export default function Footer() {
               { name: "Terms & Conditions", path: "/terms-conditions" },
             ].map((policy) => (
               <li key={policy.name}>
-                <a
-                  href={policy.path}
+                <Link
+                  to={policy.path}
                   className="text-(--color-earth) hover:text-(--color-cornsilk) hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   {policy.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -169,6 +169,7 @@ export default function Footer() {
                 id="newsletter-email"
                 type="email"
                 placeholder="email@example.com"
+                aria-label="Newsletter Email Address"
                 className="flex-1 p-3 text-sm rounded-l-xl bg-(--color-cornsilk)/5 text-(--color-cornsilk) border border-(--color-cornsilk)/10 focus:border-(--color-tiger)/50 focus:outline-none transition-all"
                 onChange={() => openSignup()}
                 value={""}

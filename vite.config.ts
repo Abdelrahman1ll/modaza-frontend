@@ -80,7 +80,7 @@ export default defineConfig(({ mode }) => {
       // وسيط (Proxy) لسيرفر المعاينة لجلب البيانات والصور
       proxy: {
         "/api": {
-          target: env.VITE_APP_API_URL_HTTPS,
+          target: env.VITE_APP_API_URL,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
           headers: {
@@ -93,10 +93,11 @@ export default defineConfig(({ mode }) => {
     // Build process optimizations
     // إعدادات تحسين نسخة الإنتاج النهائية
     build: {
-      target: "es2017", // Output modern JS - إنتاج كود جافا سكريبت حديث
+      target: "esnext", // Output modern JS - إنتاج كود جافا سكريبت حديث
       minify: "esbuild", // Minify JS/CSS - ضغط الكود
       cssCodeSplit: true, // Split CSS per page - تقسيم ملفات التصميم
-      chunkSizeWarningLimit: 1000, // Increase chunk size warning threshold - زيادة حد تحذير حجم الملفات
+      chunkSizeWarningLimit: 600, // Reduced limit for better awareness
+      reportCompressedSize: false, // Speed up build
       rollupOptions: {
         output: {
           // Manual chunking to optimize shared libraries and caching
@@ -107,20 +108,28 @@ export default defineConfig(({ mode }) => {
                 id.includes("react") ||
                 id.includes("react-dom") ||
                 id.includes("react-router")
-              )
-                return "react-vendor";
-              if (id.includes("@reduxjs/toolkit") || id.includes("react-redux"))
-                return "redux-vendor";
+              ) {
+                return "vendor-react";
+              }
+              if (id.includes("three") || id.includes("@react-three")) {
+                return "vendor-three";
+              }
+              if (id.includes("framer-motion")) {
+                return "vendor-motion";
+              }
+              if (id.includes("recharts")) {
+                return "vendor-charts";
+              }
+              if (id.includes("lucide-react") || id.includes("react-icons")) {
+                return "vendor-icons";
+              }
               if (
-                id.includes("framer-motion") ||
-                id.includes("lucide-react") ||
-                id.includes("react-icons")
-              )
-                return "ui-vendor";
-              if (id.includes("recharts")) return "chart-vendor";
-              if (id.includes("three") || id.includes("@react-three"))
-                return "three-vendor";
-              return "vendor";
+                id.includes("@reduxjs/toolkit") ||
+                id.includes("react-redux")
+              ) {
+                return "vendor-redux";
+              }
+              return "vendor-others";
             }
           },
         },

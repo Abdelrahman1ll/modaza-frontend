@@ -39,6 +39,22 @@ vi.mock("lucide-react", () => ({
   CreditCard: () => <svg data-testid="credit-card-icon" />,
 }));
 
+// Mock Redux hook
+vi.mock("../../redux/Delivery/apiDelivery", () => ({
+  useGetDeliveryQuery: vi.fn(() => ({
+    data: {
+      deliveries: [
+        {
+          id: 1,
+          deliveryPriceClose: 60,
+          deliveryPriceFar: 80,
+        },
+      ],
+    },
+    isLoading: false,
+  })),
+}));
+
 describe("ShippingDelivery Component", () => {
   it("renders the main heading correctly", () => {
     render(<ShippingDelivery />);

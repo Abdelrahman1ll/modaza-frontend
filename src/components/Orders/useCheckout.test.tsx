@@ -28,9 +28,20 @@ vi.mock("react-toastify", () => ({
   toast: { error: vi.fn(), success: vi.fn() },
 }));
 
-// Mock Audio play function
+// Mock Audio play function and Geolocation
 beforeAll(() => {
   window.HTMLMediaElement.prototype.play = vi.fn();
+  Object.defineProperty(global.navigator, "geolocation", {
+    value: {
+      getCurrentPosition: vi.fn(),
+      watchPosition: vi.fn(),
+      clearWatch: vi.fn(),
+    },
+    writable: true,
+  });
+  // Mock window.scroll
+  window.scroll = vi.fn();
+  window.scrollTo = vi.fn();
 });
 
 describe("useCheckout Hook", () => {

@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Cart from "./cart";
@@ -11,36 +10,15 @@ vi.mock("./useCart", () => ({
 }));
 
 // Mock Framer Motion to avoid animation issues in tests
+// Mock Framer Motion to avoid animation issues in tests
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <button {...props}>{children}</button>,
-    h3: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <h3 {...props}>{children}</h3>,
-    p: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <p {...props}>{children}</p>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    button: ({ children, ...props }: any) => (
+      <button {...props}>{children}</button>
+    ),
+    h3: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
+    p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>

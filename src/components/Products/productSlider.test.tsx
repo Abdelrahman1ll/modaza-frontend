@@ -23,21 +23,11 @@ vi.mock("../../redux/products/apiProducts", () => ({
 import { useGetProductsQuery } from "../../redux/products/apiProducts";
 
 // Mock Framer Motion
+// Mock Framer Motion
 vi.mock("framer-motion", () => {
   const motionComponent = (Tag: string) => {
-    return ({
-      children,
-      whileHover,
-      whileTap,
-      whileInView,
-      whileFocus,
-      initial,
-      animate,
-      exit,
-      transition,
-      variants,
-      ...props
-    }: any) => React.createElement(Tag, props, children);
+    return ({ children, ...props }: any) =>
+      React.createElement(Tag, props, children);
   };
 
   return {

@@ -101,22 +101,49 @@ function App() {
         <NetworkStatus />
 
         <Routes>
-          {/* E2E: Covered (home.spec.ts, auth.spec.ts, owner.spec.ts) */}
+          {/* 
+            Home Page: The main landing page of the application.
+            الصفحة الرئيسية: صفحة الهبوط الأساسية للتطبيق.
+            E2E: Covered (home.spec.ts, auth.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/" element={<HomePage />} />
-          {/* E2E: Covered (products.spec.ts, cart.spec.ts, checkout.spec.ts, owner.spec.ts, roles.spec.ts) */}
+
+          {/* 
+            Products Page: Displays a list of all available products with filters.
+            صفحة المنتجات: تعرض قائمة بجميع المنتجات المتاحة مع خيارات التصفية.
+            E2E: Covered (products.spec.ts, cart.spec.ts, checkout.spec.ts, owner.spec.ts, roles.spec.ts) 
+          */}
           <Route path="/products" element={<ProductsPage />} />
-          {/* E2E: Covered (details.spec.ts, cart.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Product Details Page: Shows detailed information about a specific product.
+            صفحة تفاصيل المنتج: تعرض معلومات مفصلة حول منتج معين.
+            E2E: Covered (details.spec.ts, cart.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/products-details/:id"
             element={<ProductDetailsPage />}
           />
-          {/* E2E: Covered (cart.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Shopping Cart: Displays items added by the user for purchase.
+            عربة التسوق: تعرض العناصر التي أضافها المستخدم للشراء.
+            E2E: Covered (cart.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/cart" element={<CartPage />} />
 
-          {/* E2E: Covered (wishlist.spec.ts, owner.spec.ts) */}
+          {/* 
+            Wishlist: Displays products saved by the user for later.
+            قائمة الأمنيات: تعرض المنتجات التي حفظها المستخدم للرجوع إليها لاحقاً.
+            E2E: Covered (wishlist.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/wishlist" element={<WishlistPage />} />
 
-          {/* E2E: Covered (profile.spec.ts, roles.spec.ts, owner.spec.ts) */}
+          {/* 
+            User Profile: Allows users to manage their personal information.
+            الملف الشخصي: يسمح للمستخدمين بإدارة معلوماتهم الشخصية.
+            E2E: Covered (profile.spec.ts, roles.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/profile"
             element={
@@ -126,7 +153,11 @@ function App() {
             }
           />
 
-          {/* E2E: Covered (profile.spec.ts, roles.spec.ts, owner.spec.ts) */}
+          {/* 
+            Orders History: Shows a list of all orders placed by the user.
+            سجل الطلبات: يعرض قائمة بجميع الطلبات التي قام بها المستخدم.
+            E2E: Covered (profile.spec.ts, roles.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/orders"
             element={
@@ -136,7 +167,11 @@ function App() {
             }
           />
 
-          {/* E2E: Covered (details.spec.ts, owner.spec.ts) */}
+          {/* 
+            Order Details: Shows detailed information about a specific order.
+            تفاصيل الطلب: يعرض معلومات مفصلة حول طلب معين.
+            E2E: Covered (details.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/orders/:id"
             element={
@@ -145,43 +180,105 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Sales and Payment Policy: Explains terms related to sales and transactions.
+            سياسة البيع والدفع: توضح الشروط المتعلقة بالمبيعات والمعاملات.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/sales-payment-policy"
             element={<SalesPaymentPolicyPage />}
           />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Return and Exchange Policy: outlines the process for returns and exchanges.
+            سياسة الإرجاع والاستبدال: توضح إجراءات الإرجاع والاستبدال.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/return-exchange-policy"
             element={<ReturnExchangePolicyPage />}
           />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Privacy Policy: Describes how user data is handled and protected.
+            سياسة الخصوصية: تصف كيفية التعامل مع بيانات المستخدم وحمايتها.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Terms and Conditions: Legal agreement for using the platform.
+            الشروط والأحكام: الاتفاقية القانونية لاستخدام المنصة.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/terms-conditions" element={<TermsConditionsPage />} />
-          {/* E2E: Covered (checkout.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Checkout Page: Final step for completing an order and payment.
+            صفحة الدفع: الخطوة النهائية لإتمام الطلب والدفع.
+            E2E: Covered (checkout.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/checkout" element={<CheckoutPage />} />
 
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+          {/* 
+            Contact Us: Page for users to get in touch with support.
+            اتصل بنا: صفحة للمستخدمين للتواصل مع الدعم.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/contact-us" element={<ContactUsPage />} />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            About Us: Information about the company and its mission.
+            من نحن: معلومات حول الشركة ومهمتها.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/about-us" element={<AboutUsPage />} />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            FAQs: Frequently Asked Questions and their answers.
+            الأسئلة الشائعة: الأسئلة الأكثر شيوعاً وإجاباتها.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/faqs" element={<FAQsPage />} />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Shipping and Delivery: Details about delivery times and methods.
+            الشحن والتوصيل: تفاصيل حول أوقات وطرق التوصيل.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/shipping-delivery" element={<ShippingDeliveryPage />} />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Secure Payment Info: Details about secure transaction methods.
+            معلومات الدفع الآمن: تفاصيل حول طرق المعاملات الآمنة.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route path="/secure-payment" element={<SecurePaymentPage />} />
-          {/* E2E: Covered (policies.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Worldwide/Local Shipping: Regional shipping information.
+            الشحن الدولي/المحلي: معلومات الشحن الإقليمية.
+            E2E: Covered (policies.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/shipping-in-egypt"
             element={<WorldwideShippingPage />}
           />
-          {/* E2E: Covered (notfound.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            404 Not Found: Fallback page for non-existent routes.
+            404 الصفحة غير موجودة: صفحة احتياطية للمسارات غير الموجودة.
+            E2E: Covered (notfound.spec.ts, owner.spec.ts) 
+          */}
           <Route path="*" element={<NotFound />} />
 
-          {/* Protected Routes */}
-          {/* E2E: Covered (roles.spec.ts, owner.spec.ts) */}
+          {/* 
+            Edit Product (Owner/Admin): Interface for modifying product details.
+            تعديل المنتج (للمالك/المسؤول): واجهة لتعديل تفاصيل المنتج.
+            E2E: Covered (roles.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/edit-product/:id"
             element={
@@ -190,7 +287,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* E2E: Covered (owner.spec.ts) */}
+
+          {/* 
+            Add Product (Owner): Interface for creating new products.
+            إضافة منتج (للمالك): واجهة لإنشاء منتجات جديدة.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/add-product"
             element={
@@ -199,7 +301,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* E2E: Covered (owner.spec.ts) */}
+
+          {/* 
+            Add Delivery (Owner): Management of delivery options and providers.
+            إضافة توصيل (للمالك): إدارة خيارات ومزودي التوصيل.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/add-delivery"
             element={
@@ -209,7 +316,11 @@ function App() {
             }
           />
 
-          {/* E2E: Covered (owner.spec.ts) */}
+          {/* 
+            Discount Codes (Owner): Management of promotional and discount coupons.
+            أكواد الخصم (للمالك): إدارة كوبونات الخصم والترويج.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/discount-codes"
             element={
@@ -219,7 +330,11 @@ function App() {
             }
           />
 
-          {/* E2E: Covered (owner.spec.ts) */}
+          {/* 
+            All User Messages (Owner): Viewing and managing contact form submissions.
+            جميع رسائل المستخدمين (للمالك): عرض وإدارة الرسائل الواردة من نماذج الاتصال.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/all-users-messages"
             element={
@@ -228,7 +343,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* E2E: Covered (owner.spec.ts) */}
+
+          {/* 
+            Email Order Dispatcher (Owner): Tool for managing and dispatching order emails.
+            قائم بإرسال طلبات البريد (للمالك): أداة لإدارة وإرسال رسائل الطلبات بالبريد.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/email-order-dispatcher"
             element={
@@ -237,7 +357,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* E2E: Covered (roles.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            Owner Dashboard: Analytical overview and administrative statistics.
+            لوحة تحكم المالك: نظرة عامة تحليلية وإحصائيات إدارية.
+            E2E: Covered (roles.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/dashboard"
             element={
@@ -246,7 +371,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* E2E: Covered (roles.spec.ts, owner.spec.ts) */}
+
+          {/* 
+            User Management (Owner): Viewing and managing all registered users.
+            إدارة المستخدمين (للمالك): عرض وإدارة جميع المستخدمين المسجلين.
+            E2E: Covered (roles.spec.ts, owner.spec.ts) 
+          */}
           <Route
             path="/all-users"
             element={
@@ -255,7 +385,12 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* E2E: Covered (owner.spec.ts) */}
+
+          {/* 
+            Edit User (Owner): Specialized interface for editing user permissions/details.
+            تعديل مستخدم (للمالك): واجهة متخصصة لتعديل صلاحيات أو تفاصيل المستخدم.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/edit-user-owner/:id"
             element={
@@ -265,7 +400,11 @@ function App() {
             }
           />
 
-          {/* E2E: Covered (owner.spec.ts) */}
+          {/* 
+            Category Management (Owner): Creating and organizing product categories.
+            إدارة الأصناف (للمالك): إنشاء وتنظيم فئات المنتجات.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/category"
             element={
@@ -275,7 +414,11 @@ function App() {
             }
           />
 
-          {/* E2E: Covered (owner.spec.ts) */}
+          {/* 
+            Color Management (Owner): Managing available product colors.
+            إدارة الألوان (للمالك): إدارة ألوان المنتجات المتاحة.
+            E2E: Covered (owner.spec.ts) 
+          */}
           <Route
             path="/color"
             element={

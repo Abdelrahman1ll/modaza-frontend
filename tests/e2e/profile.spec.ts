@@ -1,20 +1,61 @@
 import { test, expect } from "@playwright/test";
+import { login, logout } from "./utils/auth-helper";
 
-test.describe("Profile and Orders", () => {
-  test("should navigate to profile and orders (when logged in - conceptual)", async ({
-    page,
-  }) => {
-    // Note: This test might need a login step if the route is protected
-    // For now, we follow the structure of existing tests
+test.describe("Profile Page (Full Flow)", () => {
+  const USER_EMAIL = "user@gmail.com";
+
+  test("should update user profile information", async ({ page }) => {
+    // 1. Login
+    await login(page, USER_EMAIL);
+
+    // 2. Navigate to Profile
     await page.goto("/profile");
 
-    // We expect a redirect to home/login if not logged in,
-    // or the profile page if we could bypass or are logged in.
-    // If it's a ProtectedRoute, it might redirect.
+    // Use .first() to avoid strict mode violation
+    await expect(
+      page
+        .locator("h1, h2")
+        .filter({ hasText: /Profile|حسابي/i })
+        .first(),
+    ).toBeVisible();
 
-    // Let's assume we want to test that the pages exist and have basic structure
-    await page.goto("/orders");
-    // Since it's protected, we might just verify we don't get a 404
-    await expect(page).not.toHaveURL(/.*404.*/);
+    // Verify email is correctly loaded (using display value for inputs)
+    await expect(page.locator('input[name="email"]')).toHaveValue(USER_EMAIL);
+
+    // 3. Update Profile Data
+    await page.locator('input[name="firstName"]').fill("E2EFirst");
+    await page.locator('input[name="lastName"]').fill("E2ELast");
+    await page.locator('input[name="phone"]').fill("01012345678");
+
+    // Fill birthday
+    await page.locator('input[name="birthday"]').fill("1990-01-01");
+
+    // 4. Save Changes
+    const saveBtn = page
+      .locator('button[type="submit"]')
+      .filter({ hasText: /Save Changes|حفظ التغييرات/i })
+      .first();
+    await saveBtn.click();
+
+    // 5. Verify Success
+    await expect(
+      page.getByText(/Profile saved successfully|تم حفظ الملف بنجاح/i),
+    ).toBeVisible();
+
+    // 6. Verify data persists on reload
+    await page.reload();
+    await expect(page.locator('input[name="firstName"]')).toHaveValue(
+      "E2EFirst",
+    );
+    await expect(page.locator('input[name="lastName"]')).toHaveValue("E2ELast");
+    await expect(page.locator('input[name="phone"]')).toHaveValue(
+      "01012345678",
+    );
+    await expect(page.locator('input[name="birthday"]')).toHaveValue(
+      "1990-01-01",
+    );
+
+    // 7. Logout
+    await logout(page);
   });
 });

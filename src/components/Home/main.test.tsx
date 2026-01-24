@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Main from "./main";
@@ -10,59 +9,20 @@ vi.mock("../../utils/cloudinary", () => ({
   getCloudinaryUrl: vi.fn((id) => `mock-url-${id}`),
   getCloudinarySrcSet: vi.fn(() => "mock-srcset"),
 }));
-
 // Mock Framer Motion
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    img: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <img {...props}>{children}</img>,
-    h1: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <h1 {...props}>{children}</h1>,
-    p: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <p {...props}>{children}</p>,
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <button {...props}>{children}</button>,
-    section: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <section {...props}>{children}</section>,
-    svg: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <svg {...props}>{children}</svg>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    img: ({ children, ...props }: any) => <img {...props}>{children}</img>,
+    h1: ({ children, ...props }: any) => <h1 {...props}>{children}</h1>,
+    p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+    button: ({ children, ...props }: any) => (
+      <button {...props}>{children}</button>
+    ),
+    section: ({ children, ...props }: any) => (
+      <section {...props}>{children}</section>
+    ),
+    svg: ({ children, ...props }: any) => <svg {...props}>{children}</svg>,
   },
 }));
 

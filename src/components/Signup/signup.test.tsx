@@ -18,19 +18,8 @@ vi.mock("./googleSignup", () => ({
 // Mock framer-motion to render children directly without warnings
 vi.mock("framer-motion", () => {
   const motionComponent = (Tag: string) => {
-    return ({
-      children,
-      whileHover,
-      whileTap,
-      whileInView,
-      whileFocus,
-      initial,
-      animate,
-      exit,
-      transition,
-      variants,
-      ...props
-    }: any) => React.createElement(Tag, props, children);
+    return ({ children, ...props }: any) =>
+      React.createElement(Tag, props, children);
   };
 
   return {

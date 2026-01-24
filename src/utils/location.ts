@@ -71,9 +71,11 @@ export const detectUserGovernorate = async (): Promise<{
           if (data.locality) potentialNames.add(data.locality);
 
           if (data.localityInfo?.administrative) {
-            data.localityInfo.administrative.forEach((adm: any) => {
-              if (adm.name) potentialNames.add(adm.name);
-            });
+            data.localityInfo.administrative.forEach(
+              (adm: { name: string }) => {
+                if (adm.name) potentialNames.add(adm.name);
+              },
+            );
           }
 
           let matchedGov: string | null = null;

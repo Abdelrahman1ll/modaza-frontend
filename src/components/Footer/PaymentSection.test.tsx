@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import PaymentSection from "./PaymentSection";
@@ -7,15 +6,10 @@ import "@testing-library/jest-dom";
 /* ================= MOCKS ================= */
 
 // Mock framer-motion
+// Mock framer-motion
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -40,9 +34,7 @@ describe("PaymentSection Component", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(
-        /Choose the method that suits you best/i,
-      ),
+      screen.getByText(/Choose the method that suits you best/i),
     ).toBeInTheDocument();
   });
 

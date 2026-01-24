@@ -27,13 +27,7 @@ vi.mock("framer-motion", () => ({
     {},
     {
       get: () => {
-        return ({
-          children,
-          ...props
-        }: {
-          children: React.ReactNode;
-          [key: string]: unknown;
-        }) => {
+        return ({ children, ...props }: any) => {
           return <div {...props}>{children}</div>;
         };
       },

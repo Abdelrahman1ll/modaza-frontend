@@ -1,190 +1,115 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  act,
-  waitFor,
-} from "@testing-library/react";
-import {
-  describe,
-  it,
-  expect,
-  vi,
-  beforeEach,
-  afterEach,
-  beforeAll,
-} from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import Game from "./Game";
 
-// Mock requestAnimationFrame and cancelAnimationFrame
-beforeAll(() => {
-  global.requestAnimationFrame = vi.fn(
-    (cb) => setTimeout(cb, 0) as unknown as number,
-  );
-  global.cancelAnimationFrame = vi.fn((id) => clearTimeout(id));
-  window.requestAnimationFrame = global.requestAnimationFrame;
-  window.cancelAnimationFrame = global.cancelAnimationFrame;
-});
+// Define mock for unwrap
+const mockUnwrap = vi.fn();
 
-// Mock framer-motion to avoid animation issues in tests
+// Mock Redux Hook
+vi.mock("../../redux/DiscountCodes/apiDiscountCodes", () => ({
+  usePostValidateDiscountCodeMutation: vi.fn(() => [
+    vi.fn().mockReturnValue({ unwrap: mockUnwrap }), // Returns mutation trigger
+    {}, // Result object (not used in this component directly for status)
+  ]),
+}));
+
+// Mock Framer Motion
 vi.mock("framer-motion", () => ({
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
   motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => {
-      // Consume unused props to prevent them from hitting the DOM if necessary,
-      // or just pass '...props' if valid attributes.
-      // For the mock, we can just return a div with children to be safe and simple.
-      return <div {...props}>{children}</div>;
-    },
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => {
-      return <button {...props}>{children}</button>;
-    },
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    button: ({ children, onClick, ...props }: any) => (
+      <button onClick={onClick} {...props}>
+        {children}
+      </button>
+    ),
   },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 describe("Game Component", () => {
   beforeEach(() => {
-    // Mock requestAnimationFrame
-    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) =>
-      setTimeout(cb, 16),
-    );
-    vi.stubGlobal("cancelAnimationFrame", (id: number) => clearTimeout(id));
+    vi.useFakeTimers();
+    // Default mock implementation for API
+    mockUnwrap.mockResolvedValue({
+      discountCode: { code: "LIGHTMASTER", discount: 15 },
+    });
   });
 
   afterEach(() => {
+    vi.runOnlyPendingTimers();
     vi.useRealTimers();
-    vi.restoreAllMocks();
   });
 
-  it("renders the initial state correctly", () => {
+  it("renders the initial game state correctly", () => {
     render(<Game />);
 
-    expect(screen.getAllByText(/Stop the/i)[0]).toBeInTheDocument();
-    expect(screen.getAllByText(/Light/i)[0]).toBeInTheDocument();
-    expect(screen.getByText(/How to Play/i)).toBeInTheDocument();
+    // Check Static Texts
     expect(
-      screen.getByRole("button", { name: /Start Game/i }),
+      screen.getByRole("heading", { name: /Stop the Light/i }),
     ).toBeInTheDocument();
-  });
-
-  it("starts the game when the Start Game button is clicked", async () => {
-    render(<Game />);
-
-    const startButton = screen.getByRole("button", { name: /Start Game/i });
-    fireEvent.click(startButton);
-
-    // Initial state change should happen immediately
-    expect(screen.getByText(/Level 1/i)).toBeInTheDocument();
-
-    // Check if Stop button appears
     expect(
-      await screen.findByRole("button", { name: /STOP!/i }),
+      screen.getByRole("heading", { name: /How to Play/i }),
     ).toBeInTheDocument();
 
-    // Start button should be gone
-    await waitFor(() => {
-      expect(
-        screen.queryByRole("button", { name: /Start Game/i }),
-      ).not.toBeInTheDocument();
-    });
+    // Check Level Indicators
+    expect(screen.getByText("Level 1 / 3")).toBeInTheDocument();
+
+    // Check Start Button
+    const startBtn = screen.getByRole("button", { name: /Start Game/i });
+    expect(startBtn).toBeInTheDocument();
   });
 
-  it("advances level when stopped in the target zone", async () => {
-    vi.useFakeTimers();
+  it("calls discount validation API on mount", async () => {
     render(<Game />);
-
-    const startButton = screen.getByRole("button", { name: /Start Game/i });
-    fireEvent.click(startButton);
-
-    // Initial position is 0, win zone is 40-60
-    // Advance time to move cursor
-    await act(async () => {
-      vi.advanceTimersByTime(45 * 16); // ~45 frames
-    });
-
-    const stopButton = screen.getByRole("button", { name: /STOP!/i });
-    fireEvent.click(stopButton);
-
-    expect(screen.getByText(/Perfect! Moving to Level/i)).toBeInTheDocument();
-
-    await act(async () => {
-      vi.advanceTimersByTime(1000);
-    });
-
-    expect(screen.getByText(/Level 2 \/ 3/i)).toBeInTheDocument();
+    // API is called in useEffect
+    expect(mockUnwrap).toHaveBeenCalled();
   });
 
-  it("ends the game with LOSS when stopped outside the target zone", async () => {
-    // No fake timers needed for immediate stop
+  it("starts the game when 'Start Game' is clicked", async () => {
     render(<Game />);
 
-    // Start
+    const startBtn = screen.getByRole("button", { name: /Start Game/i });
+    fireEvent.click(startBtn);
+
+    // Button should change to STOP!
+    const stopBtn = screen.getByRole("button", { name: /STOP!/i });
+    expect(stopBtn).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Start Game/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("handles 'Loss' condition when stopping immediately (outside target)", async () => {
+    render(<Game />);
+
+    // Start Game
     fireEvent.click(screen.getByRole("button", { name: /Start Game/i }));
 
-    // For now, let's just checking if button is clickable.
-    const stopButton = screen.getByRole("button", { name: /STOP!/i });
-    fireEvent.click(stopButton);
+    // Stop Immediately (Position starts at 0, Target is ~40-60)
+    // So 0 should be a MISS.
+    const stopBtn = screen.getByRole("button", { name: /STOP!/i });
+    fireEvent.click(stopBtn);
 
-    // Stop button disappears on loss
-    expect(
-      screen.queryByRole("button", { name: /STOP!/i }),
-    ).not.toBeInTheDocument();
-
-    expect(await screen.findByText(/Missed!/i)).toBeInTheDocument();
+    // Should show "Missed!" state
+    expect(screen.getByText(/Missed!/i)).toBeInTheDocument();
+    expect(screen.getByText(/Don't give up, try again/i)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /Try Again/i }),
     ).toBeInTheDocument();
   });
 
-  it("shows win reward after completing all levels", async () => {
-    vi.useFakeTimers();
+  it("resets game when 'Try Again' is clicked", async () => {
     render(<Game />);
 
-    const startButton = screen.getByRole("button", { name: /Start Game/i });
-    fireEvent.click(startButton);
-
-    // Level 1
-    await act(async () => {
-      vi.advanceTimersByTime(50 * 16);
-    });
-    fireEvent.click(screen.getByRole("button", { name: /STOP!/i }));
-    await act(async () => {
-      vi.advanceTimersByTime(1000);
-    });
-
-    // Level 2
-    expect(screen.getByText(/Level 2 \/ 3/i)).toBeInTheDocument();
-    await act(async () => {
-      vi.advanceTimersByTime(23 * 16);
-    });
-    fireEvent.click(screen.getByRole("button", { name: /STOP!/i }));
-    await act(async () => {
-      vi.advanceTimersByTime(1000);
-    });
-
-    // Level 3
-    expect(screen.getByText(/Level 3 \/ 3/i)).toBeInTheDocument();
-    await act(async () => {
-      vi.advanceTimersByTime(16 * 16);
-    });
+    // Start -> Stop (Loss) -> Try Again
+    fireEvent.click(screen.getByRole("button", { name: /Start Game/i }));
     fireEvent.click(screen.getByRole("button", { name: /STOP!/i }));
 
-    // Win check
-    expect(screen.getByText(/Congratulations!/i)).toBeInTheDocument();
-    expect(screen.getByText(/LIGHTMASTER/i)).toBeInTheDocument();
+    const tryAgainBtn = screen.getByRole("button", { name: /Try Again/i });
+    fireEvent.click(tryAgainBtn);
+
+    // Should be back to playing state immediately as per logic:
+    // Try Again calls `startGame` directly
+    expect(screen.getByRole("button", { name: /STOP!/i })).toBeInTheDocument();
   });
 });

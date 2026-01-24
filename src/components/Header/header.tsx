@@ -252,13 +252,9 @@ export default function Header() {
                   to="/wishlist"
                   className="block p-2 rounded-full hover:bg-white/50 transition-colors text-(--color-dark) hover:text-(--color-primary) relative"
                   title="قائمة المفضلة"
+                  aria-label="View Wishlist"
                 >
-                  <Heart
-                    className="cursor-pointer"
-                    size={22}
-                    strokeWidth={2}
-                    aria-label="View Wishlist"
-                  />
+                  <Heart className="cursor-pointer" size={22} strokeWidth={2} />
                 </Link>
               </motion.div>
 
@@ -270,16 +266,12 @@ export default function Header() {
                   to="/cart"
                   className="block p-2 rounded-full hover:bg-white/50 transition-colors text-(--color-dark) hover:text-(--color-primary) relative"
                   title="عربة التسوق"
+                  aria-label={`View Shopping Cart, ${totalItems} items`}
                 >
-                  <ShoppingCart
-                    size={22}
-                    strokeWidth={2}
-                    aria-label="View Shopping Cart"
-                  />
+                  <ShoppingCart size={22} strokeWidth={2} />
                   <span
                     className="absolute top-0 right-0 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger) shadow-sm ring-2 ring-[--color-cornsilk]"
                     title="Number of items in cart"
-                    aria-label={`${totalItems} items in cart`}
                   >
                     {totalItems}
                   </span>

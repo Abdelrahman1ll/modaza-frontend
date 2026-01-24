@@ -1,73 +1,35 @@
 import { test, expect } from "@playwright/test";
+import { login, logout } from "./utils/auth-helper";
 
-test.describe("Authentication", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-  });
+test.describe("Authentication Page", () => {
+  const TIMESTAMP = Date.now();
+  const NEW_USER_EMAIL = `test${TIMESTAMP}@gmail.com`;
+  const OWNER_EMAIL = "owner@gmail.com";
 
-  test("should complete the full OTP authentication flow", async ({ page }) => {
-    // 1. Mock the API responses
-    await page.route("**/users/check-email", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ message: "Code sent to email" }),
-      });
-    });
+  test("should register a new user and logout", async ({ page }) => {
+    await login(page, NEW_USER_EMAIL);
 
-    await page.route("**/users", async (route) => {
-      // Check if it's a POST to /users with code
-      if (route.request().method() === "POST") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            id: 1,
-            email: "test@example.com",
-            role: "user",
-            token: "fake-jwt-token",
-          }),
-        });
-      } else {
-        await route.continue();
+    // Complete profile if modal appears
+    try {
+      if (
+        await page
+          .getByText(/Complete Your Profile/i)
+          .isVisible({ timeout: 2000 })
+      ) {
+        await page.getByPlaceholder("First Name").fill("Test");
+        await page.getByPlaceholder("Last Name").fill("User");
+        await page.getByPlaceholder("Phone Number").fill("01012345678");
+        await page.getByPlaceholder("YYYY-MM-DD").fill("1995-05-05");
+        await page.getByRole("button", { name: /Complete Profile/i }).click();
       }
-    });
+    } catch (e) {}
 
-    // 2. Open Signup Modal
-    const loginButton = page.getByRole("button", { name: "Login" }).first();
-    await loginButton.click();
-
-    // 3. Enter Email
-    const emailInput = page.getByPlaceholder("name@example.com");
-    await emailInput.fill("test@example.com");
-    await page.getByRole("button", { name: /Send Verification Code/i }).click();
-
-    // 4. Verify Code Input is visible
-    await expect(page.getByText(/Check Your Email/i)).toBeVisible();
-
-    // 5. Enter 6-digit code
-    // The code inputs have IDs like code-0, code-1...
-    const digits = ["1", "2", "3", "4", "5", "6"];
-    for (let i = 0; i < digits.length; i++) {
-      await page.locator(`#code-${i}`).fill(digits[i]);
-    }
-
-    // 6. Submit Verification
-    await page.getByRole("button", { name: /Verify & Sign Up/i }).click();
-
-    // 7. Verify login success (User menu should appear)
-    const userMenuButton = page.locator('div[title="حسابي"]').first();
-    await expect(userMenuButton).toBeVisible();
+    await expect(page.locator('div[title="حسابي"]').first()).toBeVisible();
+    await logout(page);
   });
 
-  test("should open signup modal and show initial state", async ({ page }) => {
-    const loginButton = page.getByRole("button", { name: "Login" }).first();
-    await loginButton.click();
-
-    const modalHeading = page.getByRole("heading", { name: /Create Account/i });
-    await expect(modalHeading).toBeVisible();
-
-    const emailInput = page.getByPlaceholder("name@example.com");
-    await expect(emailInput).toBeVisible();
+  test("should login as an existing owner", async ({ page }) => {
+    await login(page, OWNER_EMAIL);
+    await expect(page.locator('div[title="حسابي"]').first()).toBeVisible();
   });
 });

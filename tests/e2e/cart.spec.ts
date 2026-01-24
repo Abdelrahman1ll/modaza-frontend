@@ -1,173 +1,144 @@
-import { test, expect, type Page } from "@playwright/test";
-import CryptoJS from "crypto-js";
+import { test, expect } from "@playwright/test";
+import { login, logout } from "./utils/auth-helper";
 
-const SECRET_KEY =
-  process.env.VITE_SECRET_KEY =
-  "fallback_secret_key_dev_only";
+test.describe("Cart Page (Sequential Multi-Role Flow)", () => {
+  const OWNER_EMAIL = "owner@gmail.com";
+  const USER_EMAIL = "user@gmail.com";
+  const ADMIN_EMAIL = "admin@gmail.com";
+  const TIMESTAMP = Date.now();
+  const productName = `CartFlow-${TIMESTAMP}`;
 
-async function mockLogin(page: Page) {
-  const authData = {
-    user: {
-      id: 1,
-      firstName: "Test",
-      lastName: "User",
-      email: "test@example.com",
-      phone: "1234567890",
-      birthday: "2000-01-01",
-      role: "user",
-      createdAt: new Date().toISOString(),
-    },
-    accessToken: "mock_access_token_hour",
-    refreshToken: "mock_refresh_token_3_months",
-  };
+  test("should follow the Owner -> Admin -> User flow for cart operations", async ({
+    page,
+  }) => {
+    // -------------------------------------------------------------------------
+    // Phase 1: Owner - Product Creation
+    // -------------------------------------------------------------------------
+    await login(page, OWNER_EMAIL);
+    await page.goto("/add-product");
 
-  const encrypted = CryptoJS.AES.encrypt(
-    JSON.stringify(authData),
-    SECRET_KEY,
-  ).toString();
+    await page.locator('input[name="name"]').fill(productName);
+    await page.locator('input[name="price"]').fill("400");
+    await page.locator('input[name="promotionalPrice"]').fill("500");
 
-  await page.context().addCookies([
-    {
-      name: "user",
-      value: encrypted,
-      domain: "localhost",
-      path: "/",
-    },
-  ]);
-}
+    // Select Category
+    await page.locator("button:has-text('Select Category')").click();
+    const firstCat = page.locator("div.max-h-60 button").first();
+    await firstCat.waitFor({ state: "visible" });
+    await firstCat.click();
 
-test.describe("Shopping Cart", () => {
-  test.beforeEach(async ({ page }) => {
-    // 1. Mock Login
-    await mockLogin(page);
+    // Select Color
+    await page.locator("button:has-text('Select Color')").click();
+    const firstColor = page.locator("div.max-h-60 button").first();
+    await firstColor.waitFor({ state: "visible" });
+    await firstColor.click();
 
-    // 2. Mock API Responses
-    await page.route("**/products", async (route) => {
-      if (route.request().method() === "GET") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            products: [
-              {
-                id: 1,
-                name: "Mock Product",
-                price: 100,
-                promotionalPrice: 120,
-                discountPercentage: 10,
-                images: [
-                  "https://via.placeholder.com/400x500",
-                  "https://via.placeholder.com/400x500/ff0000",
-                ],
-                stock: 10,
-                total_stock: 10,
-                category: { name: "Test Category" },
-                sizes: [
-                  { id: 101, size: "M", stock: 5, length: 70, width: 50 },
-                  { id: 102, size: "L", stock: 5, length: 72, width: 52 },
-                ],
-              },
-            ],
-          }),
-        });
-      } else {
-        await route.continue();
-      }
+    await page
+      .locator('textarea[name="description"]')
+      .fill("E2E Sequential Cart Test Product");
+
+    // Inventory
+    await page.locator('input[name="stock"]').fill("100");
+    await page.locator('input[name="wholesalePrice"]').fill("200");
+    await page.locator('input[name="packagingCost"]').fill("10");
+    await page.locator('input[name="marketingCosts"]').fill("20");
+
+    // Size Specification
+    await page.locator('input[placeholder="size"]').first().fill("L");
+    await page.locator('input[placeholder="length"]').first().fill("80");
+    await page.locator('input[placeholder="width"]').first().fill("60");
+    await page.locator('input[placeholder="stock"]').first().fill("50");
+
+    // Image Upload
+    await page.locator('input[type="file"]').setInputFiles({
+      name: "test-product.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+        "base64",
+      ),
     });
 
-    await page.route("**/products/1", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          product: {
-            id: 1,
-            name: "Mock Product",
-            price: 100,
-            promotionalPrice: 120,
-            discountPercentage: 10,
-            description: "A great mock product for testing.",
-            images: [
-              "https://via.placeholder.com/400x500",
-              "https://via.placeholder.com/400x500/ff0000",
-            ],
-            stock: 10,
-            total_stock: 10,
-            category: { name: "Test Category" },
-            sizes: [
-              { id: 101, size: "M", stock: 5, length: 70, width: 50 },
-              { id: 102, size: "L", stock: 5, length: 72, width: 52 },
-            ],
-          },
-        }),
-      });
+    // Submit
+    await page.locator('button[type="submit"]').click();
+    await expect(page.getByText(/Product added successfully/i)).toBeVisible({
+      timeout: 15000,
     });
 
-    await page.route("**/carts", async (route) => {
-      const method = route.request().method();
-      if (method === "POST") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ message: "Added to cart" }),
-        });
-      } else if (method === "GET") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            carts: {
-              items: [
-                {
-                  id: "cart-item-1",
-                  product: {
-                    id: 1,
-                    name: "Mock Product",
-                    price: 100,
-                    images: ["https://via.placeholder.com/400x500"],
-                  },
-                  quantity: 1,
-                  sizes: "M",
-                },
-              ],
-            },
-          }),
-        });
-      }
-    });
-  });
+    await logout(page);
 
-  test("should allow adding a product to the cart", async ({ page }) => {
-    // 1. Go to products page
+    // -------------------------------------------------------------------------
+    // Phase 2: Admin - Verification
+    // -------------------------------------------------------------------------
+    await login(page, ADMIN_EMAIL);
     await page.goto("/products");
 
-    // 2. Click on the first product card to see details
-    // We need to hover first because "Explore Details" is only visible on hover
-    const firstProduct = page.locator(".group\\/card").first();
-    await firstProduct.hover();
-    const exploreDetails = page.getByText("Explore Details").first();
-    await exploreDetails.click();
+    const searchInput = page.getByPlaceholder(/Search|بحث/i);
+    await searchInput.waitFor({ state: "visible" });
+    await searchInput.fill(productName);
+    await page.waitForTimeout(1000); // Debounce wait
 
-    // 3. Verify we are on the product details page
-    await expect(page).toHaveURL(/\/products-details\/1/);
+    // Corrected locator: name is in h3 inside the card footer
+    const adminCard = page
+      .locator(".group\\/card")
+      .filter({ hasText: productName })
+      .first();
+    await expect(adminCard).toBeVisible({ timeout: 15000 });
 
-    // 4. Select a size
-    const sizeM = page.getByRole("button", { name: /^M$/ }).first();
-    await sizeM.click();
+    await logout(page);
 
-    // 5. Add to cart
-    const addToCartButton = page.getByRole("button", { name: /Add to Cart/i });
-    await addToCartButton.click();
+    // -------------------------------------------------------------------------
+    // Phase 3: User - Add to Cart
+    // -------------------------------------------------------------------------
+    await login(page, USER_EMAIL);
+    await page.goto("/products");
 
-    // 6. Verify cart badge in header updates
-    // The selector might vary, let's look for a span inside the cart link
-    const cartBadge = page.locator("a[href='/cart'] span").first();
-    // Wait for the badge to show something other than "0" or being hidden
-    await expect(cartBadge).toBeVisible();
+    const userSearch = page.getByPlaceholder(/Search|بحث/i);
+    await userSearch.waitFor({ state: "visible" });
+    await userSearch.fill(productName);
+    await page.waitForTimeout(1000);
 
-    // 7. Go to cart page and verify product is there
+    const userCard = page
+      .locator(".group\\/card")
+      .filter({ hasText: productName })
+      .first();
+    await expect(userCard).toBeVisible({ timeout: 15000 });
+
+    // Click on the detail link (it's the top part of the card)
+    await userCard.locator('a[href*="products-details"]').click();
+
+    // On Details Page
+    await expect(page).toHaveURL(/.*products-details/);
+
+    // Select Size
+    await page.getByRole("button", { name: "L", exact: true }).click();
+
+    // Add to Cart
+    await page
+      .getByRole("button", { name: /Add to Cart/i })
+      .first()
+      .click();
+
+    // Navigate to Cart
     await page.goto("/cart");
-    // Check for the product name in the cart list
-    await expect(page.getByText("Mock Product")).toBeVisible();
+
+    // Verify product presence
+    await expect(page.getByText(productName).first()).toBeVisible({
+      timeout: 20000,
+    });
+
+    await logout(page);
+  });
+
+  test("should show cart page empty state", async ({ page }) => {
+    await login(page, USER_EMAIL);
+    await page.goto("/cart");
+    await expect(
+      page
+        .locator("h1, h2, h3")
+        .filter({ hasText: /Cart|السلة/i })
+        .first(),
+    ).toBeVisible();
+    await logout(page);
   });
 });

@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --color-dark: #606C38;
+  --color-dark: #606c38;
   --color-pakistan: #283618;
-  --color-cornsilk: #FEFAE0;
-  --color-earth: #DDA15E;
-  --color-tiger: #BC6C25;
+  --color-cornsilk: #fefae0;
+  --color-earth: #b07436; /* Darkened for better contrast on cornsilk */
+  --color-tiger: #a65d1f; /* Darkened for 4.5:1 contrast ratio */
 }
 
 @font-face {
@@ -73,7 +73,8 @@ body::-webkit-scrollbar {
 }
 
 @keyframes orb-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) scale(1.05);
   }
   50% {
@@ -82,18 +83,24 @@ body::-webkit-scrollbar {
 }
 
 @keyframes orb-glow {
-  0%, 100% {
-    box-shadow: 0 0 40px rgba(188, 108, 37, 0.4), 0 0 80px rgba(188, 108, 37, 0.2);
+  0%,
+  100% {
+    box-shadow:
+      0 0 40px rgba(188, 108, 37, 0.4),
+      0 0 80px rgba(188, 108, 37, 0.2);
     filter: brightness(1);
   }
   50% {
-    box-shadow: 0 0 60px rgba(188, 108, 37, 0.6), 0 0 120px rgba(188, 108, 37, 0.3);
+    box-shadow:
+      0 0 60px rgba(188, 108, 37, 0.6),
+      0 0 120px rgba(188, 108, 37, 0.3);
     filter: brightness(1.2);
   }
 }
 
 @keyframes orb-morph {
-  0%, 100% {
+  0%,
+  100% {
     border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   }
   50% {

@@ -140,6 +140,10 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Shipping Details
                 </h2>
+                {/* 
+                   Shipping Details Section: Collects user address and contact info.
+                   قسم بيانات الشحن: يجمع عنوان المستخدم ومعلومات الاتصال.
+                */}
               </div>
 
               <div className="grid grid-cols-2 gap-2 md:gap-6">
@@ -403,6 +407,10 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Payment Method
                 </h2>
+                {/* 
+                   Payment Method Section: Allows choosing between Card, Wallet, or Cash.
+                   قسم طريقة الدفع: يسمح بالاختيار بين البطاقة، المحفظة الإلكترونية، أو الدفع نقداً.
+                */}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
@@ -577,6 +585,10 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Order Summary
                 </h2>
+                {/* 
+                   Order Summary Section: Displays cart items, delivery fees, and final total.
+                   قسم ملخص الطلب: يعرض عناصر السلة، مصاريف الشحن، وإجمالي المبلغ.
+                */}
               </div>
 
               {isLoading ? (

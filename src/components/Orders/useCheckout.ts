@@ -151,27 +151,6 @@ export default function useCheckout() {
   };
 
   /**
-   * Loads saved address data from localStorage on component mount.
-   * استعادة بيانات العنوان المحفوظة من التخزين المحلي عند تحميل المكون.
-   */
-  useEffect(() => {
-    const saved = localStorage.getItem("checkoutAddress");
-    if (saved) {
-      const data = JSON.parse(saved);
-      setFirstName(data.firstName || "");
-      setLastName(data.lastName || "");
-      setState(data.state || "");
-      setAddressDetails(data.addressDetails || "");
-      setPhone1(data.phone1 || "");
-      setPhone2(data.phone2 || "");
-      setSaveAddress(true);
-    } else {
-      // If no saved address, try to detect location
-      handleAutoLocation();
-    }
-  }, []);
-
-  /**
    * Automatically detects the user's governorate and updates the state.
    * يقوم تلقائياً بالكشف عن محافظة المستخدم وتحديث الحالة.
    */
@@ -190,6 +169,27 @@ export default function useCheckout() {
       setIsDetectingLocation(false);
     }
   }, [state, addressDetails]);
+
+  /**
+   * Loads saved address data from localStorage on component mount.
+   * استعادة بيانات العنوان المحفوظة من التخزين المحلي عند تحميل المكون.
+   */
+  useEffect(() => {
+    const saved = localStorage.getItem("checkoutAddress");
+    if (saved) {
+      const data = JSON.parse(saved);
+      setFirstName(data.firstName || "");
+      setLastName(data.lastName || "");
+      setState(data.state || "");
+      setAddressDetails(data.addressDetails || "");
+      setPhone1(data.phone1 || "");
+      setPhone2(data.phone2 || "");
+      setSaveAddress(true);
+    } else {
+      // If no saved address, try to detect location
+      handleAutoLocation();
+    }
+  }, [handleAutoLocation]);
 
   /**
    * Automatically saves or removes address data in localStorage based on 'saveAddress' state.
@@ -296,7 +296,10 @@ export default function useCheckout() {
         return;
       }
 
-       if (response?.discountCode.code === "LIGHTMASTER" && LIGHTMASTER === false) {
+      if (
+        response?.discountCode.code === "LIGHTMASTER" &&
+        LIGHTMASTER === false
+      ) {
         setDiscount(0);
         setErrorMsg("The LIGHTMASTER code has already been used");
         return;
