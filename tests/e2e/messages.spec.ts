@@ -1,27 +1,55 @@
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 
-test.describe("User Messages Management", () => {
+test.describe("User Messages Management (e2e)", () => {
   const OWNER_EMAIL = "owner@gmail.com";
+  const TEST_SUBJECT = `E2E Broadcast - ${Date.now()}`;
+  const TEST_MESSAGE = `This is an automated broadcast message sent during E2E testing at ${new Date().toISOString()}.`;
 
   test.beforeEach(async ({ page }) => {
+    test.setTimeout(60000);
     await login(page, OWNER_EMAIL);
     await page.goto("/all-users-messages");
+    await page.waitForLoadState("networkidle");
   });
 
   test.afterEach(async ({ page }) => {
     await logout(page);
   });
 
-  test("should list user messages", async ({ page }) => {
-    // Use .first() to avoid strict mode violation if multiple h1/h2 exist
+  test("should send a broadcast message to all users", async ({ page }) => {
+    // 1. Check title
     await expect(
       page
         .locator("h1, h2")
-        .filter({ hasText: /Messages|الرسائل/i })
+        .filter({ hasText: /Broadcast Message/i })
         .first(),
     ).toBeVisible();
-    const messages = page.locator(".message-card, .message-row");
-    // Some apps use cards, let's look for images if not sure
+
+    const sendButton = page.getByRole("button", {
+      name: /Send to All Customers/i,
+    });
+
+    // 2. Validation check (button should be disabled if fields are empty)
+    await expect(sendButton).toBeDisabled();
+
+    // 3. Fill subject and message
+    await page.getByPlaceholder(/Ex: Big Summer Sale/i).fill(TEST_SUBJECT);
+    await page.getByPlaceholder(/Type your message here/i).fill(TEST_MESSAGE);
+
+    // 4. Send message
+    await expect(sendButton).toBeEnabled();
+    await sendButton.click();
+
+    // 5. Verify success
+    await expect(
+      page.getByText(/Message sent successfully to all customers/i),
+    ).toBeVisible({ timeout: 15000 });
+
+    // 6. Verify fields are cleared
+    await expect(page.getByPlaceholder(/Ex: Big Summer Sale/i)).toHaveValue("");
+    await expect(page.getByPlaceholder(/Type your message here/i)).toHaveValue(
+      "",
+    );
   });
 });

@@ -186,6 +186,7 @@ export default function EmailOrderDispatcher() {
                     }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleEdit(order)}
+                    aria-label={`Edit ${order.name}`}
                     className="p-3 rounded-xl bg-white/40 border border-white/60 text-(--color-pakistan) hover:text-(--color-tiger) transition-colors"
                   >
                     <Edit size={18} />
@@ -197,6 +198,7 @@ export default function EmailOrderDispatcher() {
                     }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleDelete(order?.id)}
+                    aria-label={`Delete ${order.name}`}
                     className="p-3 rounded-xl bg-white/40 border border-white/60 text-red-500/60 hover:text-red-600 transition-colors"
                   >
                     <Trash2 size={18} />

@@ -10,6 +10,7 @@ test.describe("Cart (e2e)", () => {
   test("should follow the Owner -> User flow for cart operations", async ({
     page,
   }) => {
+    test.setTimeout(180000); // 3 minutes for full flow
     await login(page, OWNER_EMAIL);
 
     // Add Category

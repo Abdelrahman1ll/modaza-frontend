@@ -28,30 +28,31 @@ export default function useEmailOrderDispatcher() {
     email: "",
   });
 
-
   const handleSendEmail = async () => {
-    setErrors({
-      name: "",
-      email: "",
-    });
-
+    let hasError = false;
+    const newErrors = { name: "", email: "" };
 
     // ===== VALIDATE NAME =====
     if (!customerName || customerName.trim() === "") {
-      setErrors((prev) => ({ ...prev, name: "Name is required" }));
-      return;
+      newErrors.name = "Name is required";
+      hasError = true;
     }
 
     // ===== VALIDATE EMAIL =====
     if (!customerEmail || customerEmail.trim() === "") {
-      setErrors((prev) => ({ ...prev, email: "Email is required" }));
+      newErrors.email = "Email is required";
+      hasError = true;
+    } else if (!validateEmail(customerEmail)) {
+      newErrors.email = "Email is not valid";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
       return;
     }
 
-    if (!validateEmail(customerEmail)) {
-      setErrors((prev) => ({ ...prev, email: "Email is not valid" }));
-      return;
-    }
+    setErrors({ name: "", email: "" });
 
     try {
       await postEmailOrderDispatcher({
@@ -60,11 +61,11 @@ export default function useEmailOrderDispatcher() {
       }).unwrap();
       toast.success("Email sent successfully");
       refetch();
+      setCustomerName("");
+      setCustomerEmail("");
     } catch {
       toast.error("Error checking email");
     }
-    setCustomerName("");
-    setCustomerEmail("");
   };
 
   const handleDelete = async (id: number) => {
@@ -88,26 +89,47 @@ export default function useEmailOrderDispatcher() {
   };
 
   const handleSaveEdit = async () => {
-    if (editingId) {
+    if (!editingId) return;
+
+    let hasError = false;
+    const newErrors = { name: "", email: "" };
+
+    if (!customerName || customerName.trim() === "") {
+      newErrors.name = "Name is required";
+      hasError = true;
+    }
+
+    if (!customerEmail || customerEmail.trim() === "") {
+      newErrors.email = "Email is required";
+      hasError = true;
+    } else if (!validateEmail(customerEmail)) {
+      newErrors.email = "Email is not valid";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({ name: "", email: "" });
+
+    try {
       await patchEmailOrderDispatcher({
         id: editingId,
         data: {
           name: customerName,
           email: customerEmail,
         },
-      })
-        .unwrap()
-        .then(() => {
-          toast.success("Order updated successfully");
-          refetch();
-        })
-        .catch(() => {
-          toast.error("Error updating order");
-        });
+      }).unwrap();
+      toast.success("Order updated successfully");
+      refetch();
+      setEditingId(null);
+      setCustomerName("");
+      setCustomerEmail("");
+    } catch {
+      toast.error("Error updating order");
     }
-    setEditingId(null);
-    setCustomerName("");
-    setCustomerEmail("");
   };
 
   return {

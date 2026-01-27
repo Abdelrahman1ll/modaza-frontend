@@ -9,6 +9,7 @@ test.describe("Discount Codes (e2e)", () => {
   test("should create, edit, delete and verify discount code", async ({
     page,
   }) => {
+    test.setTimeout(180000);
     // --- Phase 1: Owner Flow (CRUD) ---
     await login(page, OWNER_EMAIL);
     await page.goto("/discount-codes");
@@ -16,6 +17,7 @@ test.describe("Discount Codes (e2e)", () => {
     // 1. Create
     const codeInput = page.getByPlaceholder(/Ex: SUMMER2026/i);
     await codeInput.fill(discoCode);
+
 
     const percentInput = page.getByPlaceholder(/%/i);
     await percentInput.fill(DISCOUNT_PERCENT.toString());

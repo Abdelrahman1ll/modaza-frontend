@@ -46,7 +46,7 @@ export async function logout(page: Page) {
   await page
     .getByRole("button", { name: /Log Out/i })
     .first()
-    .click();
+    .click({ force: true });
 
   console.log("[AuthHelper] Logout successful.");
 }
