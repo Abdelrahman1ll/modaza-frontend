@@ -71,6 +71,7 @@ export default function Checkout() {
     handleAutoLocation,
     rawDeliveryFee,
     freeDelivery,
+    isOrderCompleted,
   } = useCheckout();
 
   /**
@@ -78,10 +79,10 @@ export default function Checkout() {
    * يقوم تلقائياً بتوجيه المستخدم لصفحة السلة إذا أصبحت السلة فارغة.
    */
   useEffect(() => {
-    if (!isLoading && data?.carts?.items.length === 0) {
+    if (!isLoading && !isOrderCompleted && data?.carts?.items.length === 0) {
       navigate("/cart");
     }
-  }, [data, isLoading, navigate]);
+  }, [data, isLoading, navigate, isOrderCompleted]);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },

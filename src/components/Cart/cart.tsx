@@ -179,6 +179,7 @@ export default function Cart() {
                     <motion.button
                       whileHover={{ scale: 1.1, rotate: 90 }}
                       whileTap={{ scale: 0.9 }}
+                      aria-label="Remove item"
                       onClick={() => removeItem(item?.id)}
                       className="p-2 rounded-full transition cursor-pointer text-white bg-(--color-tiger) shadow-lg"
                     >
@@ -240,6 +241,7 @@ export default function Cart() {
                     <div className="flex items-center p-1 gap-3 bg-white border-2 border-gray-100 rounded-full shadow-sm max-[520px]:w-full max-[520px]:justify-between">
                       <motion.button
                         whileTap={{ scale: 0.8 }}
+                        disabled={item?.quantity <= 1}
                         onClick={() =>
                           decreaseQuantity({
                             id: item?.id,
@@ -255,6 +257,7 @@ export default function Cart() {
                       </span>
                       <motion.button
                         whileTap={{ scale: 0.8 }}
+                        disabled={item?.quantity >= item?.product?.stock}
                         onClick={() =>
                           increaseQuantity({
                             id: item?.id,

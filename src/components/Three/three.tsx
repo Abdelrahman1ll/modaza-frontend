@@ -23,9 +23,15 @@ export default function BackgroundEffect() {
       0.1,
       1000,
     );
-    const renderer = new WebGLRenderer({
-      alpha: true,
-    });
+    let renderer: WebGLRenderer;
+    try {
+      renderer = new WebGLRenderer({
+        alpha: true,
+      });
+    } catch (e) {
+      console.warn("WebGL not supported or disabled:", e);
+      return;
+    }
     renderer.setSize(window.innerWidth, window.innerHeight);
     mount.appendChild(renderer.domElement);
 

@@ -128,6 +128,7 @@ export default function Category() {
             <div className="relative flex-1 group">
               <input
                 value={name}
+                data-testid="category-name-input"
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Ex: Luxury Collection"
                 className="w-full pl-6 pr-4 py-4 rounded-2xl bg-white/50 border border-white/60 focus:bg-white/80 focus:border-(--color-tiger) outline-none transition-all font-bold text-(--color-pakistan) placeholder:text-(--color-pakistan)/30 shadow-inner"
@@ -136,7 +137,7 @@ export default function Category() {
                 <Plus size={20} />
               </div>
             </div>
-
+ 
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}

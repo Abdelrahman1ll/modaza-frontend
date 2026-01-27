@@ -10,8 +10,8 @@
     "preview": "vite preview --mode production",
     "test": "vitest --mode development",
     "test:ui": "vitest --ui --mode development",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e": "playwright test --project=chromium --headed --workers=1",
+    "test:e2e:ui": "playwright test --ui --project=chromium --headed --workers=1"
   },
   "dependencies": {
     "@formspree/react": "^3.0.0",

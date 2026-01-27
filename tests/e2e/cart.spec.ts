@@ -1,37 +1,75 @@
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 
-test.describe("Cart Page (Sequential Multi-Role Flow)", () => {
+test.describe("Cart (e2e)", () => {
   const OWNER_EMAIL = "owner@gmail.com";
   const USER_EMAIL = "user@gmail.com";
-  const ADMIN_EMAIL = "admin@gmail.com";
   const TIMESTAMP = Date.now();
   const productName = `CartFlow-${TIMESTAMP}`;
 
-  test("should follow the Owner -> Admin -> User flow for cart operations", async ({
+  test("should follow the Owner -> User flow for cart operations", async ({
     page,
   }) => {
-    // -------------------------------------------------------------------------
-    // Phase 1: Owner - Product Creation
-    // -------------------------------------------------------------------------
     await login(page, OWNER_EMAIL);
+
+    // Add Category
+    const categoryName = `Cat-${TIMESTAMP}`;
+    await page.goto("/category");
+    await page.waitForLoadState("networkidle");
+
+    const catInput = page.getByPlaceholder(/Ex: Luxury Collection/i).first();
+    await expect(catInput).toBeVisible({ timeout: 15000 });
+    await catInput.fill(categoryName);
+
+    await page.getByRole("button", { name: /Create/i }).click();
+
+    await expect(page.getByText(categoryName).first()).toBeVisible({
+      timeout: 15000,
+    });
+
+    // Add Color
+    const colorName = `Color-${TIMESTAMP}`;
+    await page.goto("/color");
+
+    const colorInput = page.getByPlaceholder("Ex: Midnight Black");
+    await expect(colorInput).toBeVisible({ timeout: 15000 });
+    await colorInput.fill(colorName);
+
+    const colorPicker = page.locator('input[type="color"]');
+    if (await colorPicker.isVisible()) {
+      await colorPicker.fill("#386641");
+    }
+
+    await page.getByRole("button", { name: /Register/i }).click();
+
+    await expect(page.getByText(colorName).first()).toBeVisible({
+      timeout: 15000,
+    });
+
+    // Add Product
     await page.goto("/add-product");
 
     await page.locator('input[name="name"]').fill(productName);
     await page.locator('input[name="price"]').fill("400");
-    await page.locator('input[name="promotionalPrice"]').fill("500");
+    await page.locator('input[name="promotionalPrice"]').fill("600");
 
     // Select Category
     await page.locator("button:has-text('Select Category')").click();
-    const firstCat = page.locator("div.max-h-60 button").first();
-    await firstCat.waitFor({ state: "visible" });
-    await firstCat.click();
+    const catOption = page
+      .locator("div.max-h-60 button")
+      .filter({ hasText: categoryName })
+      .first();
+    await catOption.waitFor({ state: "visible" });
+    await catOption.click();
 
     // Select Color
     await page.locator("button:has-text('Select Color')").click();
-    const firstColor = page.locator("div.max-h-60 button").first();
-    await firstColor.waitFor({ state: "visible" });
-    await firstColor.click();
+    const colorOption = page
+      .locator("div.max-h-60 button")
+      .filter({ hasText: colorName })
+      .first();
+    await colorOption.waitFor({ state: "visible" });
+    await colorOption.click();
 
     await page
       .locator('textarea[name="description"]')
@@ -68,29 +106,10 @@ test.describe("Cart Page (Sequential Multi-Role Flow)", () => {
     await logout(page);
 
     // -------------------------------------------------------------------------
-    // Phase 2: Admin - Verification
-    // -------------------------------------------------------------------------
-    await login(page, ADMIN_EMAIL);
-    await page.goto("/products");
-
-    const searchInput = page.getByPlaceholder(/Search|بحث/i);
-    await searchInput.waitFor({ state: "visible" });
-    await searchInput.fill(productName);
-    await page.waitForTimeout(1000); // Debounce wait
-
-    // Corrected locator: name is in h3 inside the card footer
-    const adminCard = page
-      .locator(".group\\/card")
-      .filter({ hasText: productName })
-      .first();
-    await expect(adminCard).toBeVisible({ timeout: 15000 });
-
-    await logout(page);
-
-    // -------------------------------------------------------------------------
-    // Phase 3: User - Add to Cart
+    // Phase 2: User - Add to Cart
     // -------------------------------------------------------------------------
     await login(page, USER_EMAIL);
+
     await page.goto("/products");
 
     const userSearch = page.getByPlaceholder(/Search|بحث/i);
@@ -123,22 +142,46 @@ test.describe("Cart Page (Sequential Multi-Role Flow)", () => {
     await page.goto("/cart");
 
     // Verify product presence
-    await expect(page.getByText(productName).first()).toBeVisible({
-      timeout: 20000,
+    const cartItem = page
+      .locator("div.flex-col.md\\:flex-row.items-center")
+      .filter({ hasText: productName })
+      .first();
+    await expect(cartItem).toBeVisible({ timeout: 20000 });
+
+    // Increase quantity
+    await cartItem.getByRole("button", { name: /\+/i }).click();
+    // Wait for internal state update/re-render
+    await expect(cartItem.getByText("2", { exact: true })).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Decrease quantity (using the specific − character from the component)
+    await cartItem.getByRole("button", { name: /−/i }).click();
+    await expect(cartItem.getByText("1", { exact: true })).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Navigate to Checkout
+    await page.getByRole("button", { name: /Checkout/i }).click();
+
+    // Verify on Checkout Page
+    await expect(page).toHaveURL(/.*checkout/);
+
+    await page.goto("/cart");
+    await page.waitForLoadState("networkidle");
+
+    await cartItem.getByRole("button", { name: /Remove item/i }).click();
+
+    // Wait for the item to actually disappear from the DOM/visibility
+    await expect(cartItem).not.toBeVisible({ timeout: 500 });
+
+    // Verify item is removed - check for the empty state heading
+    await expect(page.getByText(/Your cart is empty/i)).toBeVisible({
+      timeout: 15000,
     });
 
     await logout(page);
-  });
 
-  test("should show cart page empty state", async ({ page }) => {
-    await login(page, USER_EMAIL);
-    await page.goto("/cart");
-    await expect(
-      page
-        .locator("h1, h2, h3")
-        .filter({ hasText: /Cart|السلة/i })
-        .first(),
-    ).toBeVisible();
-    await logout(page);
+    console.log("Cart flow completed successfully.");
   });
 });

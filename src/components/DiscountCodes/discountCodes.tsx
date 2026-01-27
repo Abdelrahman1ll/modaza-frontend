@@ -110,6 +110,7 @@ export default function DiscountCodes() {
                 <input
                   type="date"
                   value={newExpiry}
+                  placeholder="Start Date"
                   onChange={(e) => setNewExpiry(e.target.value)}
                   className="w-full pl-10 pr-4 py-4 rounded-2xl bg-white/50 border border-white/60 focus:bg-white/80 focus:border-(--color-tiger) outline-none transition-all font-bold text-(--color-pakistan) placeholder:text-(--color-pakistan)/30 shadow-inner"
                 />
@@ -133,7 +134,7 @@ export default function DiscountCodes() {
             ) : (
               <>
                 {editingId ? <Edit size={16} /> : <Ticket size={16} />}
-                {editingId ? "Update Promotion" : "Launch Promotion"}
+                {editingId ? "Edit Code" : "Add Code"}
               </>
             )}
           </motion.button>
@@ -191,6 +192,7 @@ export default function DiscountCodes() {
                     }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleEdit(item)}
+                    aria-label="Edit"
                     className="p-3 rounded-xl bg-white/40 border border-white/60 text-(--color-pakistan) hover:text-(--color-tiger) transition-colors"
                   >
                     <Edit size={18} />
@@ -202,6 +204,7 @@ export default function DiscountCodes() {
                     }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleDelete(item.id)}
+                    aria-label="Delete"
                     className="p-3 rounded-xl bg-white/40 border border-white/60 text-red-500/60 hover:text-red-600 transition-colors"
                   >
                     <Trash2 size={18} />

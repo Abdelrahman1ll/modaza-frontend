@@ -32,11 +32,16 @@ export default function ProtectedRoute({
 
   // If user role is not among the allowed roles, redirect back to home
   // إذا كان دور المستخدم غير مسموح له، قم بإرجاعه للرئيسية
-  if (!roles.includes(user.role as "owner" | "admin" | "user")) {
+  if (
+    !roles
+      .map((r) => r.toLowerCase())
+      .includes(user.role.toLowerCase() as "owner" | "admin" | "user")
+  ) {
     return <Navigate to="/" replace />;
   }
 
   // If all checks pass, render the protected content
   // إذا مرت كل الفحوصات بنجاح، اعرض المحتوى المحمي
+
   return <>{children}</>;
 }

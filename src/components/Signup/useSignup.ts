@@ -25,9 +25,6 @@ export default function useSignup(onClose: () => void) {
         await localStorage.setItem("email", email);
         setEmail("");
         setShowCodeInput(true);
-        if (response && import.meta.env.MODE === "development") {
-          console.log(response);
-        }
       }
     } catch {
       toast.error("Error checking email");

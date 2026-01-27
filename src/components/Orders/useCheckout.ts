@@ -74,6 +74,7 @@ export default function useCheckout() {
   const [isCardValid, setIsCardValid] = useState(false); // Validation for credit card | صحة بيانات البطاقة الائتمانية
   const [isPaying, setIsPaying] = useState(false); // Payment processing status | حالة معالجة الدفع
   const [isDetectingLocation, setIsDetectingLocation] = useState(false); // State for location detection | حالة الكشف عن الموقع
+  const [isOrderCompleted, setIsOrderCompleted] = useState(false); // Flag for successful completion
   const payRef = useRef<(() => void) | null>(null); // Ref for triggering payment iframe | مرجع لتشغيل إطار الدفع
 
   const [errors, setErrors] = useState({
@@ -378,17 +379,22 @@ export default function useCheckout() {
       // Reset state and provide feedback | إعادة تعيين الحالة وتنبيه المستخدم
       setPaymentMethod("");
       setCode("");
+      setIsOrderCompleted(true);
       toast.success("Order placed successfully");
-      audio.play(); // Play success notification | تشغيل صوت التنبيه بالنجاح
 
       if (paymentMethod === "credit_card") {
         localStorage.removeItem("orderPaymentId");
       }
 
-      // Navigate to orders page after a short delay | الانتقال لصفحة الطلبات بعد تأخير بسيط
+      // Navigate to orders page
       setTimeout(() => {
         navigate("/orders");
-      }, 200);
+      }, 500);
+
+      // Play success notification safely
+      try {
+        audio.play().catch(() => {});
+      } catch (e) {}
 
       refetch();
     } catch (error: unknown) {
@@ -459,5 +465,6 @@ export default function useCheckout() {
     handleAutoLocation,
     rawDeliveryFee,
     freeDelivery,
+    isOrderCompleted,
   };
 }

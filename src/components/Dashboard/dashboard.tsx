@@ -486,7 +486,10 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        <div className="p-4 md:p-8 min-h-screen space-y-8 bg-[#FEFAE0] overflow-x-hidden">
+        <div
+          data-testid="dashboard-container"
+          className="p-4 md:p-8 min-h-screen space-y-8 bg-[#FEFAE0] overflow-x-hidden"
+        >
           {/* Header */}
           <div className="relative mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -514,6 +517,7 @@ export default function Dashboard() {
             {totalsCards?.map((item, i) => (
               <div
                 key={i}
+                data-testid="stat-card"
                 className="group relative p-6 rounded-3xl bg-white/40 backdrop-blur-xl border border-white/50 shadow-lg hover:shadow-2xl hover:bg-white/60 transition-all duration-300 overflow-hidden"
               >
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500">
