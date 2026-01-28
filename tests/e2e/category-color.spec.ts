@@ -1,3 +1,4 @@
+/** Page: /category, /color */
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 

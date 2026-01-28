@@ -1,3 +1,4 @@
+/** Page: /discount-codes */
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 
@@ -18,7 +19,6 @@ test.describe("Discount Codes (e2e)", () => {
     const codeInput = page.getByPlaceholder(/Ex: SUMMER2026/i);
     await codeInput.fill(discoCode);
 
-
     const percentInput = page.getByPlaceholder(/%/i);
     await percentInput.fill(DISCOUNT_PERCENT.toString());
 
@@ -32,7 +32,7 @@ test.describe("Discount Codes (e2e)", () => {
       timeout: 10000,
     });
 
-    // 2. Edit  
+    // 2. Edit
     const editBaseCode = `EDIT${TIMESTAMP}`;
     await page
       .locator("div.group")

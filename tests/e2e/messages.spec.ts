@@ -1,3 +1,4 @@
+/** Page: /all-users-messages */
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 

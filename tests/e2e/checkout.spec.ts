@@ -1,3 +1,7 @@
+/**
+ * Page: /checkout
+ * Source: src/components/Checkout/checkout.tsx, src/pages/Checkout/checkoutPage.tsx
+ */
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 
@@ -207,6 +211,28 @@ test.describe("Checkout (e2e)", () => {
     });
 
     await expect(page).toHaveURL(/.*orders/, { timeout: 15000 });
+
+    // -------------------------------------------------------------------------
+    // Phase 4: Verify Order Details
+    // -------------------------------------------------------------------------
+    // Wait for the order list to load (using networkidle to ensure data is fetched)
+    await page.waitForLoadState("networkidle");
+
+    // Click the first order's details link
+    const orderLink = page.locator("a[href^='/orders/']").first();
+    await expect(orderLink).toBeVisible({ timeout: 10000 });
+    await orderLink.click();
+
+    // Verify navigation to order details page
+    await expect(page).toHaveURL(/\/orders\/\d+/, { timeout: 15000 });
+
+    // Verify "Order Details" heading is present
+    await expect(
+      page.getByRole("heading", { name: "Order Details" }),
+    ).toBeVisible({ timeout: 10000 });
+
+    // Wait specifically for user to see the page
+    await page.waitForTimeout(3000);
 
     await logout(page);
     console.log(

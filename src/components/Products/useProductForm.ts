@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   useGetProductsQuery,
   usePatchProductMutation,
@@ -57,6 +57,7 @@ export default function useProductForm(mode: "add" | "edit") {
     usePatchProductMutation();
   const { data: products } = useGetProductsQuery("/products");
   const { id } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<ErrorProductType>({
     name: "",
     description: "",
@@ -361,6 +362,7 @@ export default function useProductForm(mode: "add" | "edit") {
         });
         setNameColors("");
         setNameCategory("");
+        setTimeout(() => navigate("/products"), 500);
       } else if (mode === "edit") {
         await patchProduct({ id, data: formDataToSend }).unwrap();
 
@@ -399,6 +401,7 @@ export default function useProductForm(mode: "add" | "edit") {
         });
         setNameColors("");
         setNameCategory("");
+        setTimeout(() => navigate("/products"), 500);
       }
     } catch (error: unknown) {
       const err = error as { data?: { message?: string[] | string } };

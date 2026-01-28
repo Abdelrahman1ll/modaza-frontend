@@ -1,3 +1,4 @@
+/** Page: * (404) */
 import { test, expect } from "@playwright/test";
 
 test.describe("404 Not Found Page (e2e)", () => {

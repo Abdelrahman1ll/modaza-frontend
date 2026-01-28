@@ -1,3 +1,7 @@
+/**
+ * Page: /cart
+ * Source: src/components/Cart/cart.tsx, src/pages/Cart/cartPage.tsx
+ */
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 

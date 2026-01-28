@@ -1,3 +1,4 @@
+/** Page: Login/Register Modal */
 import { test, expect } from "@playwright/test";
 import { login, logout } from "./utils/auth-helper";
 
