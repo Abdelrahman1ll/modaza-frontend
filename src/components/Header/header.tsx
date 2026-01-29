@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ShoppingCart,
+  ShoppingBag,
   User,
   Search,
   X,
@@ -268,7 +268,7 @@ export default function Header() {
                   title="عربة التسوق"
                   aria-label={`View Shopping Cart, ${totalItems} items`}
                 >
-                  <ShoppingCart size={22} strokeWidth={2} />
+                  <ShoppingBag size={22} strokeWidth={2} />
                   <span
                     className="absolute top-0 right-0 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full bg-(--color-tiger) shadow-sm ring-2 ring-[--color-cornsilk]"
                     title="Number of items in cart"
@@ -489,7 +489,7 @@ export default function Header() {
             className="block p-2 rounded-full relative text-(--color-dark) hover:bg-(--color-tiger)/30 hover:shadow-md transition-all"
             title="عربة التسوق"
           >
-            <ShoppingCart size={24} strokeWidth={2.5} />
+            <ShoppingBag size={24} strokeWidth={2.5} />
             <span className="absolute -top-1 -right-1 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full bg-(--color-tiger) shadow-md border-2 border-(--color-cornsilk)">
               {totalItems}
             </span>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { motion } from "framer-motion";
 import "./AddToCartButton.css";
 
@@ -45,7 +45,7 @@ export default function AddToCartButton({
       ></span>
 
       <span className="relative z-10 tracking-tight">Add to Cart</span>
-      <ShoppingCart
+      <ShoppingBag
         size={24}
         strokeWidth={2.5}
         className={`relative z-10 transition-all duration-500 ${

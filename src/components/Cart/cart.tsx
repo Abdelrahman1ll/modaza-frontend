@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { X, ShoppingCart } from "lucide-react";
+import { X, ShoppingBag } from "lucide-react";
 import type { CartItemType } from "../../types/CartType";
 import UseCart from "./useCart";
 
@@ -88,7 +88,7 @@ export default function Cart() {
             }}
             className="w-24 h-24 bg-linear-to-br from-(--color-tiger) to-(--color-earth) rounded-3xl mx-auto flex items-center justify-center text-white shadow-2xl shadow-(--color-tiger)/20 mb-8"
           >
-            <ShoppingCart size={40} strokeWidth={2.5} />
+            <ShoppingBag size={40} strokeWidth={2.5} />
           </motion.div>
 
           <motion.h3
@@ -139,7 +139,7 @@ export default function Cart() {
           {data?.carts?.items.map((item: CartItemType) => {
             const percentstock = Math.min(
               (item?.product?.stock / item?.product?.total_stock) * 100,
-              100
+              100,
             );
 
             const getColor = () => {

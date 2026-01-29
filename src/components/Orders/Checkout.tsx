@@ -6,7 +6,7 @@ import {
   Smartphone,
   Wallet,
   Truck,
-  ShoppingCart,
+  ShoppingBag,
   ChevronDown,
   Info,
   ShieldCheck,
@@ -581,7 +581,7 @@ export default function Checkout() {
             <motion.div variants={itemVariants} className={cardClasses}>
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2.5 rounded-2xl bg-(--color-pakistan)/5 text-(--color-pakistan)">
-                  <ShoppingCart size={24} />
+                  <ShoppingBag size={24} />
                 </div>
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Order Summary
@@ -608,7 +608,7 @@ export default function Checkout() {
               ) : data?.carts?.items.length === 0 ? (
                 <div className="text-center py-10 space-y-4">
                   <div className="w-20 h-20 bg-(--color-tiger)/10 text-(--color-tiger) rounded-full flex items-center justify-center mx-auto mb-6">
-                    <ShoppingCart size={32} />
+                    <ShoppingBag size={32} />
                   </div>
                   <p className="text-lg font-black text-(--color-pakistan)">
                     Your cart is empty

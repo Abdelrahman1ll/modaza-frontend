@@ -8,9 +8,11 @@ import { motion } from "framer-motion";
 export default function MotionZoomImage({
   mainImage,
   product,
+  onImageClick,
 }: {
   mainImage: string;
   product?: { name?: string };
+  onImageClick?: () => void;
 }) {
   const imgRef = useRef<HTMLDivElement>(null);
   const [backgroundPos, setBackgroundPos] = useState("50% 50%");
@@ -32,7 +34,11 @@ export default function MotionZoomImage({
   };
 
   const handleClick = () => {
-    setZoomLevel((prev) => (prev >= MAX_ZOOM ? MIN_ZOOM : prev + 1));
+    if (onImageClick) {
+      onImageClick();
+    } else {
+      setZoomLevel((prev) => (prev >= MAX_ZOOM ? MIN_ZOOM : prev + 1));
+    }
   };
 
   return (

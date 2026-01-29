@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import {
-  ShoppingCart,
+  ShoppingBag,
   CreditCard,
   DollarSign,
   CheckCircle,
@@ -73,7 +73,7 @@ export default function SalesPaymentPolicy() {
           <motion.section variants={itemVariants} className="space-y-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-(--color-pakistan)/5 text-(--color-pakistan) flex items-center justify-center shrink-0">
-                <ShoppingCart size={24} />
+                <ShoppingBag size={24} />
               </div>
               <div className="flex-1 border-b border-gray-100 pb-2">
                 <h2 className="text-sm font-black uppercase tracking-widest text-(--color-pakistan)">

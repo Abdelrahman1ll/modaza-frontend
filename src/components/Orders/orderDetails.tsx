@@ -5,7 +5,7 @@ import {
   MapPin,
   CheckCircle2,
   XCircle,
-  ShoppingCart,
+  ShoppingBag,
   Calendar,
   Phone,
   Mail,
@@ -53,14 +53,14 @@ export default function OrderDetails() {
     order?.paymentMethod === "credit_card"
       ? "Credit Card"
       : order?.paymentMethod === "cash_on_delivery"
-      ? "Cash on Delivery"
-      : order?.paymentMethod === "vodafone_cash"
-      ? "Vodafone Cash"
-      : order?.paymentMethod === "instaPay"
-      ? "InstaPay"
-      : order?.paymentMethod === "paypal"
-      ? "PayPal"
-      : "Payment";
+        ? "Cash on Delivery"
+        : order?.paymentMethod === "vodafone_cash"
+          ? "Vodafone Cash"
+          : order?.paymentMethod === "instaPay"
+            ? "InstaPay"
+            : order?.paymentMethod === "paypal"
+              ? "PayPal"
+              : "Payment";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -340,7 +340,7 @@ export default function OrderDetails() {
                   className="flex flex-col items-center py-20 bg-(--color-tiger)/5 rounded-3xl border border-dashed border-(--color-tiger)/30"
                 >
                   <div className="p-6 rounded-full bg-(--color-tiger)/10 mb-6">
-                    <ShoppingCart
+                    <ShoppingBag
                       size={60}
                       className="text-(--color-tiger)/40"
                     />

@@ -1,5 +1,12 @@
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Heart, PackageSearch } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  PackageSearch,
+  X,
+} from "lucide-react";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { ProductSizeType } from "../../types/ProductType";
 import MotionZoomImage from "./ImageZoom";
 import useProductDetail from "./useProductDetail";
@@ -29,6 +36,14 @@ export default function ProductDetail() {
     isFetching,
     setCurrentIndex,
   } = useProductDetail();
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const handleImageClick = () => {
+    if (window.innerWidth >= 768) {
+      setIsFullscreen(true);
+    }
+  };
   return (
     <>
       {isLoading && !isFetching ? (
@@ -102,7 +117,10 @@ export default function ProductDetail() {
           >
             {/* الصورة الرئيسية ككونتينر بريميوم */}
             <div className="relative overflow-hidden rounded-4xl m-2">
-              <MotionZoomImage mainImage={mainImage} />
+              <MotionZoomImage
+                mainImage={mainImage}
+                onImageClick={handleImageClick}
+              />
 
               {/* أسهم التنقل - Glassmorphism */}
               <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between items-center pointer-events-none z-10">
@@ -231,8 +249,8 @@ export default function ProductDetail() {
                             isOutOfStock
                               ? "bg-gray-100 text-gray-300 cursor-not-allowed border-dashed border-2 border-gray-200"
                               : isSelected
-                              ? "bg-(--color-tiger) text-white shadow-xl shadow-(--color-tiger)/20 border-2 border-(--color-tiger)"
-                              : "bg-white text-gray-700 border-2 border-gray-100 hover:border-(--color-tiger)/30 shadow-sm"
+                                ? "bg-(--color-tiger) text-white shadow-xl shadow-(--color-tiger)/20 border-2 border-(--color-tiger)"
+                                : "bg-white text-gray-700 border-2 border-gray-100 hover:border-(--color-tiger)/30 shadow-sm"
                           }`}
                         >
                           {size.size}
@@ -241,7 +259,7 @@ export default function ProductDetail() {
                           )}
                         </motion.button>
                       );
-                    }
+                    },
                   )}
               </div>
               {selectedSize && (
@@ -249,7 +267,7 @@ export default function ProductDetail() {
                   <p className="text-sm text-(--color-pakistan)">
                     {(() => {
                       const selected = product?.sizes?.find(
-                        (size) => size.id === selectedSize
+                        (size) => size.id === selectedSize,
                       );
                       if (!selected) return null;
 
@@ -357,6 +375,75 @@ export default function ProductDetail() {
           </motion.div>
         </div>
       )}
+
+      {/* Fullscreen Overlay */}
+      <AnimatePresence>
+        {isFullscreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsFullscreen(false)}
+            className="fixed inset-0 z-100 flex items-center justify-center bg-white/95 backdrop-blur-2xl p-4 md:p-10 cursor-zoom-out"
+          >
+            <motion.button
+              initial={{ scale: 0, rotate: -90 }}
+              animate={{ scale: 1, rotate: 0 }}
+              className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-(--color-tiger) rounded-full backdrop-blur-md transition-all border border-white/20 z-110"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFullscreen(false);
+              }}
+            >
+              <X size={32} />
+            </motion.button>
+
+            <motion.div
+              layoutId="product-image"
+              className="relative max-w-7xl max-h-full w-full h-full flex items-center justify-center"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={mainImage}
+                alt={product?.name}
+                className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl selectable-none"
+                draggable={false}
+              />
+
+              {/* Navigation arrows in fullscreen */}
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between items-center px-4 md:px-10 pointer-events-none">
+                <motion.button
+                  whileHover={{ scale: 1.1, x: -5 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrev();
+                  }}
+                  className="pointer-events-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-(--color-tiger) p-4 rounded-full shadow-lg border border-white/20"
+                >
+                  <ChevronLeft size={36} />
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.1, x: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNext();
+                  }}
+                  className="pointer-events-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-(--color-tiger) p-4 rounded-full shadow-lg border border-white/20"
+                >
+                  <ChevronRight size={36} />
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
