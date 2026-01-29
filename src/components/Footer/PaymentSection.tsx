@@ -74,7 +74,7 @@ export default function PaymentSection() {
               key={index}
               variants={itemVariants}
               whileHover={{ y: -8, scale: 1.02 }}
-              className="group flex flex-col items-center text-center p-4 bg-white/40 backdrop-blur-xl border border-gray-200/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300"
+              className="group flex flex-col items-center text-center p-4 bg-white/40 backdrop-blur-xl border border-gray-200/50 rounded-3xl transition-all duration-300"
             >
               <div className="mb-6 p-4 rounded-2xl bg-white shadow-sm text-gray-700 group-hover:bg-(--color-tiger) group-hover:text-white transition-colors duration-300">
                 {method.icon}

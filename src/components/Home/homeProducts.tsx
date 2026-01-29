@@ -117,7 +117,7 @@ export default function HomeProducts() {
               viewport={{ once: true, margin: "-50px" }}
               className="shrink-0 w-[240px] sm:w-[320px] md:w-[380px] lg:w-[420px]"
             >
-              <div className="relative overflow-hidden rounded-[2.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.1)] group transition-all duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.15)] hover:-translate-y-2">
+              <div className="relative overflow-hidden rounded-[2.5rem] group transition-all duration-500 hover:-translate-y-2">
                 <motion.div className="w-full h-full relative overflow-hidden">
                   <img
                     src={getCloudinaryUrl(product.images[0], { width: 600 })}

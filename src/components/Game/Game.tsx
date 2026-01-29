@@ -195,7 +195,7 @@ const Game = () => {
             {[1, 2, 3].map((l) => (
               <div
                 key={l}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${l <= level && gameState !== "IDLE" ? "bg-(--color-tiger) scale-110 shadow-lg shadow-(--color-tiger)/50" : "bg-gray-200"}`}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${l <= level && gameState !== "IDLE" ? "bg-(--color-tiger) scale-110" : "bg-gray-200"}`}
               />
             ))}
           </div>

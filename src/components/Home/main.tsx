@@ -130,7 +130,6 @@ export default function Main() {
                     font-black
                     uppercase
                     tracking-widest
-                    shadow-[0_15px_30px_rgba(188,108,37,0.4)]
                     bg-(--color-tiger)
                     hover:bg-[#d47d2b]
                     transition-all
@@ -186,7 +185,7 @@ export default function Main() {
                     translateY: -8,
                     transition: { duration: 0.4, ease: "easeOut" },
                   }}
-                  className="relative overflow-hidden rounded-4xl w-full h-[65vh] md:h-[80vh] lg:h-[88vh] bg-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.08)] group"
+                  className="relative overflow-hidden rounded-4xl w-full h-[65vh] md:h-[80vh] lg:h-[88vh] bg-gray-100 group"
                 >
                   <motion.div
                     className="w-full h-full"
