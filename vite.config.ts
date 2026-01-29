@@ -140,7 +140,7 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true, // Allow using 'describe', 'it', 'expect' without importing - السماح باستخدام دوال الاختبار بدون استيرادها
       environment: "jsdom", // Use jsdom for React component testing - استخدام بيئة jsdom لاختبار المكونات
-      setupFiles: "./src/test/setup.ts", // Path to global setup file - مسار ملف الإعداد العالمي
+      setupFiles: "./src/test/setup.tsx", // Path to global setup file - مسار ملف الإعداد العالمي
       css: true, // Process CSS in tests - معالجة ملفات CSS في الاختبارات
       include: ["src/**/*.{test,spec}.{ts,tsx}"], // Only include tests in src - تشمل فقط الاختبارات الموجودة في src
       exclude: ["**/node_modules/**", "**/dist/**", "**/tests/e2e/**"], // Exclude E2E tests and other folders - استبعاد اختبارات E2E والمجلدات الأخرى

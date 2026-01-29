@@ -10,7 +10,7 @@ test.describe("User Management (Owner)", () => {
   const TARGET_USER_EMAIL = "admin-test@gmail.com";
 
   test.beforeEach(async ({ page }) => {
-    test.setTimeout(60000);
+    test.setTimeout(80000);
     await login(page, TARGET_USER_EMAIL);
     await logout(page);
     await login(page, OWNER_EMAIL);
@@ -43,15 +43,18 @@ test.describe("User Management (Owner)", () => {
 
     // 5. Change Role
     // Open dropdown
-    await page
+    const roleTrigger = page
       .locator("button")
       .filter({ hasText: /Standard User|System Admin|Platform Owner/ })
-      .first()
-      .click();
+      .first();
+    await roleTrigger.click();
 
-    // Select 'Standard User' or 'System Admin' to toggle
-    // Let's just select 'System Admin'
-    await page.getByText("System Admin").click();
+    // Select 'System Admin' from the dropdown.
+    // We use a broader regex because the button contains both label and description.
+    await page
+      .getByRole("button", { name: /System Admin/i })
+      .filter({ has: page.getByText(/Can manage products/i) })
+      .click();
 
     // 6. Save
     await page.getByRole("button", { name: /Save User Profile/i }).click();

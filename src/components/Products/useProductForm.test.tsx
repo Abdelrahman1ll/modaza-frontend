@@ -12,6 +12,7 @@ vi.mock("../../redux/category/apiCategory");
 vi.mock("../../redux/color/apiColor");
 vi.mock("react-router-dom", () => ({
   useParams: vi.fn(),
+  useNavigate: vi.fn(),
 }));
 vi.mock("react-toastify", () => ({
   toast: {

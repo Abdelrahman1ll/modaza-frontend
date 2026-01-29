@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import DiscountCodes from "./discountCodes";
@@ -10,28 +9,9 @@ vi.mock("./useDiscountCodes", () => ({
   default: vi.fn(),
 }));
 
-// Mock Framer Motion
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <button {...props}>{children}</button>,
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-}));
+// Mock Framer Motion is now handled globally in setup.ts
+// but we keep a simple version here if needed, or just let global handle it.
+// Removing local mock to use global one which is cleaner.
 
 describe("DiscountCodes Component", () => {
   const mockHandleAddOrSave = vi.fn();
@@ -139,7 +119,7 @@ describe("DiscountCodes Component", () => {
 
     render(<DiscountCodes />);
 
-    const button = screen.getByRole("button", { name: /Launch Promotion/i });
+    const button = screen.getByRole("button", { name: /Add Code/i });
     fireEvent.click(button);
 
     expect(mockHandleAddOrSave).toHaveBeenCalled();
@@ -156,7 +136,7 @@ describe("DiscountCodes Component", () => {
 
     expect(screen.getByText("Edit Promotion")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Update Promotion/i }),
+      screen.getByRole("button", { name: /Edit Code/i }),
     ).toBeInTheDocument();
   });
 

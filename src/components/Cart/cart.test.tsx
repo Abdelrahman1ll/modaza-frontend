@@ -9,21 +9,7 @@ vi.mock("./useCart", () => ({
   default: vi.fn(),
 }));
 
-// Mock Framer Motion to avoid animation issues in tests
-// Mock Framer Motion to avoid animation issues in tests
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, ...props }: any) => (
-      <button {...props}>{children}</button>
-    ),
-    h3: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
-    p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-}));
+// Mock Framer Motion is now handled globally in setup.ts
 
 describe("Cart Component", () => {
   const mockDecreaseQuantity = vi.fn();
@@ -160,7 +146,7 @@ describe("Cart Component", () => {
     expect(mockDecreaseQuantity).toHaveBeenCalledWith({ id: 1, quantity: 2 });
 
     // Test remove (X button)
-    const removeButton = screen.getByRole("button", { name: "" }); // The button with X icon usually doesn't have text
+    const removeButton = screen.getByRole("button", { name: /Remove item/i });
     // Let's find it more specifically if needed, but since it's the only one with X icon...
     fireEvent.click(removeButton);
     expect(mockRemoveItem).toHaveBeenCalledWith(1);

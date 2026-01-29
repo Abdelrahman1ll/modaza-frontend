@@ -12,24 +12,27 @@ test.describe("Profile Page (Full Flow)", () => {
     // 2. Navigate to Profile
     await page.goto("/profile");
 
-    // Use .first() to avoid strict mode violation
+    // Use h1, h2, h3 to find the section header (Personal Info)
     await expect(
       page
-        .locator("h1, h2")
-        .filter({ hasText: /Profile|حسابي/i })
+        .locator("h1, h2, h3")
+        .filter({ hasText: /Profile|حسابي|Personal Info|بياناتي/i })
         .first(),
     ).toBeVisible();
 
-    // Verify email is correctly loaded (using display value for inputs)
-    await expect(page.locator('input[name="email"]')).toHaveValue(USER_EMAIL);
+    // Verify email is read-only and matches USER_EMAIL
+    const emailInput = page.locator('input[name="email"]');
+    await expect(emailInput).toBeDisabled();
+    await expect(emailInput).toHaveValue(USER_EMAIL);
 
-    // 3. Update Profile Data
+    // 3. Update Profile Data (Editable fields only)
     await page.locator('input[name="firstName"]').fill("E2EFirst");
     await page.locator('input[name="lastName"]').fill("E2ELast");
     await page.locator('input[name="phone"]').fill("01012345678");
 
-    // Fill birthday
-    await page.locator('input[name="birthday"]').fill("1990-01-01");
+    // Fill birthday (must be at least 10 years ago)
+    const BIRTHDAY = "1990-01-01";
+    await page.locator('input[name="birthday"]').fill(BIRTHDAY);
 
     // 4. Save Changes
     const saveBtn = page
@@ -38,7 +41,7 @@ test.describe("Profile Page (Full Flow)", () => {
       .first();
     await saveBtn.click();
 
-    // 5. Verify Success
+    // 5. Verify Success Toast
     await expect(
       page.getByText(/Profile saved successfully|تم حفظ الملف بنجاح/i),
     ).toBeVisible();
@@ -52,9 +55,7 @@ test.describe("Profile Page (Full Flow)", () => {
     await expect(page.locator('input[name="phone"]')).toHaveValue(
       "01012345678",
     );
-    await expect(page.locator('input[name="birthday"]')).toHaveValue(
-      "1990-01-01",
-    );
+    await expect(page.locator('input[name="birthday"]')).toHaveValue(BIRTHDAY);
 
     // 7. Logout
     await logout(page);

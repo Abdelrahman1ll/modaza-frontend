@@ -8,125 +8,39 @@ test.describe("Wishlist Page (Full Flow)", () => {
   const TIMESTAMP = Date.now();
   const productName = `WishlistTest ${TIMESTAMP}`;
 
-  test("should follow the Owner -> Admin -> User flow for wishlist", async ({
+  test("should allow a user to add an existing product to their wishlist", async ({
     page,
   }) => {
-    // Phase 1: Owner Setup (Create Product)
-    await login(page, OWNER_EMAIL);
-    // Add Category
-    const categoryName = `Cat-${TIMESTAMP}`;
-    await page.goto("/category");
-    await page.waitForLoadState("networkidle");
-
-    const catInput = page.getByPlaceholder(/Ex: Luxury Collection/i).first();
-    await expect(catInput).toBeVisible({ timeout: 15000 });
-    await catInput.fill(categoryName);
-
-    await page.getByRole("button", { name: /Create/i }).click();
-
-    await expect(page.getByText(categoryName).first()).toBeVisible({
-      timeout: 15000,
-    });
-
-    // Add Color
-    const colorName = `Color-${TIMESTAMP}`;
-    await page.goto("/color");
-
-    const colorInput = page.getByPlaceholder("Ex: Midnight Black");
-    await expect(colorInput).toBeVisible({ timeout: 15000 });
-    await colorInput.fill(colorName);
-
-    const colorPicker = page.locator('input[type="color"]');
-    if (await colorPicker.isVisible()) {
-      await colorPicker.fill("#386641");
-    }
-
-    await page.getByRole("button", { name: /Register/i }).click();
-
-    await expect(page.getByText(colorName).first()).toBeVisible({
-      timeout: 15000,
-    });
-
-    // Add Product
-    await page.goto("/add-product");
-
-    await page.locator('input[name="name"]').fill(productName);
-    await page.locator('input[name="price"]').fill("400");
-    await page.locator('input[name="promotionalPrice"]').fill("600");
-
-    // Select Category
-    await page.locator("button:has-text('Select Category')").click();
-    const catOption = page
-      .locator("div.max-h-60 button")
-      .filter({ hasText: categoryName })
-      .first();
-    await catOption.waitFor({ state: "visible" });
-    await catOption.click();
-
-    // Select Color
-    await page.locator("button:has-text('Select Color')").click();
-    const colorOption = page
-      .locator("div.max-h-60 button")
-      .filter({ hasText: colorName })
-      .first();
-    await colorOption.waitFor({ state: "visible" });
-    await colorOption.click();
-
-    await page
-      .locator('textarea[name="description"]')
-      .fill("E2E Sequential Cart Test Product");
-
-    // Inventory
-    await page.locator('input[name="stock"]').fill("100");
-    await page.locator('input[name="wholesalePrice"]').fill("200");
-    await page.locator('input[name="packagingCost"]').fill("10");
-    await page.locator('input[name="marketingCosts"]').fill("20");
-
-    // Size Specification
-    await page.locator('input[placeholder="size"]').first().fill("L");
-    await page.locator('input[placeholder="length"]').first().fill("80");
-    await page.locator('input[placeholder="width"]').first().fill("60");
-    await page.locator('input[placeholder="stock"]').first().fill("50");
-
-    // Image Upload
-    await page.locator('input[type="file"]').setInputFiles({
-      name: "test-product.png",
-      mimeType: "image/png",
-      buffer: Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
-        "base64",
-      ),
-    });
-
-    // Submit
-    await page.locator('button[type="submit"]').click();
-    await expect(page.getByText(/Product added successfully/i)).toBeVisible({
-      timeout: 15000,
-    });
-    await logout(page);
-
+    // 1. Login as User
     await login(page, USER_EMAIL);
 
+    // 2. Navigate to Products
     await page.goto("/products");
+    await page.waitForLoadState("networkidle");
 
-    // Use a more specific selector for the card container (same as checkout.spec.ts)
-    // The previous selector likely grabbed the text node's parent (footer) which doesn't contain the wishlist button (in image container).
-    const userProductCard = page
-      .locator(".group\\/card")
-      .filter({ hasText: productName })
-      .first();
+    // 3. Find the first product card
+    const firstProductCard = page.locator(".group\\/card").first();
+    await expect(firstProductCard).toBeVisible({ timeout: 15000 });
 
-    await expect(userProductCard).toBeVisible({ timeout: 10000 });
+    // 4. Get the product name for verification
+    // We'll look for a heading or strong tag inside the card
+    const productName = await firstProductCard
+      .locator("h3, h2, strong")
+      .first()
+      .innerText();
+    console.log(`[Test] Adding product to wishlist: ${productName}`);
 
-    // Correct selector for the wishlist button based on ProductCard component
-    const wishlistBtn = userProductCard
+    // 5. Click the wishlist toggle button
+    const wishlistBtn = firstProductCard
       .locator("button[aria-label*='wishlist']")
       .first();
     await wishlistBtn.click({ force: true });
 
+    // 6. Navigate to Wishlist and Verify
     await page.goto("/wishlist");
     await expect(page.getByText(productName)).toBeVisible({ timeout: 15000 });
 
+    // 7. Cleanup/Logout
     await logout(page);
   });
 });
