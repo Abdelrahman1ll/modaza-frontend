@@ -26,34 +26,55 @@ vi.mock("./AddToCartButton", () => ({
 }));
 
 // Mock Framer Motion
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <button {...props}>{children}</button>,
-    span: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <span {...props}>{children}</span>,
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-}));
+vi.mock("framer-motion", () => {
+  const filterMotionProps = (props: Record<string, unknown>) => {
+    const {
+      whileHover,
+      whileTap,
+      initial,
+      animate,
+      exit,
+      transition,
+      variants,
+      dragConstraints,
+      drag,
+      layoutId,
+      whileInView,
+      viewport,
+      ...rest
+    } = props;
+    return rest;
+  };
+
+  return {
+    motion: {
+      div: ({
+        children,
+        ...props
+      }: {
+        children: React.ReactNode;
+        [key: string]: unknown;
+      }) => <div {...filterMotionProps(props)}>{children}</div>,
+      button: ({
+        children,
+        ...props
+      }: {
+        children: React.ReactNode;
+        [key: string]: unknown;
+      }) => <button {...filterMotionProps(props)}>{children}</button>,
+      span: ({
+        children,
+        ...props
+      }: {
+        children: React.ReactNode;
+        [key: string]: unknown;
+      }) => <span {...filterMotionProps(props)}>{children}</span>,
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => (
+      <>{children}</>
+    ),
+  };
+});
 
 // Mock Lucide Icons
 vi.mock("lucide-react", () => ({

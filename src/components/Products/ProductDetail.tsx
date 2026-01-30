@@ -46,7 +46,7 @@ export default function ProductDetail() {
   };
   return (
     <>
-      {isLoading && !isFetching ? (
+      {isLoading || isFetching ? (
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 m-4 mt-12">
           {/* الجزء الأيسر skeleton */}
           <div className="w-full md:w-1/2 animate-pulse flex flex-col gap-4">

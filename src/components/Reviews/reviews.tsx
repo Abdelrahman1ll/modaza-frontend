@@ -79,7 +79,11 @@ export default function Reviews({
       <AnimatePresence mode="wait">
         {showReviews && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            initial={
+              hideForm
+                ? { opacity: 1, height: "auto" }
+                : { opacity: 0, height: 0 }
+            }
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
@@ -174,11 +178,13 @@ export default function Reviews({
                   .map((review: ReviewType, idx: number) => (
                     <motion.div
                       key={review?.id}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={
+                        hideForm ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                      }
                       animate={{
                         opacity: 1,
                         y: 0,
-                        transition: { delay: idx * 0.1 },
+                        transition: hideForm ? {} : { delay: idx * 0.1 },
                       }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       className="relative mt-8"

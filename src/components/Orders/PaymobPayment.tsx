@@ -130,7 +130,7 @@ export default function PaymobPayment({
           {dots.map((_, i) => (
             <span
               key={i}
-              className="w-3 h-3 rounded-full bg-[#BC6C25] animate-dot"
+              className="w-3 h-3 rounded-full bg-(--color-tiger) animate-dot"
               style={{ animationDelay: `${i * 0.15}s` }}
             ></span>
           ))}
