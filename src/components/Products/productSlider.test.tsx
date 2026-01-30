@@ -57,7 +57,7 @@ vi.mock("../../utils/cloudinary", () => ({
   getCloudinarySrcSet: () => "",
 }));
 
-describe("ProductSlider Component", () => {
+describe("ProductGrid Component", () => {
   const mockProducts = {
     products: [
       { id: 1, name: "Product 1", price: 100, images: ["img1.jpg"] },
@@ -65,8 +65,7 @@ describe("ProductSlider Component", () => {
       { id: 3, name: "Product 3", price: 300, images: ["img3.jpg"] },
     ],
   };
-
-  beforeEach(() => {
+  +beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
   });
@@ -102,7 +101,7 @@ describe("ProductSlider Component", () => {
     expect(screen.getByText(/No products found/i)).toBeInTheDocument();
   });
 
-  it("renders the first product by default", () => {
+  it("renders all products in the grid", () => {
     vi.mocked(useGetProductsQuery).mockReturnValue({
       data: mockProducts,
       isLoading: false,
@@ -115,29 +114,9 @@ describe("ProductSlider Component", () => {
     );
 
     expect(screen.getByText("Product 1")).toBeInTheDocument();
+    expect(screen.getByText("Product 2")).toBeInTheDocument();
+    expect(screen.getByText("Product 3")).toBeInTheDocument();
     expect(screen.getByText("100")).toBeInTheDocument();
-  });
-
-  it("navigates to next product when clicking next button", () => {
-    vi.mocked(useGetProductsQuery).mockReturnValue({
-      data: mockProducts,
-      isLoading: false,
-    } as unknown as ReturnType<typeof useGetProductsQuery>);
-
-    render(
-      <BrowserRouter>
-        <ProductSlider />
-      </BrowserRouter>,
-    );
-
-    const buttons = screen.getAllByRole("button");
-    const nextButton = buttons[1]; // Index 0 is prev, Index 1 is next
-
-    fireEvent.click(nextButton);
-
-    // After clicking next, Product 2 should be 'more visible' (scale 1 in motion logic)
-    // Testing state-driven UI often requires checking styles or specific attributes.
-    // Since we mock motion as simple div, we'd need to verify state or next render.
   });
 
   it("navigates to product detail on card click", () => {
@@ -158,26 +137,5 @@ describe("ProductSlider Component", () => {
     fireEvent.click(productCard!);
 
     expect(mockNavigate).toHaveBeenCalledWith("/products-details/1");
-  });
-
-  it("persists slider index in sessionStorage", () => {
-    vi.mocked(useGetProductsQuery).mockReturnValue({
-      data: mockProducts,
-      isLoading: false,
-    } as unknown as ReturnType<typeof useGetProductsQuery>);
-
-    render(
-      <BrowserRouter>
-        <ProductSlider />
-      </BrowserRouter>,
-    );
-
-    expect(sessionStorage.getItem("product-slider-index")).toBe("0");
-
-    const buttons = screen.getAllByRole("button");
-    const nextButton = buttons[1];
-    fireEvent.click(nextButton);
-
-    expect(sessionStorage.getItem("product-slider-index")).toBe("1");
   });
 });

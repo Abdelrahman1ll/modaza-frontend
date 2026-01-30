@@ -14,6 +14,9 @@ vi.mock("./pages/products/productPage", () => ({
 vi.mock("./pages/products/productDetailsPage", () => ({
   default: () => <div>Product Details Page</div>,
 }));
+vi.mock("./pages/products/ReviewsPage", () => ({
+  default: () => <div>Reviews Page</div>,
+}));
 vi.mock("./pages/Cart/cartPage", () => ({
   default: () => <div>Cart Page</div>,
 }));
@@ -78,6 +81,18 @@ describe("App Component", () => {
     // Then content
     await waitFor(() =>
       expect(screen.getByText("Home Page")).toBeInTheDocument(),
+    );
+  });
+
+  it("renders reviews page on product reviews route", async () => {
+    render(
+      <MemoryRouter initialEntries={["/products-details/1/reviews"]}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByText("Reviews Page")).toBeInTheDocument(),
     );
   });
 

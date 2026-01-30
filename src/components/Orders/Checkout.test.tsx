@@ -13,55 +13,38 @@ vi.mock("./useCheckout", () => ({
 }));
 
 // Mock Framer Motion
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({
+vi.mock("framer-motion", () => {
+  const motionMock =
+    (Tag: string) =>
+    ({
       children,
+      initial,
+      animate,
+      exit,
+      transition,
+      variants,
+      whileHover,
+      whileTap,
+      whileInView,
+      layoutId,
       ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-    h1: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <h1 {...props}>{children}</h1>,
-    p: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <p {...props}>{children}</p>,
-    button: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <button {...props}>{children}</button>,
-    section: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <section {...props}>{children}</section>,
-    span: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <span {...props}>{children}</span>,
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-}));
+    }: any) =>
+      React.createElement(Tag, props, children);
+
+  return {
+    motion: {
+      div: motionMock("div"),
+      h1: motionMock("h1"),
+      p: motionMock("p"),
+      button: motionMock("button"),
+      section: motionMock("section"),
+      span: motionMock("span"),
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => (
+      <>{children}</>
+    ),
+  };
+});
 
 // Mock Lucide icons
 vi.mock("lucide-react", () => ({
@@ -70,7 +53,7 @@ vi.mock("lucide-react", () => ({
   Smartphone: () => <div data-testid="phone-icon" />,
   Wallet: () => <div data-testid="wallet-icon" />,
   Truck: () => <div data-testid="truck-icon" />,
-  ShoppingCart: () => <div data-testid="cart-icon" />,
+  ShoppingBag: () => <div data-testid="bag-icon" />,
   ChevronDown: () => <div data-testid="chevron-icon" />,
   Info: () => <div data-testid="info-icon" />,
   ShieldCheck: () => <div data-testid="shield-icon" />,

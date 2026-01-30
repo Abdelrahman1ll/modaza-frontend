@@ -1,15 +1,23 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, MessageSquarePlus, X, Edit3, Trash2 } from "lucide-react";
+import { Star, MessageSquarePlus, Edit3, Trash2 } from "lucide-react";
 import type { ReviewType } from "../../types/ReviewsType";
 import useReviews from "./useReviews";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
 /**
  * Reviews: Interface for viewing and managing product reviews/ratings.
  * المراجعات: واجهة لعرض وإدارة تقييمات ومراجعات المنتجات.
  */
-export default function Reviews() {
+export default function Reviews({
+  limit,
+  hideForm,
+}: {
+  limit?: number;
+  hideForm?: boolean;
+}) {
+  const { id } = useParams();
   const {
     reviewsData,
     handleDeleteReview,
@@ -29,43 +37,44 @@ export default function Reviews() {
 
   const { user } = useContext(AuthContext);
 
+  useEffect(() => {
+    if (hideForm) {
+      setShowReviews(true);
+    }
+  }, [hideForm, setShowReviews]);
+
   return (
-    <section className="py-8 px-4 relative overflow-hidden">
+    <section className="py-4 px-4 mt-12 relative overflow-hidden">
       {/* Main toggle button */}
-      <div className="w-full flex justify-center mb-4">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setShowReviews(!showReviews)}
-          className="group relative px-8 py-4 rounded-full bg-white/80 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_40px_rgba(188,108,37,0.2)] transition-all duration-300"
-        >
-          <div className="absolute inset-0 rounded-full bg-linear-to-r from-(--color-tiger) via-(--color-earth) to-(--color-tiger) opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
-          <div className="absolute inset-0 rounded-full border border-(--color-tiger)/20 group-hover:border-(--color-tiger)/50 transition-colors duration-300" />
-
-          <div className="relative flex items-center gap-3">
-            <div
-              className={`p-2 rounded-full transition-colors duration-300 ${
-                showReviews
-                  ? "bg-red-50 text-red-500"
-                  : "bg-(--color-tiger)/10 text-(--color-tiger)"
-              }`}
+      {!hideForm && (
+        <div className="w-full flex justify-center mb-4">
+          <Link to={`/products-details/${id}/reviews`}>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="group relative px-14 py-4 rounded-full bg-white/80 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_20px_40px_rgba(188,108,37,0.2)] transition-all duration-300"
             >
-              {showReviews ? <X size={18} /> : <MessageSquarePlus size={18} />}
-            </div>
+              <div className="absolute inset-0 rounded-full bg-linear-to-r from-(--color-tiger) via-(--color-earth) to-(--color-tiger) opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+              <div className="absolute inset-0 rounded-full border border-(--color-tiger)/20 group-hover:border-(--color-tiger)/50 transition-colors duration-300" />
 
-            <div className="flex flex-col items-start">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                {showReviews ? "Close Panel" : "Customer Reviews"}
-              </span>
-              <span className="text-sm font-black text-(--color-pakistan) group-hover:text-(--color-tiger) transition-colors">
-                {showReviews
-                  ? "Hide Reviews & Form"
-                  : "Read Reviews or Write One"}
-              </span>
-            </div>
-          </div>
-        </motion.button>
-      </div>
+              <div className="relative flex items-center gap-3">
+                <div className="p-2 rounded-full bg-(--color-tiger)/10 text-(--color-tiger)">
+                  <MessageSquarePlus size={18} />
+                </div>
+
+                <div className="flex flex-col items-start">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Customer Reviews
+                  </span>
+                  <span className="text-sm font-black text-(--color-pakistan) group-hover:text-(--color-tiger) transition-colors">
+                    Read Reviews & Write One
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </Link>
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
         {showReviews && (
@@ -160,92 +169,109 @@ export default function Reviews() {
             {/* Reviews list */}
             <div className="space-y-6">
               <AnimatePresence>
-                {reviewsData?.review.map((review: ReviewType, idx: number) => (
-                  <motion.div
-                    key={review?.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      transition: { delay: idx * 0.1 },
-                    }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="relative mt-8"
-                  >
-                    {/* Date Tag - Outside Top Right */}
-                    <div className="absolute -top-6 right-0 mb-1 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-full text-[12px] font-bold text-(--color-pakistan) uppercase tracking-wider z-0">
-                      {review?.createdAt &&
-                        new Date(review?.createdAt).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          }
-                        )}
-                    </div>
+                {reviewsData?.review
+                  ?.slice(0, limit || reviewsData?.review?.length)
+                  .map((review: ReviewType, idx: number) => (
+                    <motion.div
+                      key={review?.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        transition: { delay: idx * 0.1 },
+                      }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="relative mt-8"
+                    >
+                      {/* Date Tag - Outside Top Right */}
+                      <div className="absolute -top-6 right-0 mb-1 bg-white/50 backdrop-blur-sm px-3 py-1 rounded-full text-[12px] font-bold text-(--color-pakistan) uppercase tracking-wider z-0">
+                        {review?.createdAt &&
+                          new Date(review?.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            },
+                          )}
+                      </div>
 
-                    <div className="group relative bg-white/40 backdrop-blur-md rounded-2xl p-3 border border-white/60 transition-all hover:bg-white/60 z-10">
-                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 mb-2">
-                        {/* User Info */}
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--color-cornsilk) to-white border border-(--color-earth)/20 flex items-center justify-center text-(--color-pakistan) font-black text-lg">
-                            {review?.user?.firstName?.charAt(0)}
-                          </div>
-                          <div>
-                            <h4 className="text-lg font-bold text-(--color-pakistan)">
-                              {review?.user?.firstName} {review?.user?.lastName}
-                            </h4>
-                            <div className="flex gap-0.5 mt-0.5">
-                              {Array.from({ length: 5 }).map((_, i) => (
-                                <Star
-                                  key={i}
-                                  size={12}
-                                  color={
-                                    i < review?.rating
-                                      ? "var(--color-tiger)"
-                                      : "#e5e7eb"
-                                  }
-                                  fill={
-                                    i < review?.rating
-                                      ? "var(--color-tiger)"
-                                      : "transparent"
-                                  }
-                                  strokeWidth={0}
-                                />
-                              ))}
+                      <div className="group relative bg-white/40 backdrop-blur-md rounded-2xl p-3 border border-white/60 transition-all hover:bg-white/60 z-10">
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 mb-2">
+                          {/* User Info */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--color-cornsilk) to-white border border-(--color-earth)/20 flex items-center justify-center text-(--color-pakistan) font-black text-lg">
+                              {review?.user?.firstName?.charAt(0)}
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-bold text-(--color-pakistan)">
+                                {review?.user?.firstName}{" "}
+                                {review?.user?.lastName}
+                              </h4>
+                              <div className="flex gap-0.5 mt-0.5">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    size={12}
+                                    color={
+                                      i < review?.rating
+                                        ? "var(--color-tiger)"
+                                        : "#e5e7eb"
+                                    }
+                                    fill={
+                                      i < review?.rating
+                                        ? "var(--color-tiger)"
+                                        : "transparent"
+                                    }
+                                    strokeWidth={0}
+                                  />
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
+
+                        <p className="text-base text-gray-700 leading-relaxed pl-13 mb-2 font-medium">
+                          {review?.comment}
+                        </p>
+
+                        {/* Actions */}
+                        {user?.id === review?.user?.id && (
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handleEditReview(review)}
+                              className="p-2 rounded-lg text-gray-400 hover:text-(--color-tiger) bg-gray-50 hover:bg-(--color-tiger)/10 transition-all"
+                              title="Edit Review"
+                            >
+                              <Edit3 size={18} strokeWidth={2.5} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteReview(review.id)}
+                              className="p-2 rounded-lg text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 transition-all"
+                              title="Delete Review"
+                            >
+                              <Trash2 size={18} strokeWidth={2.5} />
+                            </button>
+                          </div>
+                        )}
                       </div>
-
-                      <p className="text-base text-gray-700 leading-relaxed pl-13 mb-2 font-medium">
-                        {review?.comment}
-                      </p>
-
-                      {/* Actions */}
-                      {user?.id === review?.user?.id && (
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => handleEditReview(review)}
-                            className="p-2 rounded-lg text-gray-400 hover:text-(--color-tiger) bg-gray-50 hover:bg-(--color-tiger)/10 transition-all"
-                            title="Edit Review"
-                          >
-                            <Edit3 size={18} strokeWidth={2.5} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteReview(review.id)}
-                            className="p-2 rounded-lg text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 transition-all"
-                            title="Delete Review"
-                          >
-                            <Trash2 size={18} strokeWidth={2.5} />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))}
               </AnimatePresence>
+
+              {limit &&
+                !hideForm &&
+                reviewsData?.review &&
+                reviewsData.review.length > limit && (
+                  <div className="mt-12 flex justify-center">
+                    <Link
+                      to={`/products-details/${id}/reviews`}
+                      className="px-10 py-4 border border-(--color-dark) text-(--color-dark) text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-(--color-dark) hover:text-white transition-all duration-300"
+                    >
+                      View All Perspectives ({reviewsData.review.length})
+                    </Link>
+                  </div>
+                )}
 
               {reviewsData?.review?.length === 0 && (
                 <motion.div

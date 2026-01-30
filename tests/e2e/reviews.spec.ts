@@ -28,7 +28,7 @@ test.describe("Product Reviews (e2e)", () => {
     await expect(page).toHaveURL(/.*products-details/);
 
     // Open Reviews Panel
-    const reviewsToggle = page.getByText(/Read Reviews or Write One/i);
+    const reviewsToggle = page.getByText(/Read Reviews & Write One/i);
     // Ensure it's visible
     await reviewsToggle.scrollIntoViewIfNeeded();
     await reviewsToggle.click();

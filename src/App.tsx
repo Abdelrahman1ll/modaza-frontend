@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReviewsPage from "./pages/products/ReviewsPage";
 
 const CategoryPage = lazy(() => import("./pages/Category/categoryPage"));
 
@@ -123,6 +124,11 @@ function App() {
           <Route
             path="/products-details/:id"
             element={<ProductDetailsPage />}
+          />
+
+          <Route
+            path="/products-details/:id/reviews"
+            element={<ReviewsPage />}
           />
 
           {/* 

@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import Reviews from "./reviews";
 import useReviews from "./useReviews"; // Import the hook to mock it
 import { AuthContext, type AuthContextType } from "../../context/AuthContext";
+import { BrowserRouter } from "react-router-dom";
 import "@testing-library/jest-dom";
 
 // Mock the custom hook
@@ -36,9 +37,13 @@ vi.mock("framer-motion", () => ({
 
 // Mock Lucide Icons
 vi.mock("lucide-react", () => ({
-  Star: ({ onClick, ...props }: { onClick?: () => void; [key: string]: unknown }) => (
-    <svg data-testid="star-icon" onClick={onClick} {...props} />
-  ),
+  Star: ({
+    onClick,
+    ...props
+  }: {
+    onClick?: () => void;
+    [key: string]: unknown;
+  }) => <svg data-testid="star-icon" onClick={onClick} {...props} />,
   MessageSquarePlus: () => <svg data-testid="message-icon" />,
   X: () => <svg data-testid="close-icon" />,
   Edit3: () => <svg data-testid="edit-icon" />,
@@ -73,18 +78,20 @@ describe("Reviews Component", () => {
   // Helper to render with AuthContext
   const renderWithContext = (ui: React.ReactNode, user = mockUser) => {
     return render(
-      <AuthContext.Provider
-        value={
-          {
-            user,
-            setUser: vi.fn(),
-            logout: vi.fn(),
-            initializing: false,
-          } as unknown as AuthContextType
-        }
-      >
-        {ui}
-      </AuthContext.Provider>,
+      <BrowserRouter>
+        <AuthContext.Provider
+          value={
+            {
+              user,
+              setUser: vi.fn(),
+              logout: vi.fn(),
+              initializing: false,
+            } as unknown as AuthContextType
+          }
+        >
+          {ui}
+        </AuthContext.Provider>
+      </BrowserRouter>,
     );
   };
 
@@ -96,7 +103,7 @@ describe("Reviews Component", () => {
   it("renders the toggle button initially", () => {
     renderWithContext(<Reviews />);
     expect(screen.getByText("Customer Reviews")).toBeInTheDocument();
-    expect(screen.getByText("Read Reviews or Write One")).toBeInTheDocument();
+    expect(screen.getByText("Read Reviews & Write One")).toBeInTheDocument();
   });
 
   it("toggles the reviews panel when clicked", () => {
@@ -113,7 +120,6 @@ describe("Reviews Component", () => {
     expect(
       screen.getByPlaceholderText("What did you like about this product?"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Close Panel")).toBeInTheDocument();
   });
 
   it("displays reviews when data is available", () => {
