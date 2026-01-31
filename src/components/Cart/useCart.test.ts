@@ -8,6 +8,8 @@ import {
 } from "../../redux/Cart/apiCart";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import React from "react";
 
 // Mock dependencies
 vi.mock("../../redux/Cart/apiCart", () => ({
@@ -23,6 +25,13 @@ vi.mock("react-toastify", () => ({
     success: vi.fn(),
   },
 }));
+
+const wrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(
+    AuthContext.Provider,
+    { value: { user: { role: "user" } } as any },
+    children,
+  );
 
 describe("UseCart Hook", () => {
   const mockNavigate = vi.fn();
@@ -72,7 +81,7 @@ describe("UseCart Hook", () => {
 
   describe("Initialization", () => {
     it("should initialize with cart data", () => {
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       expect(result.current.data).toEqual(mockCartData);
       expect(result.current.isLoading).toBe(false);
@@ -80,7 +89,7 @@ describe("UseCart Hook", () => {
     });
 
     it("should return navigate function", () => {
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       expect(result.current.navigate).toBe(mockNavigate);
     });
@@ -90,7 +99,7 @@ describe("UseCart Hook", () => {
     it("should decrease quantity when quantity is greater than 1", async () => {
       mockPatchCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.decreaseQuantity({ id: 1, quantity: 3 });
@@ -105,7 +114,7 @@ describe("UseCart Hook", () => {
     });
 
     it("should show info toast when quantity is 1", async () => {
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.decreaseQuantity({ id: 1, quantity: 1 });
@@ -116,7 +125,7 @@ describe("UseCart Hook", () => {
     });
 
     it("should show info toast when quantity is less than 1", async () => {
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.decreaseQuantity({ id: 1, quantity: 0 });
@@ -129,7 +138,7 @@ describe("UseCart Hook", () => {
     it("should handle error when decreasing quantity fails", async () => {
       mockPatchCart.mockRejectedValue(new Error("Network error"));
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.decreaseQuantity({ id: 1, quantity: 5 });
@@ -142,7 +151,7 @@ describe("UseCart Hook", () => {
     it("should convert id to string when calling patchCart", async () => {
       mockPatchCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.decreaseQuantity({ id: 123, quantity: 5 });
@@ -159,7 +168,7 @@ describe("UseCart Hook", () => {
     it("should increase quantity when quantity is less than 15", async () => {
       mockPatchCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.increaseQuantity({ id: 1, quantity: 5 });
@@ -174,7 +183,7 @@ describe("UseCart Hook", () => {
     });
 
     it("should show info toast when quantity is 15", async () => {
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.increaseQuantity({ id: 1, quantity: 15 });
@@ -185,7 +194,7 @@ describe("UseCart Hook", () => {
     });
 
     it("should show info toast when quantity is greater than 15", async () => {
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.increaseQuantity({ id: 1, quantity: 20 });
@@ -198,7 +207,7 @@ describe("UseCart Hook", () => {
     it("should handle error when increasing quantity fails", async () => {
       mockPatchCart.mockRejectedValue(new Error("Network error"));
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.increaseQuantity({ id: 1, quantity: 5 });
@@ -211,7 +220,7 @@ describe("UseCart Hook", () => {
     it("should convert id to string when calling patchCart", async () => {
       mockPatchCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.increaseQuantity({ id: 456, quantity: 3 });
@@ -226,7 +235,7 @@ describe("UseCart Hook", () => {
     it("should allow increasing from 14 to 15", async () => {
       mockPatchCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.increaseQuantity({ id: 1, quantity: 14 });
@@ -244,7 +253,7 @@ describe("UseCart Hook", () => {
     it("should remove item successfully", async () => {
       mockDeleteCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.removeItem(1);
@@ -258,7 +267,7 @@ describe("UseCart Hook", () => {
     it("should handle error when removing item fails", async () => {
       mockDeleteCart.mockRejectedValue(new Error("Network error"));
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.removeItem(1);
@@ -271,7 +280,7 @@ describe("UseCart Hook", () => {
     it("should convert id to string when calling deleteCart", async () => {
       mockDeleteCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.removeItem(789);
@@ -301,7 +310,7 @@ describe("UseCart Hook", () => {
         status: "pending" as const,
       } as any);
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.data).toBeUndefined();
@@ -326,7 +335,7 @@ describe("UseCart Hook", () => {
         status: "rejected" as const,
       } as any);
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       expect(result.current.isError).toBe(true);
       expect(result.current.data).toBeUndefined();
@@ -353,7 +362,7 @@ describe("UseCart Hook", () => {
         status: "fulfilled" as const,
       } as any);
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       expect(result.current.data?.carts.items).toHaveLength(0);
       expect(result.current.data?.carts.total).toBe(0);
@@ -362,7 +371,7 @@ describe("UseCart Hook", () => {
     it("should handle multiple rapid quantity changes", async () => {
       mockPatchCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await Promise.all([
@@ -380,7 +389,7 @@ describe("UseCart Hook", () => {
       mockPatchCart.mockResolvedValue({});
       mockDeleteCart.mockResolvedValue({});
 
-      const { result } = renderHook(() => UseCart());
+      const { result } = renderHook(() => UseCart(), { wrapper });
 
       await act(async () => {
         await result.current.increaseQuantity({ id: 1, quantity: 5 });

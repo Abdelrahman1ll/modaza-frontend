@@ -24,7 +24,7 @@ export default function useProductDetail() {
   const { isFav, handleToggleWishlist: toggleWishlist } = useWishlistToggle();
 
   const [postCart] = usePostCartMutation();
-  const { refetch: refetchCart } = useGetCartQuery({});
+  const { refetch: refetchCart } = useGetCartQuery({}, { skip: user?.role !== "user" });
 
   const handleToggleWishlist = () => toggleWishlist(Number(id));
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -36,14 +36,14 @@ export default function useProductDetail() {
   const handleNext = () => {
     if (!product?.images?.length) return;
     setCurrentIndex((prevIndex: number) =>
-      prevIndex === product?.images?.length - 1 ? 0 : prevIndex + 1
+      prevIndex === product?.images?.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const handlePrev = () => {
     if (!product?.images?.length) return;
     setCurrentIndex((prevIndex: number) =>
-      prevIndex === 0 ? product?.images?.length - 1 : prevIndex - 1
+      prevIndex === 0 ? product?.images?.length - 1 : prevIndex - 1,
     );
   };
 
@@ -78,7 +78,7 @@ export default function useProductDetail() {
     }
 
     if (user.role !== "user") {
-      toast.error("I'm not allowed to admin");
+      toast.error("I'm not allowed to add to cart");
       return;
     }
     const newErrors: {

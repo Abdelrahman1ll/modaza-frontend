@@ -30,8 +30,9 @@ export default function useHeader() {
   const { user, logout: handleLogout } = useContext(AuthContext);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  // 👇 Click-outside to close the country dropdown
+  // 👇 Click-outside to close the country dropdown AND the main menu
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       const isOutsideDesktop =
@@ -41,8 +42,15 @@ export default function useHeader() {
         !mobileDropdownRef.current ||
         !mobileDropdownRef.current.contains(event.target as Node);
 
+      const isOutsideMenu =
+        !menuRef.current || !menuRef.current.contains(event.target as Node);
+
       if (isOutsideDesktop && isOutsideMobile) {
         setIsOpen(false);
+      }
+
+      if (isOutsideMenu) {
+        setIsMenuOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -79,18 +87,7 @@ export default function useHeader() {
     return () => clearTimeout(handler);
   }, [nameInput, setSearchParams, searchParams]);
 
-  const isUser = user?.role === "user";
-
-  const { data: cart, refetch: refetchCart } = useGetCartQuery(
-    {},
-    { skip: !isUser }
-  );
-
-  useEffect(() => {
-    if (isUser) {
-      refetchCart();
-    }
-  }, [isUser, refetchCart]);
+  const { data: cart } = useGetCartQuery({}, { skip: user?.role !== "user" });
 
   const totalItems: number = cart?.carts?.items.length || 0;
 
@@ -118,5 +115,6 @@ export default function useHeader() {
     toggleCountryDropdown,
     desktopDropdownRef,
     mobileDropdownRef,
+    menuRef, // Export the new ref
   };
-};
+}

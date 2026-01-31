@@ -28,9 +28,7 @@ const Game = () => {
             discount: response.discountCode.discount,
           });
         }
-      } catch (error) {
-        console.error("Failed to fetch LIGHTMASTER discount:", error);
-      }
+      } catch {}
     };
     fetchDiscount();
   }, [validateDiscountCode]);

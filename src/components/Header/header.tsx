@@ -6,8 +6,8 @@ import {
   X,
   Menu,
   House,
-  Heart,
   ChevronDown,
+  Heart,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import SearchInput from "./search";
@@ -42,6 +42,7 @@ export default function Header() {
     desktopDropdownRef,
     mobileDropdownRef,
     toggleCountryDropdown,
+    menuRef,
   } = useHeader();
   const location = useLocation();
 
@@ -316,6 +317,7 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               />
               <motion.div
+                ref={menuRef}
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}

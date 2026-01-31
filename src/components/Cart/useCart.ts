@@ -5,15 +5,25 @@ import {
 } from "../../redux/Cart/apiCart";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
 /**
  * useCart: Logic for managing cart items, quantities, and removal.
  * خطاف السلة: منطق إدارة منتجات السلة والكميات والحذف.
  */
 export default function UseCart() {
   const navigate = useNavigate();
-  const { data, isLoading, refetch, isError } = useGetCartQuery({});
+   const { user } = useContext(AuthContext);
+  const { data, isLoading, isError } = useGetCartQuery(
+    {},
+    { skip: user?.role !== "user" },
+  );
   const [deleteCart] = useDeleteCartMutation();
   const [patchCart] = usePatchCartMutation();
+  const { refetch } = useGetCartQuery(
+    {},
+    { skip: user?.role !== "user" },
+  );
   
   const decreaseQuantity = async ({
     id,

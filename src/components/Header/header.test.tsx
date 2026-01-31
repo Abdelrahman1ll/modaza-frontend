@@ -77,6 +77,7 @@ describe("Header Component", () => {
     desktopDropdownRef: { current: null },
     mobileDropdownRef: { current: null },
     toggleCountryDropdown: mockToggleCountryDropdown,
+    menuRef: { current: null },
   };
 
   beforeEach(() => {
