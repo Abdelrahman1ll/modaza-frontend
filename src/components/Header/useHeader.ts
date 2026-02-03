@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { SignupContext } from "../../context/SignupContext";
 
 const countries = [
-  { name: "Egypt", flag: "/eg.svg" },
+  { name: "Egypt", flag: "https://flagcdn.com/eg.svg" },
   // { name: "Saudi", flag: "https://flagcdn.com/sa.svg" },
   // { name: "Morocco", flag: "https://flagcdn.com/ma.svg" },
   // { name: "Jordan", flag: "https://flagcdn.com/jo.svg" },
