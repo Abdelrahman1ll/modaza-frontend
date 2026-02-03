@@ -73,7 +73,8 @@ body::-webkit-scrollbar {
 }
 
 @keyframes dot-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
     opacity: 0.3;
   }

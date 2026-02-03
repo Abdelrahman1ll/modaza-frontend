@@ -16,7 +16,14 @@ export const ApiEmail = createApi({
         body: data,
       }),
     }),
+    postReportCrash: builder.mutation({
+      query: (data) => ({
+        url: "/email/report-crash",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useSendEmailMutation } = ApiEmail;
+export const { useSendEmailMutation, usePostReportCrashMutation } = ApiEmail;
