@@ -37,4 +37,4 @@ Allow: /return-exchange-policy
 Allow: /sales-payment-policy
 
 # Sitemap
-Sitemap: https://modeza-fashion.vercel.app/sitemap.xml
+Sitemap: https://Modaza-fashion.vercel.app/sitemap.xml

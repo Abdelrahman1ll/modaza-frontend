@@ -92,7 +92,7 @@ describe("SecurePayment Component", () => {
   it("renders footer text", () => {
     render(<SecurePayment />);
     expect(
-      screen.getByText(/Modeza Boutique — Encrypted Connection/i),
+      screen.getByText(/Modaza Boutique — Encrypted Connection/i),
     ).toBeInTheDocument();
   });
 });

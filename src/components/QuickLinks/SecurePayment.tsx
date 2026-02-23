@@ -187,7 +187,7 @@ export default function SecurePayment() {
 
         <motion.div variants={itemVariants} className="mt-12 text-center">
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-300">
-            © {new Date().getFullYear()} Modeza Boutique — Encrypted Connection
+            © {new Date().getFullYear()} Modaza Boutique — Encrypted Connection
           </p>
         </motion.div>
       </motion.div>

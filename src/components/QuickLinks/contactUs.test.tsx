@@ -69,7 +69,7 @@ vi.mock("lucide-react", () => ({
 
 // Mock BrandText
 vi.mock("../../BrandText", () => ({
-  BRAND_EMAIL: "support@modeza.com",
+  BRAND_EMAIL: "support@Modaza.com",
   BRAND_PHONE: "+20 123 456 7890",
 }));
 
@@ -88,7 +88,7 @@ describe("ContactUs Component", () => {
     render(<ContactUs />);
     expect(screen.getByText(/Let’s Start a/i)).toBeInTheDocument();
     expect(screen.getByText(/Conversation/i)).toBeInTheDocument();
-    expect(screen.getByText("support@modeza.com")).toBeInTheDocument();
+    expect(screen.getByText("support@Modaza.com")).toBeInTheDocument();
     expect(screen.getByText("+20 123 456 7890")).toBeInTheDocument();
   });
 

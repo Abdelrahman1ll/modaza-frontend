@@ -196,7 +196,7 @@ export default function WorldwideShipping() {
 
         <motion.div variants={itemVariants} className="mt-12 text-center">
           <p className="text-[10px] font-black uppercase tracking-widest text-gray-300">
-            © {new Date().getFullYear()} Modeza Boutique — Connecting Fashion
+            © {new Date().getFullYear()} Modaza Boutique — Connecting Fashion
             Across Egypt
           </p>
         </motion.div>

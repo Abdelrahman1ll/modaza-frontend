@@ -88,7 +88,7 @@ describe("WorldwideShipping Component", () => {
   it("renders footer text", () => {
     render(<WorldwideShipping />);
     expect(
-      screen.getByText(/Modeza Boutique — Connecting Fashion Across Egypt/i),
+      screen.getByText(/Modaza Boutique — Connecting Fashion Across Egypt/i),
     ).toBeInTheDocument();
   });
 });

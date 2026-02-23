@@ -195,7 +195,7 @@ const ProductCard = memo(
           <span className="mb-1 text-[10px] font-black uppercase tracking-[0.25em] text-[#BC6C25]/80">
             {typeof product.category === "object" && product.category !== null
               ? (product.category as unknown as { name: string }).name
-              : product.category || "Modeza Collection"}
+              : product.category || "Modaza Collection"}
           </span>
           <h3 className="mb-2 text-lg font-bold tracking-tight text-gray-900 transition-colors duration-300 group-hover/card:text-(--color-tiger)">
             {product.name}

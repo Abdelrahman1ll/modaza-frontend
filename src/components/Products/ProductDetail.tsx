@@ -189,7 +189,7 @@ export default function ProductDetail() {
                 {typeof product.category === "object" &&
                 product.category !== null
                   ? (product.category as unknown as { name: string }).name
-                  : product.category || "Modeza Collection"}
+                  : product.category || "Modaza Collection"}
               </span>
               <h2 className="text-4xl font-black tracking-tight text-(--color-pakistan) leading-[1.1]">
                 {product?.name}

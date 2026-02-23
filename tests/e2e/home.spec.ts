@@ -8,7 +8,7 @@ test.describe("Home Page", () => {
 
   test("should load successfully and show main sections", async ({ page }) => {
     // Check for logo or title
-    await expect(page).toHaveTitle(/Modeza/i);
+    await expect(page).toHaveTitle(/Modaza/i);
 
     // Check for navigation links
     await expect(

@@ -105,7 +105,7 @@ describe("Header Component", () => {
     );
 
     // We expect the brand name to be rendered at least once (for desktop and mobile)
-    const brandElements = screen.getAllByText(/Modeza/i); // Assuming BRAND_NAME is Modeza
+    const brandElements = screen.getAllByText(/Modaza/i); // Assuming BRAND_NAME is Modaza
     expect(brandElements.length).toBeGreaterThan(0);
   });
 

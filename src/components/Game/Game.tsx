@@ -361,19 +361,21 @@ const Game = () => {
                             </span>
                           </div>
 
-                          <div className="flex flex-col md:flex-row items-center gap-6 bg-white/60 p-6 rounded-2xl border border-white shadow-lg">
-                            <div className="text-center">
-                              <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">
-                                Your Reward
-                              </p>
-                              <p className="font-mono font-black text-2xl text-(--color-tiger)">
-                                {discountInfo?.code || "LIGHTMASTER"}
-                              </p>
-                              <p className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full mt-1 inline-block">
-                                {discountInfo?.discount || 5}% Discount
-                              </p>
+                          {discountInfo && (
+                            <div className="flex flex-col md:flex-row items-center gap-6 bg-white/60 p-6 rounded-2xl border border-white shadow-lg">
+                              <div className="text-center">
+                                <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">
+                                  Your Reward
+                                </p>
+                                <p className="font-mono font-black text-2xl text-(--color-tiger)">
+                                  {discountInfo.code}
+                                </p>
+                                <p className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full mt-1 inline-block">
+                                  {discountInfo.discount}% Discount
+                                </p>
+                              </div>
                             </div>
-                          </div>
+                          )}
 
                           <button
                             onClick={startGame}

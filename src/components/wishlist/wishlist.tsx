@@ -59,7 +59,7 @@ const WishlistSkeleton = () => (
 export default function Wishlist() {
   const { handleToggleWishlist, isFav, isLoading, user, data } = UseWishlist();
   const [hoveredIds, setHoveredIds] = React.useState<Record<number, boolean>>(
-    {}
+    {},
   );
 
   return (
@@ -200,7 +200,7 @@ export default function Wishlist() {
                         product.category !== null
                           ? (product.category as unknown as { name: string })
                               .name
-                          : product.category || "Modeza Collection"}
+                          : product.category || "Modaza Collection"}
                       </span>
                       <h3 className="mb-2 text-lg font-bold tracking-tight text-gray-900 transition-colors duration-300 group-hover/card:text-(--color-tiger)">
                         {product.name}
@@ -244,7 +244,7 @@ export default function Wishlist() {
                     </div>
                   </motion.div>
                 );
-              }
+              },
             )
           ) : (
             <div className="col-span-full flex flex-col items-center justify-center py-20">
