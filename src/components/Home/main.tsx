@@ -3,9 +3,9 @@ import type { Variants } from "framer-motion";
 
 import { getCloudinaryUrl, getCloudinarySrcSet } from "../../utils/cloudinary";
 
-const MODEL1_ID = "v1768316779/premium_photo-1681494700976-861938fe0513_gz2j30";
-const MODEL2_ID = "v1768316743/premium_photo-1673826949034-18367fc03955_xcpma8";
-const MODEL4_ID = "v1768316551/premium_photo-1667520043080-53dcca77e2aa_iehpcz";
+const MODEL1_ID = "v1771808562/showcase3_lmoorr.jpg";
+const MODEL2_ID = "v1771809838/Gemini_Generated_Image_wiw8exwiw8exwiw8_zacowr.png";
+const MODEL4_ID = "v1771808605/showcase1_gcpfc7.jpg";
 
 import { Link } from "react-router-dom";
 
@@ -78,7 +78,7 @@ export default function Main() {
               height={1000}
               loading="eager"
               fetchPriority="high"
-              className="w-full h-full object-cover origin-center"
+              className="w-full h-full object-cover object-top origin-top"
             />
 
             {/* Premium Gradient Overlay with layered opacity */}
@@ -203,7 +203,7 @@ export default function Main() {
                       decoding="async"
                       srcSet={getCloudinarySrcSet(img)}
                       sizes="(max-width: 640px) 400px, (max-width: 768px) 800px, 1400px"
-                      className="w-full h-full object-cover object-center"
+                      className="w-full h-full object-cover object-top"
                     />
                   </motion.div>
                   {/* Subtle hover overlay */}

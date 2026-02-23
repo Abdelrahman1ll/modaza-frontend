@@ -3,7 +3,7 @@
  * Generates optimized image URLs with automatic format conversion and responsive sizing
  */
 
-const CLOUDINARY_CLOUD_NAME = "dnjilyjr4";
+const CLOUDINARY_CLOUD_NAME = "dawkbwkfd";
 const CLOUDINARY_BASE_URL = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
 interface CloudinaryOptions {

@@ -9,6 +9,7 @@ const Game = () => {
   const [gameState, setGameState] = useState<
     "IDLE" | "PLAYING" | "WON" | "LOST" | "LEVEL_COMPLETE"
   >("IDLE");
+  const [isOpen, setIsOpen] = useState(false);
 
   const [validateDiscountCode] = usePostValidateDiscountCodeMutation();
   const [discountInfo, setDiscountInfo] = useState<{
@@ -150,187 +151,272 @@ const Game = () => {
   };
 
   return (
-    <section className="relative w-full max-w-7xl mx-auto px-4 py-6 md:py-10 overflow-hidden">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-(--color-tiger) opacity-5 blur-[100px]" />
-      </div>
-
-      <div className="relative z-10 rounded-[2.5rem] p-6 md:p-10 flex flex-col items-center justify-center min-h-[450px] gap-6 bg-white/2 border border-black/3 backdrop-blur-[2px] transition-all duration-500">
-        {/* Top Instructions Row */}
-        <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-black/5 pb-6">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-sm font-bold text-(--color-tiger) uppercase tracking-widest">
-              How to Play
-            </h2>
-            <p className="text-xs text-(--color-pakistan)/70 max-w-sm leading-relaxed">
-              1. Click <strong>START</strong> to begin.
-              <br />
-              2. Click <strong>STOP</strong> when the light is within the{" "}
-              <strong>Green Zone</strong>.<br />
-              3. Complete all <strong>3 Levels</strong> to win your discount!
-            </p>
-          </div>
-
-          <div className="flex gap-2">
-            <div className="text-right">
-              <p className="text-[10px] uppercase tracking-widest text-gray-500">
-                Total Time
-              </p>
-              <p className="font-mono font-bold text-xl text-(--color-pakistan)">
-                {formatTime(elapsedTime)}s
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Game Title & Progress */}
-        <div className="text-center space-y-2 mt-2">
-          <h2 className="text-3xl md:text-5xl font-black text-(--color-pakistan)">
-            Stop the <span className="text-(--color-tiger)">Light</span>
-          </h2>
-          <div className="flex justify-center gap-2 mt-2">
-            {[1, 2, 3].map((l) => (
-              <div
-                key={l}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${l <= level && gameState !== "IDLE" ? "bg-(--color-tiger) scale-110" : "bg-gray-200"}`}
-              />
-            ))}
-          </div>
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-            Level {gameState === "IDLE" ? "1" : level} / {MAX_LEVELS}
-          </p>
-        </div>
-
-        {/* Game Bar Container */}
-        <div className="relative w-full max-w-2xl h-14 bg-gray-200/50 rounded-full overflow-hidden border-4 border-white shadow-inner">
-          {/* Win Zone Marker */}
-          <div
-            className={`absolute top-0 bottom-0 border-x-2 transition-all duration-300 ${gameState === "LEVEL_COMPLETE" ? "bg-green-500/20 border-green-500" : "bg-(--color-earth)/20 border-(--color-earth)"}`}
-            style={{
-              left: `${WIN_ZONE_START}%`,
-              width: `${TARGET_WIDTH}%`,
-            }}
+    <>
+      {/* Floating Button */}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsOpen(true)}
+            className="fixed bottom-64 -left-2 md:-left-4 z-50 bg-(--color-tiger) text-white p-4 rounded-tr-full rounded-br-full shadow-[0_10px_40px_rgba(228,168,83,0.5)] flex items-center justify-center gap-2 group border-2 border-white pointer-events-auto"
           >
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-bold text-(--color-earth) uppercase tracking-widest opacity-80 whitespace-nowrap">
-              Target
-            </div>
-          </div>
-
-          {/* The Moving Cursor */}
-          <div
-            className="absolute top-1 bottom-1 w-4 bg-(--color-tiger) rounded-full shadow-[0_0_15px_rgba(228,168,83,0.8)] z-10"
-            style={{ left: `calc(${cursorPosition}% - 8px)` }}
-          />
-        </div>
-
-        {/* Status Message */}
-        <div className="h-6">
-          {gameState === "LEVEL_COMPLETE" && (
-            <span className="text-green-600 font-bold animate-pulse uppercase tracking-widest text-sm">
-              Perfect! Moving to Level {level + 1}...
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap text-sm font-black uppercase tracking-widest px-0 group-hover:px-2">
+              Play & Win!
             </span>
-          )}
-        </div>
+            <svg
+              className="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-        {/* Controls / Result */}
-        <div className="h-28 w-full flex items-center justify-center relative">
-          <AnimatePresence mode="wait">
-            {gameState === "IDLE" && (
-              <motion.button
-                key="start"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                onClick={startGame}
-                className="px-10 py-4 bg-(--color-pakistan) text-white font-bold rounded-full text-lg shadow-xl hover:scale-105 active:scale-95 transition-all w-64 uppercase tracking-widest"
-              >
-                Start Game
-              </motion.button>
-            )}
+      {/* Modal Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setIsOpen(false)}
+            />
 
-            {(gameState === "PLAYING" || gameState === "LEVEL_COMPLETE") && (
-              <motion.button
-                key="stop"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                onClick={stopGame}
-                disabled={gameState === "LEVEL_COMPLETE"}
-                className="px-16 py-6 bg-(--color-tiger) text-white font-black rounded-full text-2xl shadow-xl shadow-(--color-tiger)/30 hover:scale-105 active:scale-95 transition-all uppercase tracking-widest w-72 disabled:opacity-50 disabled:cursor-not-allowed"
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-4xl z-10 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden min-h-[500px]"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-4 right-4 z-20 p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-full transition-colors duration-200"
               >
-                STOP!
-              </motion.button>
-            )}
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
 
-            {gameState === "WON" && (
-              <motion.div
-                key="won"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                className="flex flex-col items-center gap-4 w-full"
-              >
-                <div className="flex flex-col items-center mt-6">
-                  <span className="text-lg font-black text-(--color-pakistan) uppercase tracking-widest">
-                    Congratulations!
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    You beat all 3 levels!
-                  </span>
+              <div className="relative w-full h-full p-4 py-8 md:py-10">
+                {/* Background Ambience */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-(--color-tiger) opacity-5 blur-[100px]" />
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center gap-6 bg-white/60 p-6 rounded-2xl border border-white shadow-lg">
-                  <div className="text-center">
-                    <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">
-                      Your Reward
-                    </p>
-                    <p className="font-mono font-black text-2xl text-(--color-tiger)">
-                      {discountInfo?.code || "LIGHTMASTER"}
-                    </p>
-                    <p className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full mt-1 inline-block">
-                      {discountInfo?.discount || 5}% Discount
+                <div className="relative z-10 rounded-[2.5rem] p-6 md:p-10 flex flex-col items-center justify-center min-h-[450px] gap-6 bg-white/2 border border-black/3 backdrop-blur-[2px] transition-all duration-500">
+                  {/* Top Instructions Row */}
+                  <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-black/5 pb-6">
+                    <div className="flex flex-col gap-1">
+                      <h2 className="text-sm font-bold text-(--color-tiger) uppercase tracking-widest">
+                        How to Play
+                      </h2>
+                      <p className="text-xs text-(--color-pakistan)/70 max-w-sm leading-relaxed">
+                        1. Click <strong>START</strong> to begin.
+                        <br />
+                        2. Click <strong>STOP</strong> when the light is within
+                        the <strong>Green Zone</strong>.<br />
+                        3. Complete all <strong>3 Levels</strong> to win your
+                        discount!
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <div className="text-right">
+                        <p className="text-[10px] uppercase tracking-widest text-gray-500">
+                          Total Time
+                        </p>
+                        <p className="font-mono font-bold text-xl text-(--color-pakistan)">
+                          {formatTime(elapsedTime)}s
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Main Game Title & Progress */}
+                  <div className="text-center space-y-2 mt-2">
+                    <h2 className="text-3xl md:text-5xl font-black text-(--color-pakistan)">
+                      Stop the{" "}
+                      <span className="text-(--color-tiger)">Light</span>
+                    </h2>
+                    <div className="flex justify-center gap-2 mt-2">
+                      {[1, 2, 3].map((l) => (
+                        <div
+                          key={l}
+                          className={`w-3 h-3 rounded-full transition-all duration-300 ${l <= level && gameState !== "IDLE" ? "bg-(--color-tiger) scale-110" : "bg-gray-200"}`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                      Level {gameState === "IDLE" ? "1" : level} / {MAX_LEVELS}
                     </p>
                   </div>
-                </div>
 
-                <button
-                  onClick={startGame}
-                  className="text-sm font-bold text-gray-400 hover:text-(--color-tiger) underline mb-4 uppercase tracking-widest"
-                >
-                  Play Again
-                </button>
-              </motion.div>
-            )}
+                  {/* Game Bar Container */}
+                  <div className="relative w-full max-w-2xl h-14 bg-gray-200/50 rounded-full overflow-hidden border-4 border-white shadow-inner">
+                    {/* Win Zone Marker */}
+                    <div
+                      className={`absolute top-0 bottom-0 border-x-2 transition-all duration-300 ${gameState === "LEVEL_COMPLETE" ? "bg-green-500/20 border-green-500" : "bg-(--color-earth)/20 border-(--color-earth)"}`}
+                      style={{
+                        left: `${WIN_ZONE_START}%`,
+                        width: `${TARGET_WIDTH}%`,
+                      }}
+                    >
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-bold text-(--color-earth) uppercase tracking-widest opacity-80 whitespace-nowrap">
+                        Target
+                      </div>
+                    </div>
 
-            {gameState === "LOST" && (
-              <motion.div
-                key="lost"
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
-                className="flex flex-col items-center gap-4"
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-xl font-black text-gray-400 uppercase tracking-widest">
-                    Missed!
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    Don't give up, try again!
-                  </span>
+                    {/* The Moving Cursor */}
+                    <div
+                      className="absolute top-1 bottom-1 w-4 bg-(--color-tiger) rounded-full shadow-[0_0_15px_rgba(228,168,83,0.8)] z-10"
+                      style={{ left: `calc(${cursorPosition}% - 8px)` }}
+                    />
+                  </div>
+
+                  {/* Status Message */}
+                  <div className="h-6">
+                    {gameState === "LEVEL_COMPLETE" && (
+                      <span className="text-green-600 font-bold animate-pulse uppercase tracking-widest text-sm">
+                        Perfect! Moving to Level {level + 1}...
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Controls / Result */}
+                  <div className="h-28 w-full flex items-center justify-center relative">
+                    <AnimatePresence mode="wait">
+                      {gameState === "IDLE" && (
+                        <motion.button
+                          key="start"
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.9, opacity: 0 }}
+                          onClick={startGame}
+                          className="px-10 py-4 bg-(--color-pakistan) text-white font-bold rounded-full text-lg shadow-xl hover:scale-105 active:scale-95 transition-all w-64 uppercase tracking-widest"
+                        >
+                          Start Game
+                        </motion.button>
+                      )}
+
+                      {(gameState === "PLAYING" ||
+                        gameState === "LEVEL_COMPLETE") && (
+                        <motion.button
+                          key="stop"
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.9, opacity: 0 }}
+                          onClick={stopGame}
+                          disabled={gameState === "LEVEL_COMPLETE"}
+                          className="px-16 py-6 bg-(--color-tiger) text-white font-black rounded-full text-2xl shadow-xl shadow-(--color-tiger)/30 hover:scale-105 active:scale-95 transition-all uppercase tracking-widest w-72 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          STOP!
+                        </motion.button>
+                      )}
+
+                      {gameState === "WON" && (
+                        <motion.div
+                          key="won"
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: -20, opacity: 0 }}
+                          className="flex flex-col items-center gap-4 w-full"
+                        >
+                          <div className="flex flex-col items-center mt-6">
+                            <span className="text-lg font-black text-(--color-pakistan) uppercase tracking-widest">
+                              Congratulations!
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              You beat all 3 levels!
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col md:flex-row items-center gap-6 bg-white/60 p-6 rounded-2xl border border-white shadow-lg">
+                            <div className="text-center">
+                              <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-1">
+                                Your Reward
+                              </p>
+                              <p className="font-mono font-black text-2xl text-(--color-tiger)">
+                                {discountInfo?.code || "LIGHTMASTER"}
+                              </p>
+                              <p className="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full mt-1 inline-block">
+                                {discountInfo?.discount || 5}% Discount
+                              </p>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={startGame}
+                            className="text-sm font-bold text-gray-400 hover:text-(--color-tiger) underline mb-4 uppercase tracking-widest"
+                          >
+                            Play Again
+                          </button>
+                        </motion.div>
+                      )}
+
+                      {gameState === "LOST" && (
+                        <motion.div
+                          key="lost"
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: -20, opacity: 0 }}
+                          className="flex flex-col items-center gap-4"
+                        >
+                          <div className="flex flex-col items-center">
+                            <span className="text-xl font-black text-gray-400 uppercase tracking-widest">
+                              Missed!
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              Don't give up, try again!
+                            </span>
+                          </div>
+                          <button
+                            onClick={startGame}
+                            className="px-8 py-3  text-sm bg-(--color-pakistan) text-white font-bold rounded-full hover:scale-105 transition-all shadow-lg uppercase tracking-widest"
+                          >
+                            Try Again
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
-                <button
-                  onClick={startGame}
-                  className="px-8 py-3  text-sm bg-(--color-pakistan) text-white font-bold rounded-full hover:scale-105 transition-all shadow-lg uppercase tracking-widest"
-                >
-                  Try Again
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-    </section>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
