@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import OrderDetails from "./OrderDetails";
+import OrderDetails from "./orderDetails";
 import useOrderDetails from "./useOrderDetails";
 import { BrowserRouter } from "react-router-dom";
 import "@testing-library/jest-dom";

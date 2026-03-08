@@ -3,7 +3,7 @@ import Footer from "../../components/Footer/footer";
 import PaymentSection from "../../components/Footer/PaymentSection";
 import Header from "../../components/Header/header";
 import PromoBar from "../../components/Header/PromoBar";
-import Wishlist from "../../components/wishlist/Wishlist";
+import Wishlist from "../../components/wishlist/wishlist";
 
 export default function WishlistPage() {
   return (

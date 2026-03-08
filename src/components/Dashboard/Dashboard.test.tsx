@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import Dashboard from "./Dashboard";
+import Dashboard from "./dashboard";
 import { useGetDashboardOrdersQuery } from "../../redux/Orders/apiOrders";
 import "@testing-library/jest-dom";
 

@@ -15,6 +15,7 @@ export default function useSignup(onClose: () => void) {
   const [email, setEmail] = useState<string>("");
   const [showCodeInput, setShowCodeInput] = useState<boolean>(false);
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [signupError, setSignupError] = useState<string | null>(null);
   const [checkEmail, { isLoading }] = useUsersCheckEmailMutation();
   const [postUser, { isLoading: isLoadingUser }] = usePostUsersMutation();
   const handleSignup = async (e: React.FormEvent) => {
@@ -26,8 +27,8 @@ export default function useSignup(onClose: () => void) {
         setEmail("");
         setShowCodeInput(true);
       }
-    } catch {
-      toast.error("Error checking email");
+    } catch (error: any) {
+      setSignupError(error?.data?.message || "Error checking email");
       setShowCodeInput(false);
     }
   };
@@ -41,6 +42,7 @@ export default function useSignup(onClose: () => void) {
     // Handle normal typing (single digit)
     if (value.length <= 1) {
       if (/^\d?$/.test(value)) {
+        setSignupError(null);
         const newCode = [...code];
         newCode[index] = value;
         setCode(newCode);
@@ -169,7 +171,7 @@ export default function useSignup(onClose: () => void) {
       }
     } catch (error: any) {
       const errorMsg = error?.data?.message || error?.message || "Invalid code";
-      toast.error(errorMsg);
+      setSignupError(errorMsg);
     }
   };
 
@@ -185,5 +187,7 @@ export default function useSignup(onClose: () => void) {
     handleSignup,
     isLoading,
     isLoadingUser,
+    signupError,
+    setSignupError,
   };
 }

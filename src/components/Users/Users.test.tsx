@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
-import AllUsers from "./Users";
+import AllUsers from "./users";
 import { BrowserRouter } from "react-router-dom";
 import * as apiUsers from "../../redux/users/apiUsers";
 import "@testing-library/jest-dom";

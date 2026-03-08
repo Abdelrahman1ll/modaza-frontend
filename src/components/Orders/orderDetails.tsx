@@ -13,7 +13,7 @@ import {
   Package,
 } from "lucide-react";
 
-import OrderProgress from "./OrderProgress";
+import OrderProgress from "./orderProgress";
 import useOrderDetails from "./useOrderDetails";
 import { SkeletonList } from "../Skeleton";
 

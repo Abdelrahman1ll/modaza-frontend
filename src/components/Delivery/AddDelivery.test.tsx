@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import DeliveryPrice from "./AddDelivery";
+import DeliveryPrice from "./addDelivery";
 import {
   useGetDeliveryQuery,
   usePostDeliveryMutation,

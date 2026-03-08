@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import ProductForm from "./ProductForm";
+import ProductForm from "./productForm";
 import { BrowserRouter } from "react-router-dom";
 import "@testing-library/jest-dom";
 

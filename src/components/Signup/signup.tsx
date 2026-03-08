@@ -20,6 +20,8 @@ export default function Signup({ onClose }: { onClose: () => void }) {
     handleSignup,
     isLoading,
     isLoadingUser,
+    signupError,
+    setSignupError,
   } = useSignup(onClose as () => void);
 
   const containerVariants: Variants = {
@@ -101,10 +103,24 @@ export default function Signup({ onClose }: { onClose: () => void }) {
                       className="w-full px-4 py-3 rounded-xl border border-(--color-earth)/30 focus:border-(--color-tiger) focus:ring-2 focus:ring-(--color-tiger)/10 transition-all outline-none text-(--color-pakistan) bg-white/50"
                       placeholder="name@example.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (signupError) setSignupError(null);
+                      }}
                     />
                     <AnimatePresence>
-                      {!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+                      {signupError && !showCodeInput && (
+                        <motion.p
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="text-red-500 text-xs mt-1.5 ml-1"
+                        >
+                          {signupError}
+                        </motion.p>
+                      )}
+                      {!signupError &&
+                        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
                         email.length > 0 && (
                           <motion.p
                             initial={{ opacity: 0, height: 0 }}
@@ -208,7 +224,18 @@ export default function Signup({ onClose }: { onClose: () => void }) {
                     </div>
 
                     <AnimatePresence>
-                      {!/^\d{6}$/.test(code.join("")) &&
+                      {signupError && showCodeInput && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="text-red-500 text-xs text-center mt-2"
+                        >
+                          {signupError}
+                        </motion.p>
+                      )}
+                      {!signupError &&
+                        !/^\d{6}$/.test(code.join("")) &&
                         code.join("").length !== 0 &&
                         code.join("").length !== 6 && (
                           <motion.p

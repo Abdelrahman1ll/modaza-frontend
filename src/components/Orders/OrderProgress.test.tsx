@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import OrderProgress from "./OrderProgress";
+import OrderProgress from "./orderProgress";
 import useOrderProgress from "./useOrderProgress";
 import type { OrderType } from "../../types/OrderType";
 import "@testing-library/jest-dom";

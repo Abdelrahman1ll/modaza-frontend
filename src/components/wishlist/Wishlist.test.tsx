@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
-import Wishlist from "./Wishlist";
+import Wishlist from "./wishlist";
 import UseWishlist from "./useWishlist";
 import { BrowserRouter } from "react-router-dom";
 import "@testing-library/jest-dom";
