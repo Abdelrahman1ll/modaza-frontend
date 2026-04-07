@@ -8,7 +8,8 @@ const CategoryPage = lazy(() => import("./pages/Category/categoryPage"));
 
 const ColorPage = lazy(() => import("./pages/Color/colorPage"));
 
-const Loading = lazy(() => import("./components/Loading"));
+
+// Removed duplicate lazy Loading as it is now imported normally for the location check
 const NetworkStatus = lazy(() => import("./components/NetworkStatus"));
 const ScrollToTop = lazy(() => import("./components/ScrollToTop"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
@@ -68,6 +69,10 @@ const TermsConditionsPage = lazy(
 const CheckoutPage = lazy(() => import("./pages/Orders/CheckoutPage"));
 const ContactUsPage = lazy(() => import("./pages/QuickLinks/contactUsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const AccessDenied = lazy(() => import("./pages/AccessDenied"));
+
+import Loading from "./components/Loading";
+import { useGeoLocation } from "./hooks/useGeoLocation";
 
 export default /**
  * App component: The root component that defines the application routing and page structure.
@@ -78,6 +83,15 @@ function App() {
    * Defines the routes and protected layouts for different user roles.
    * يتم هنا تعريف المسارات والتنسيقات المحمية لكل دور مستخدم.
    */
+  const { isEgypt, loading } = useGeoLocation();
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (isEgypt === false) {
+    return <AccessDenied />;
+  }
 
   return (
     <div>
