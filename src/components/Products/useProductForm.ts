@@ -277,6 +277,9 @@ export default function useProductForm(mode: "add" | "edit") {
           err.length = "Length is required.";
         if (!s.width || Number(s.width) <= 0) err.width = "Width is required.";
         if (!s.stock || Number(s.stock) <= 0) err.stock = "Stock is required.";
+        if (Number(s.stock) > Number(formData.stock)) {
+          err.stock = "Stock must be less than or equal to the total stock.";
+        }
         return err;
       });
 

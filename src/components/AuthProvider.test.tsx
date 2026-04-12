@@ -13,20 +13,7 @@ vi.mock("js-cookie", () => ({
   },
 }));
 
-// We can mock crypto-js to return simple strings for testing
-vi.mock("crypto-js", () => ({
-  default: {
-    AES: {
-      encrypt: vi.fn(() => ({ toString: () => "encrypted_data" })),
-      decrypt: vi.fn(() => ({
-        toString: () => '{"user": {"id": 1, "firstName": "Test"}}',
-      })),
-    },
-    enc: {
-      Utf8: "utf8",
-    },
-  },
-}));
+// We no longer mock because it's removed from the source
 
 describe("AuthProvider Component", () => {
   beforeEach(() => {
@@ -75,8 +62,9 @@ describe("AuthProvider Component", () => {
     expect(screen.getByTestId("user")).toHaveTextContent("no user");
   });
 
-  it("initializes with user from cookie if it exists", async () => {
-    vi.mocked(Cookies.get).mockReturnValue("some_encrypted_cookie" as any);
+  it("initializes with user from cookie if it exists (plain JSON)", async () => {
+    const mockUser = { user: { id: 1, firstName: "Test" } };
+    vi.mocked(Cookies.get).mockReturnValue(JSON.stringify(mockUser) as any);
 
     render(
       <AuthProvider>
@@ -87,7 +75,7 @@ describe("AuthProvider Component", () => {
     expect(screen.getByTestId("user")).toHaveTextContent("Test");
   });
 
-  it("updates state and cookies on setUser (login)", async () => {
+  it("updates state and cookies on setUser (login) with plain JSON", async () => {
     vi.mocked(Cookies.get).mockReturnValue(undefined as any);
 
     render(
@@ -102,15 +90,21 @@ describe("AuthProvider Component", () => {
     });
 
     expect(screen.getByTestId("user")).toHaveTextContent("New User");
+    
+    // Check that Cookies.set was called with a JSON string, not encrypted data
     expect(Cookies.set).toHaveBeenCalledWith(
       "user",
-      "encrypted_data",
+      expect.stringContaining('"firstName":"New User"'),
       expect.any(Object),
     );
   });
 
-  it("clears state and cookies on logout", async () => {
-    vi.mocked(Cookies.get).mockReturnValue("some_encrypted_cookie" as any);
+  it("clears state and cookies/localStorage on logout", async () => {
+    const mockUser = { user: { id: 1, firstName: "Test" } };
+    vi.mocked(Cookies.get).mockReturnValue(JSON.stringify(mockUser) as any);
+    
+    // Mock localStorage
+    const clearSpy = vi.spyOn(Storage.prototype, "clear");
 
     render(
       <AuthProvider>
@@ -125,5 +119,6 @@ describe("AuthProvider Component", () => {
 
     expect(screen.getByTestId("user")).toHaveTextContent("no user");
     expect(Cookies.remove).toHaveBeenCalledWith("user");
+    expect(clearSpy).toHaveBeenCalled();
   });
 });

@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { FetchArgs } from "@reduxjs/toolkit/query";
 import { baseQueryWithReauth } from "./baseQueryWithReauth";
 import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
 import { toast } from "react-toastify";
 
 /* ------------------------------------------------------------------ */
@@ -16,17 +15,7 @@ vi.mock("js-cookie", () => ({
   },
 }));
 
-vi.mock("crypto-js", () => ({
-  default: {
-    AES: {
-      decrypt: vi.fn(),
-      encrypt: vi.fn(),
-    },
-    enc: {
-      Utf8: "utf8",
-    },
-  },
-}));
+// CryptoJS is no longer imported in the source, so we don't mock it here
 
 vi.mock("react-toastify", () => ({
   toast: {
@@ -63,12 +52,6 @@ const mockUser = {
   refreshToken: "refresh-token",
 };
 
-const encryptMock = (user: object) => JSON.stringify(user);
-
-const decryptMock = (user: object) => ({
-  toString: vi.fn(() => JSON.stringify(user)),
-});
-
 /* ------------------------------------------------------------------ */
 /*                                Tests                               */
 /* ------------------------------------------------------------------ */
@@ -81,7 +64,6 @@ describe("baseQueryWithReauth", () => {
     vi.clearAllMocks();
 
     (import.meta as unknown as { env: Record<string, string> }).env = {
-      VITE_SECRET_KEY: "test-secret",
       VITE_NODE_ENV: "development",
     };
   });
@@ -108,13 +90,9 @@ describe("baseQueryWithReauth", () => {
   /* --------------------------------------------------------------- */
 
   it("shows error when refresh token request fails", async () => {
+    // Provide plain JSON user cookie
     vi.mocked(Cookies.get as (name: string) => string).mockReturnValue(
-      encryptMock(mockUser),
-    );
-    vi.mocked(CryptoJS.AES.decrypt).mockReturnValue(
-      decryptMock(mockUser) as unknown as ReturnType<
-        typeof CryptoJS.AES.decrypt
-      >,
+      JSON.stringify(mockUser),
     );
 
     mockBaseQuery
@@ -137,22 +115,13 @@ describe("baseQueryWithReauth", () => {
   /* 3️⃣ 401 + refresh succeeds                                    */
   /* --------------------------------------------------------------- */
 
-  it("refreshes token and retries original request", async () => {
+  it("refreshes token and retries original request (using plain JSON)", async () => {
     const newAccessToken = "new-token";
 
+    // Provide plain JSON user cookie
     vi.mocked(Cookies.get as (name: string) => string).mockReturnValue(
-      encryptMock(mockUser),
+      JSON.stringify(mockUser),
     );
-
-    vi.mocked(CryptoJS.AES.decrypt).mockReturnValue(
-      decryptMock(mockUser) as unknown as ReturnType<
-        typeof CryptoJS.AES.decrypt
-      >,
-    );
-
-    vi.mocked(CryptoJS.AES.encrypt).mockReturnValue({
-      toString: () => "new-encrypted-user",
-    } as unknown as ReturnType<typeof CryptoJS.AES.encrypt>);
 
     mockBaseQuery
       // original request → 401
@@ -180,7 +149,13 @@ describe("baseQueryWithReauth", () => {
       extraOptions,
     );
 
-    expect(Cookies.set).toHaveBeenCalled();
+    // Verify Cookies.set was called with JSON string
+    expect(Cookies.set).toHaveBeenCalledWith(
+      "user",
+      expect.stringContaining('"accessToken":"new-token"'),
+      expect.any(Object),
+    );
+    
     expect(result).toEqual({ data: "success-after-refresh" });
   });
 });

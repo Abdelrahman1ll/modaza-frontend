@@ -6,29 +6,21 @@ import {
   type BaseQueryApi,
 } from "@reduxjs/toolkit/query/react";
 import Cookies from "js-cookie";
-import CryptoJS from "crypto-js";
 import URL from "../../api/baseUrl";
-
-const secretKey = import.meta.env.VITE_SECRET_KEY;
 
 const baseQuery = fetchBaseQuery({
   baseUrl: URL,
   credentials: "include",
   prepareHeaders: (headers) => {
-    const encryptedUser = Cookies.get("user");
-    if (encryptedUser) {
+    const rawUser = Cookies.get("user");
+    if (rawUser) {
       try {
-        const decryptedUser = CryptoJS.AES.decrypt(
-          encryptedUser,
-          secretKey
-        ).toString(CryptoJS.enc.Utf8);
-
-        if (decryptedUser) {
-          const user = JSON.parse(decryptedUser);
+        const user = JSON.parse(rawUser);
+        if (user.accessToken) {
           headers.set("Authorization", `Bearer ${user.accessToken}`);
         }
       } catch {
-        toast.error("Error decrypting user");
+        // Silently fail or log error
       }
     }
 
@@ -44,58 +36,44 @@ export const baseQueryWithReauth = async (
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && (result.error as FetchBaseQueryError).status === 401) {
-    const encryptedUser = Cookies.get("user");
-    if (!encryptedUser) return result;
-    const decryptedUser = CryptoJS.AES.decrypt(
-      encryptedUser,
-      secretKey
-    ).toString(CryptoJS.enc.Utf8);
+    const rawUser = Cookies.get("user");
+    if (!rawUser) return result;
 
-    const user = JSON.parse(decryptedUser);
-    const refreshToken = user.refreshToken;
+    try {
+      const user = JSON.parse(rawUser);
+      const refreshToken = user.refreshToken;
 
-    if (!refreshToken) return result;
-    if (refreshToken) {
-      try {
-        const refreshResponse = (await baseQuery(
-          {
-            url: "/auth/refresh",
-            method: "POST",
-            body: { refreshToken: refreshToken },
-          },
-          api,
-          extraOptions
-        )) as { data: { accessToken: string } };
-        if (refreshResponse) {
-          const newAccessToken = refreshResponse.data.accessToken;
-          const encryptedUser = Cookies.get("user");
-          if (encryptedUser) {
-            const decryptedUser = CryptoJS.AES.decrypt(
-              encryptedUser,
-              secretKey
-            ).toString(CryptoJS.enc.Utf8);
-            if (decryptedUser) {
-              const user = JSON.parse(decryptedUser);
-              user.accessToken = newAccessToken;
-              const encryptedUser = CryptoJS.AES.encrypt(
-                JSON.stringify(user),
-                secretKey
-              ).toString();
-              Cookies.set("user", encryptedUser, {
-                expires: 90,
-                secure: import.meta.env.VITE_NODE_ENV === "production",
-                sameSite: "strict",
-                path: "/",
-              });
-            }
-          }
+      if (!refreshToken) return result;
 
-          // إعادة تنفيذ الطلب الأصلي بعد تحديث التوكن
-          result = await baseQuery(args, api, extraOptions);
-        }
-      } catch {
-        toast.error("Session expired. Please login again.");
+      const refreshResponse = (await baseQuery(
+        {
+          url: "/auth/refresh",
+          method: "POST",
+          body: { refreshToken: refreshToken },
+        },
+        api,
+        extraOptions
+      )) as { data: { accessToken: string } };
+
+      if (refreshResponse?.data?.accessToken) {
+        const newAccessToken = refreshResponse.data.accessToken;
+        
+        // Update the user object in the cookie with the new access token
+        const updatedUser = { ...user, accessToken: newAccessToken };
+        
+        Cookies.set("user", JSON.stringify(updatedUser), {
+          expires: 90,
+          secure: import.meta.env.VITE_NODE_ENV === "production",
+          sameSite: "strict",
+          path: "/",
+        });
+
+        // Retry the original request
+        result = await baseQuery(args, api, extraOptions);
       }
+    } catch (error) {
+      toast.error("Session expired. Please login again.");
+      // Optional: Redirect to login or logout
     }
   }
 
