@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CreditCard } from "lucide-react";
-import { usePostPaymentMutation } from "../../redux/Payment/apiPayment";
+import { usePostPaymentMutation } from "../../../redux/Payment/apiPayment";
 
 const paymentCache = new Map<
   string,

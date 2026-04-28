@@ -105,6 +105,34 @@ export default function useOrderDetails() {
   const actualIndex =
     lastActiveIndex === -1 ? -1 : specialSteps.length - 1 - lastActiveIndex;
 
+ const paymentMethod =
+    order?.paymentMethod === "credit_card"
+      ? "Credit Card"
+      : order?.paymentMethod === "cash_on_delivery"
+        ? "Cash on Delivery"
+        : order?.paymentMethod === "vodafone_cash"
+          ? "Vodafone Cash"
+          : order?.paymentMethod === "instaPay"
+            ? "InstaPay"
+            : order?.paymentMethod === "paypal"
+              ? "PayPal"
+              : "Payment";
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   return {
     order,
     specialSteps,
@@ -113,5 +141,8 @@ export default function useOrderDetails() {
     refetchOrders,
     role,
     isLoadingOrders,
+    paymentMethod,
+    containerVariants,
+    itemVariants,
   };
 }

@@ -1,6 +1,6 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
-import useCheckout from "./useCheckout";
+import useCheckout from "./Checkout/useCheckout";
 import { useGetCartQuery } from "../../redux/Cart/apiCart";
 import { useGetDeliveryQuery } from "../../redux/Delivery/apiDelivery";
 import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";

@@ -1,18 +1,19 @@
-import { useGetCartQuery } from "../../redux/Cart/apiCart";
+import { useGetCartQuery } from "../../../redux/Cart/apiCart";
 import { useNavigate } from "react-router-dom";
-import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
-import { useGetDeliveryQuery } from "../../redux/Delivery/apiDelivery";
+import { usePostValidateDiscountCodeMutation } from "../../../redux/DiscountCodes/apiDiscountCodes";
+import { useGetDeliveryQuery } from "../../../redux/Delivery/apiDelivery";
 import {
   useGetUserOrdersQuery,
   usePostOrdersMutation,
-} from "../../redux/Orders/apiOrders";
+} from "../../../redux/Orders/apiOrders";
 import { toast } from "react-toastify";
 import { useEffect, useRef, useState, useCallback, useContext } from "react";
-import egyptGovernorates from "../../data/egyptGovernorates.json";
-import { AuthContext } from "../../context/AuthContext";
-import { EGYPTIAN_PHONE_REGEX } from "../../utils/validators";
-import { detectUserGovernorate } from "../../utils/location";
+import egyptGovernorates from "../../../data/egyptGovernorates.json";
+import { AuthContext } from "../../../context/AuthContext";
+import { EGYPTIAN_PHONE_REGEX } from "../../../utils/validators";
+import { detectUserGovernorate } from "../../../utils/location";
 import ttsMP3 from "/ttsMP3.com_VoiceText_2025-11-19_2-28-51.mp3";
+import type { Variants } from "framer-motion";
 const audio = new Audio(ttsMP3);
 const close = [
   "Cairo",
@@ -417,6 +418,49 @@ export default function useCheckout() {
     }
   };
 
+  const instapayLink = "https://ipn.eg/S/qkpfg201065217980/instapay/1DfXwF";
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(instapayLink);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  /**
+   * Automatically redirects the user to the cart page if the cart becomes empty.
+   * يقوم تلقائياً بتوجيه المستخدم لصفحة السلة إذا أصبحت السلة فارغة.
+   */
+  useEffect(() => {
+    if (!isLoading && !isOrderCompleted && data?.carts?.items.length === 0) {
+      navigate("/cart");
+    }
+  }, [data, isLoading, navigate, isOrderCompleted]);
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  const cardClasses =
+    "p-4 md:p-6 sm:p-8 rounded-3xl shadow-xl bg-white/40 backdrop-blur-xl border border-white/60 hover:shadow-2xl transition-all duration-300";
+  const labelClasses =
+    "block text-sm font-bold mb-2 ml-1 text-(--color-pakistan)";
+  const inputClasses =
+    "w-full px-4 py-3 rounded-2xl border border-(--color-earth)/30 focus:border-(--color-tiger) focus:ring-4 focus:ring-(--color-tiger)/10 transition-all outline-none text-(--color-pakistan) bg-white/50 placeholder:text-(--color-dark)/40";
+
   return {
     discount,
     errorMsg,
@@ -466,5 +510,13 @@ export default function useCheckout() {
     rawDeliveryFee,
     freeDelivery,
     isOrderCompleted,
+    instapayLink,
+    handleCopyLink,
+    isCopied,
+    containerVariants,
+    itemVariants,
+    cardClasses,
+    labelClasses,
+    inputClasses,
   };
 }

@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2,
   CreditCard,
@@ -12,10 +11,11 @@ import {
   ShieldCheck,
   Tag,
   MapPin,
+  Check,
 } from "lucide-react";
-import type { CartItemType } from "../../types/CartType";
+import type { CartItemType } from "../../../types/CartType";
 import useCheckout from "./useCheckout";
-import { BRAND_PHONE } from "../../BrandText";
+import { BRAND_PHONE } from "../../../BrandText";
 import PaymobPayment from "./PaymobPayment";
 import { Link } from "react-router-dom";
 /**
@@ -71,42 +71,15 @@ export default function Checkout() {
     handleAutoLocation,
     rawDeliveryFee,
     freeDelivery,
-    isOrderCompleted,
+    instapayLink,
+    handleCopyLink,
+    isCopied,
+    containerVariants,
+    itemVariants,
+    cardClasses,
+    labelClasses,
+    inputClasses,
   } = useCheckout();
-
-  /**
-   * Automatically redirects the user to the cart page if the cart becomes empty.
-   * يقوم تلقائياً بتوجيه المستخدم لصفحة السلة إذا أصبحت السلة فارغة.
-   */
-  useEffect(() => {
-    if (!isLoading && !isOrderCompleted && data?.carts?.items.length === 0) {
-      navigate("/cart");
-    }
-  }, [data, isLoading, navigate, isOrderCompleted]);
-
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
-
-  const cardClasses =
-    "p-4 md:p-6 sm:p-8 rounded-3xl shadow-xl bg-white/40 backdrop-blur-xl border border-white/60 hover:shadow-2xl transition-all duration-300";
-  const labelClasses =
-    "block text-sm font-bold mb-2 ml-1 text-(--color-pakistan)";
-  const inputClasses =
-    "w-full px-4 py-3 rounded-2xl border border-(--color-earth)/30 focus:border-(--color-tiger) focus:ring-4 focus:ring-(--color-tiger)/10 transition-all outline-none text-(--color-pakistan) bg-white/50 placeholder:text-(--color-dark)/40";
 
   return (
     <div className="min-h-screen p-4 sm:p-8 md:p-12 mb-10 bg-(--color-cornsilk)/30">
@@ -141,10 +114,13 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Shipping Details
                 </h2>
-                {/* 
-                   Shipping Details Section: Collects user address and contact info.
-                   قسم بيانات الشحن: يجمع عنوان المستخدم ومعلومات الاتصال.
-                */}
+                {/**
+                 * ---------------------------------------------------------
+                 * SECTION: Shipping Details
+                 * DESCRIPTION: Collects user address, contact info, and detects location.
+                 * RECOMMENDED FILE NAME: src/components/Orders/Checkout/ShippingDetails.tsx
+                 * ---------------------------------------------------------
+                 */}
               </div>
 
               <div className="grid grid-cols-2 gap-2 md:gap-6">
@@ -408,10 +384,13 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Payment Method
                 </h2>
-                {/* 
-                   Payment Method Section: Allows choosing between Card, Wallet, or Cash.
-                   قسم طريقة الدفع: يسمح بالاختيار بين البطاقة، المحفظة الإلكترونية، أو الدفع نقداً.
-                */}
+                {/**
+                 * ---------------------------------------------------------
+                 * SECTION: Payment Method
+                 * DESCRIPTION: Allows choosing between Card, Wallet, InstaPay, or Cash.
+                 * RECOMMENDED FILE NAME: src/components/Orders/Checkout/PaymentMethod.tsx
+                 * ---------------------------------------------------------
+                 */}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
@@ -492,23 +471,66 @@ export default function Checkout() {
                     exit={{ opacity: 0, height: 0 }}
                     className="mt-6 p-6 rounded-3xl bg-white/30 border border-white/60 overflow-hidden"
                   >
-                    <div className="flex items-center gap-2 text-(--color-pakistan) font-black mb-4">
-                      <Smartphone className="text-(--color-tiger)" size={20} />
-                      Payment Number
-                    </div>
-                    <div className="relative group">
-                      <div className="p-4 bg-white/60 border-2 border-(--color-tiger) rounded-2xl font-black text-(--color-pakistan) text-center text-2xl tracking-[0.2em] shadow-inner mb-6 transition-all group-hover:bg-white">
-                        {BRAND_PHONE}
-                      </div>
-                      <button
-                        onClick={() =>
-                          navigator.clipboard.writeText(BRAND_PHONE)
-                        }
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-(--color-tiger)/10 text-(--color-tiger) hover:bg-(--color-tiger) hover:text-white transition-all text-xs font-bold"
-                      >
-                        Copy
-                      </button>
-                    </div>
+                    {openSection === "instaPay" ? (
+                      <>
+                        <div className="flex items-center gap-2 text-(--color-pakistan) font-black mb-4">
+                          <Smartphone
+                            className="text-(--color-tiger)"
+                            size={20}
+                          />
+                          InstaPay App
+                        </div>
+                        <div className="flex items-center gap-4 mb-6">
+                          <a
+                            href={instapayLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 py-3 bg-(--color-tiger) text-white font-black rounded-2xl text-center shadow-lg hover:bg-(--color-tiger)/90 transition-all"
+                          >
+                            Open the app
+                          </a>
+                          <button
+                            onClick={handleCopyLink}
+                            className={`px-4 py-3 border-2 font-bold rounded-2xl transition-all text-sm flex items-center justify-center gap-2 ${
+                              isCopied
+                                ? "bg-green-500 border-green-500 text-white"
+                                : "bg-white/60 border-(--color-tiger) text-(--color-tiger) hover:bg-(--color-tiger) hover:text-white"
+                            }`}
+                          >
+                            {isCopied ? (
+                              <>
+                                <Check size={16} /> Copied!
+                              </>
+                            ) : (
+                              "Copy the link"
+                            )}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2 text-(--color-pakistan) font-black mb-4">
+                          <Smartphone
+                            className="text-(--color-tiger)"
+                            size={20}
+                          />
+                          Payment Number
+                        </div>
+                        <div className="relative group">
+                          <div className="p-4 bg-white/60 border-2 border-(--color-tiger) rounded-2xl font-black text-(--color-pakistan) text-center text-2xl tracking-[0.2em] shadow-inner mb-6 transition-all group-hover:bg-white">
+                            {BRAND_PHONE}
+                          </div>
+                          <button
+                            onClick={() =>
+                              navigator.clipboard.writeText(BRAND_PHONE)
+                            }
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-(--color-tiger)/10 text-(--color-tiger) hover:bg-(--color-tiger) hover:text-white transition-all text-xs font-bold"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                      </>
+                    )}
 
                     <div className="p-5 rounded-2xl bg-white/40 border border-white/60">
                       <div className="flex items-center gap-2 text-sm font-black text-(--color-pakistan) mb-3">
@@ -516,10 +538,18 @@ export default function Checkout() {
                         Important Notes
                       </div>
                       <ul className="space-y-3 text-sm font-bold text-(--color-pakistan)/70 list-none ml-1">
-                        <li className="flex gap-2">
-                          <span className="text-(--color-tiger)">•</span>
-                          Transfer only to the exact number shown above.
-                        </li>
+                        {openSection === "vodafone_cash" ? (
+                          <li className="flex gap-2">
+                            <span className="text-(--color-tiger)">•</span>
+                            Transfer only to the exact number shown above.
+                          </li>
+                        ) : (
+                          <li className="flex gap-2 text-(--color-tiger) font-black">
+                            <span>•</span>
+                            Transfer exactly EGP{" "}
+                            {(finalTotal || 0).toLocaleString()}
+                          </li>
+                        )}
                         <li className="flex gap-2">
                           <span className="text-(--color-tiger)">•</span>
                           Verification is manual; we will contact you shortly
@@ -586,10 +616,13 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Order Summary
                 </h2>
-                {/* 
-                   Order Summary Section: Displays cart items, delivery fees, and final total.
-                   قسم ملخص الطلب: يعرض عناصر السلة، مصاريف الشحن، وإجمالي المبلغ.
-                */}
+                {/**
+                 * ---------------------------------------------------------
+                 * SECTION: Order Summary
+                 * DESCRIPTION: Displays cart items, promo codes, delivery fees, and final total.
+                 * RECOMMENDED FILE NAME: src/components/Orders/Checkout/OrderSummary.tsx
+                 * ---------------------------------------------------------
+                 */}
               </div>
 
               {isLoading ? (

@@ -1,5 +1,5 @@
 import PromoBar from "../../components/Header/PromoBar";
-import Checkout from "../../components/Orders/Checkout";
+import Checkout from "../../components/Orders/Checkout/Checkout";
 
 /**
  * CheckoutPage: The main page for the checkout process.

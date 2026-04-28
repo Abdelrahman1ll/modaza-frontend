@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import PaymobPayment from "./PaymobPayment";
-import { usePostPaymentMutation } from "../../redux/Payment/apiPayment";
+import { usePostPaymentMutation } from "../../../redux/Payment/apiPayment";
 import "@testing-library/jest-dom";
 
 // Mock the API hook
