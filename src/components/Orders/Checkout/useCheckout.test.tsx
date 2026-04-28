@@ -1,25 +1,25 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
-import useCheckout from "./Checkout/useCheckout";
-import { useGetCartQuery } from "../../redux/Cart/apiCart";
-import { useGetDeliveryQuery } from "../../redux/Delivery/apiDelivery";
-import { usePostValidateDiscountCodeMutation } from "../../redux/DiscountCodes/apiDiscountCodes";
-import { usePostOrdersMutation } from "../../redux/Orders/apiOrders";
-import { useGetUserOrdersQuery } from "../../redux/Orders/apiOrders";
-import { AuthContext } from "../../context/AuthContext";
-import type { UserType } from "../../types/UserType";
+import useCheckout from "./useCheckout";
+import { useGetCartQuery } from "../../../redux/Cart/apiCart";
+import { useGetDeliveryQuery } from "../../../redux/Delivery/apiDelivery";
+import { usePostValidateDiscountCodeMutation } from "../../../redux/DiscountCodes/apiDiscountCodes";
+import { usePostOrdersMutation } from "../../../redux/Orders/apiOrders";
+import { useGetUserOrdersQuery } from "../../../redux/Orders/apiOrders";
+import { AuthContext } from "../../../context/AuthContext";
+import type { UserType } from "../../../types/UserType";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 // Mock dependencies
-vi.mock("../../redux/Cart/apiCart", () => ({ useGetCartQuery: vi.fn() }));
-vi.mock("../../redux/Delivery/apiDelivery", () => ({
+vi.mock("../../../redux/Cart/apiCart", () => ({ useGetCartQuery: vi.fn() }));
+vi.mock("../../../redux/Delivery/apiDelivery", () => ({
   useGetDeliveryQuery: vi.fn(),
 }));
-vi.mock("../../redux/DiscountCodes/apiDiscountCodes", () => ({
+vi.mock("../../../redux/DiscountCodes/apiDiscountCodes", () => ({
   usePostValidateDiscountCodeMutation: vi.fn(),
 }));
-vi.mock("../../redux/Orders/apiOrders", () => ({
+vi.mock("../../../redux/Orders/apiOrders", () => ({
   usePostOrdersMutation: vi.fn(),
   useGetUserOrdersQuery: vi.fn(),
 }));
