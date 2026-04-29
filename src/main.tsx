@@ -19,7 +19,7 @@ createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <ErrorBoundary>
         {/* Browser Router: Handles page navigation - مدير التنقل بين الصفحات */}
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           {/* Google OAuth: Enables Google Login - تفعيل تسجيل الدخول بجوجل */}
           <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
             {/* Auth Provider: Manages user authentication state - مدير حالة تسجيل دخول المستخدم */}
