@@ -35,7 +35,15 @@ jobs:
       - name: Install Dependencies 📦
         run: npm ci
 
-      # الخطوة الرابعة: بناء المشروع (تحويل الكود إلى ملفات جاهزة للعمل)
+      # الخطوة الرابعة: إنشاء ملف .env بالبيانات الخاصة بك
+      # ملاحظة: يمكنك تغيير هذه الروابط لاحقاً من هنا مباشرة
+      - name: Create .env file 📝
+        run: |
+          echo "VITE_APP_API_URL=http://localhost:3000" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=your_google_client_id_here" >> .env
+          echo "VITE_NODE_ENV=production" >> .env
+
+      # الخطوة الخامسة: بناء المشروع (تحويل الكود إلى ملفات جاهزة للعمل)
       - name: Build 🏗️
         run: npm run build
 
