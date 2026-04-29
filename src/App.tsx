@@ -8,7 +8,6 @@ const CategoryPage = lazy(() => import("./pages/Category/categoryPage"));
 
 const ColorPage = lazy(() => import("./pages/Color/colorPage"));
 
-
 // Removed duplicate lazy Loading as it is now imported normally for the location check
 const NetworkStatus = lazy(() => import("./components/NetworkStatus"));
 const ScrollToTop = lazy(() => import("./components/ScrollToTop"));

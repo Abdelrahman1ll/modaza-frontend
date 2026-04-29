@@ -12,16 +12,22 @@ import {
   Tag,
   MapPin,
   Check,
+  X,
+  Search,
 } from "lucide-react";
 import type { CartItemType } from "../../../types/CartType";
 import useCheckout from "./useCheckout";
 import { BRAND_PHONE } from "../../../BrandText";
 import PaymobPayment from "./PaymobPayment";
 import { Link } from "react-router-dom";
+
 /**
- * Checkout: Multi-step process for shipping info, payment, and order completion.
- * الدفع: عملية متعددة الخطوات لبيانات الشحن والدفع وإتمام الطلب.
+ * ==========================================================================================
+ * COMPONENT: Checkout
+ * DESCRIPTION: Multi-step process for shipping info, payment, and order completion.
+ * ==========================================================================================
  */
+
 export default function Checkout() {
   const {
     discount,
@@ -79,11 +85,13 @@ export default function Checkout() {
     cardClasses,
     labelClasses,
     inputClasses,
+    dropdownRef,
   } = useCheckout();
 
   return (
     <div className="min-h-screen p-4 sm:p-8 md:p-12 mb-10 bg-(--color-cornsilk)/30">
       <div className="max-w-7xl mx-auto">
+        {/* HEADER SECTION */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -97,16 +105,20 @@ export default function Checkout() {
           </h1>
         </motion.div>
 
+        {/* MAIN LAYOUT GRID */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-8 items-start"
         >
-          {/* Main Form Column */}
+          {/* LEFT COLUMN: SHIPPING & PAYMENT */}
           <div className="lg:col-span-7 space-y-8">
-            {/* Shipping Address Card */}
-            <motion.div variants={itemVariants} className={cardClasses}>
+            {/* SECTION 1: SHIPPING ADDRESS */}
+            <motion.div 
+              variants={itemVariants} 
+              className={`${cardClasses} ${isPaying ? "pointer-events-none opacity-60 transition-opacity duration-300" : ""}`}
+            >
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-2.5 rounded-2xl bg-(--color-pakistan)/5 text-(--color-pakistan)">
                   <Truck size={24} />
@@ -114,15 +126,9 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Shipping Details
                 </h2>
-                {/**
-                 * ---------------------------------------------------------
-                 * SECTION: Shipping Details
-                 * DESCRIPTION: Collects user address, contact info, and detects location.
-                 * RECOMMENDED FILE NAME: src/components/Orders/Checkout/ShippingDetails.tsx
-                 * ---------------------------------------------------------
-                 */}
               </div>
 
+              {/* Names Input Group */}
               <div className="grid grid-cols-2 gap-2 md:gap-6">
                 <div className="flex flex-col">
                   <label className={labelClasses}>First Name</label>
@@ -176,6 +182,7 @@ export default function Checkout() {
                   </AnimatePresence>
                 </div>
 
+                {/* Country & State Group */}
                 <div className="flex flex-col">
                   <label className={labelClasses}>Country</label>
                   <input
@@ -186,7 +193,7 @@ export default function Checkout() {
                   />
                 </div>
 
-                <div className="flex flex-col relative">
+                <div className="flex flex-col relative" ref={dropdownRef}>
                   <div className="flex items-center justify-between">
                     <label className={labelClasses + " mb-0"}>
                       <span className="hidden sm:inline">State / City</span>
@@ -207,6 +214,7 @@ export default function Checkout() {
                       <span className="sm:hidden">Detect</span>
                     </button>
                   </div>
+
                   <button
                     type="button"
                     disabled={isDetectingLocation}
@@ -241,6 +249,7 @@ export default function Checkout() {
                     )}
                   </button>
 
+                  {/* Governorate Dropdown List */}
                   <AnimatePresence>
                     {isDropdownOpen && (
                       <motion.div
@@ -249,35 +258,58 @@ export default function Checkout() {
                         exit={{ opacity: 0, scale: 0.95, y: 10 }}
                         className="absolute top-full left-0 right-0 mt-3 p-3 rounded-2xl bg-white/90 backdrop-blur-2xl border border-white shadow-2xl z-50 overflow-hidden"
                       >
-                        <input
-                          type="text"
-                          placeholder="Search city..."
-                          className="w-full p-3 mb-3 bg-white/50 rounded-xl border border-(--color-earth)/20 outline-none focus:border-(--color-tiger) transition-all"
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          autoFocus
-                        />
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="relative flex-1">
+                            <Search
+                              size={14}
+                              className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-pakistan)/40"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Search city..."
+                              className="w-full pl-9 pr-3 py-2.5 bg-white/50 rounded-xl border border-(--color-earth)/20 outline-none focus:border-(--color-tiger) transition-all text-sm font-bold"
+                              value={search}
+                              onChange={(e) => setSearch(e.target.value)}
+                              autoFocus={window.innerWidth > 768}
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className="p-2.5 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors sm:hidden"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
 
                         <div className="max-h-64 overflow-y-auto space-y-1 custom-scrollbar">
-                          {filteredStates.map((gov: string) => (
-                            <button
-                              key={gov}
-                              type="button"
-                              className={`w-full text-left px-4 py-3 rounded-xl transition-colors font-bold ${
-                                state === gov
-                                  ? "bg-(--color-tiger) text-white"
-                                  : "hover:bg-(--color-tiger)/10 text-(--color-pakistan)"
-                              }`}
-                              onClick={() => {
-                                setState(gov);
-                                setIsDropdownOpen(false);
-                                setSearch("");
-                                setErrors((prev) => ({ ...prev, state: "" }));
-                              }}
-                            >
-                              {gov}
-                            </button>
-                          ))}
+                          {filteredStates.length > 0 ? (
+                            filteredStates.map((gov: string) => (
+                              <button
+                                key={gov}
+                                type="button"
+                                className={`w-full text-left px-4 py-3 rounded-xl transition-colors font-bold text-sm ${
+                                  state === gov
+                                    ? "bg-(--color-tiger) text-white"
+                                    : "hover:bg-(--color-tiger)/10 text-(--color-pakistan)"
+                                }`}
+                                onClick={() => {
+                                  setState(gov);
+                                  setIsDropdownOpen(false);
+                                  setSearch("");
+                                  setErrors((prev) => ({ ...prev, state: "" }));
+                                }}
+                              >
+                                {gov}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="p-8 text-center">
+                              <p className="text-xs font-bold text-(--color-pakistan)/40">
+                                No results found for "{search}"
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </motion.div>
                     )}
@@ -290,6 +322,7 @@ export default function Checkout() {
                 </div>
               </div>
 
+              {/* Detailed Address TextArea */}
               <div className="flex flex-col mt-2 md:mt-6">
                 <label className={labelClasses}>Detailed Address</label>
                 <textarea
@@ -316,6 +349,7 @@ export default function Checkout() {
                 </AnimatePresence>
               </div>
 
+              {/* Phone Numbers Group */}
               <div className="grid grid-cols-2 gap-2 md:gap-6 mt-2 md:mt-6">
                 <div className="flex flex-col">
                   <label className={labelClasses}>Primary Phone</label>
@@ -356,6 +390,7 @@ export default function Checkout() {
                 </div>
               </div>
 
+              {/* Save Address Toggle */}
               <div className="mt-8 flex items-center">
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <div className="relative">
@@ -375,8 +410,11 @@ export default function Checkout() {
               </div>
             </motion.div>
 
-            {/* Payment Card */}
-            <motion.div variants={itemVariants} className={cardClasses}>
+            {/* SECTION 2: PAYMENT METHOD */}
+            <motion.div 
+              variants={itemVariants} 
+              className={`${cardClasses} ${isPaying ? "pointer-events-none opacity-60 transition-opacity duration-300" : ""}`}
+            >
               <div className="flex items-center gap-3 mb-4 md:mb-8">
                 <div className="p-2.5 rounded-2xl bg-(--color-pakistan)/5 text-(--color-pakistan)">
                   <CreditCard size={24} />
@@ -384,15 +422,9 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Payment Method
                 </h2>
-                {/**
-                 * ---------------------------------------------------------
-                 * SECTION: Payment Method
-                 * DESCRIPTION: Allows choosing between Card, Wallet, InstaPay, or Cash.
-                 * RECOMMENDED FILE NAME: src/components/Orders/Checkout/PaymentMethod.tsx
-                 * ---------------------------------------------------------
-                 */}
               </div>
 
+              {/* Payment Option Buttons */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4">
                 {[
                   {
@@ -461,6 +493,7 @@ export default function Checkout() {
                 ))}
               </div>
 
+              {/* Conditional Info Sections (Wallet / InstaPay) */}
               <AnimatePresence mode="wait">
                 {openSection === "instaPay" ||
                 openSection === "vodafone_cash" ? (
@@ -565,6 +598,7 @@ export default function Checkout() {
                   </motion.div>
                 ) : null}
 
+                {/* Card Payment Iframe Section */}
                 {openSection === "credit_card" ? (
                   <motion.div
                     key="card-info"
@@ -606,7 +640,7 @@ export default function Checkout() {
             </motion.div>
           </div>
 
-          {/* Checkout Summary Column */}
+          {/* RIGHT COLUMN: ORDER SUMMARY */}
           <div className="lg:col-span-5 space-y-8">
             <motion.div variants={itemVariants} className={cardClasses}>
               <div className="flex items-center gap-3 mb-8">
@@ -616,15 +650,9 @@ export default function Checkout() {
                 <h2 className="text-2xl font-black text-(--color-pakistan)">
                   Order Summary
                 </h2>
-                {/**
-                 * ---------------------------------------------------------
-                 * SECTION: Order Summary
-                 * DESCRIPTION: Displays cart items, promo codes, delivery fees, and final total.
-                 * RECOMMENDED FILE NAME: src/components/Orders/Checkout/OrderSummary.tsx
-                 * ---------------------------------------------------------
-                 */}
               </div>
 
+              {/* Cart Items List */}
               {isLoading ? (
                 <div className="space-y-6">
                   {[1, 2].map((i) => (
@@ -695,9 +723,10 @@ export default function Checkout() {
                 </div>
               )}
 
+              {/* Totals & Discounts Section */}
               <div className="mt-10 pt-8 border-t border-white/60 space-y-6">
-                {/* Promo Code section */}
-                <div className="space-y-3">
+                {/* Promo Code Input */}
+                <div className={`space-y-3 ${isPaying ? "pointer-events-none opacity-60 transition-opacity duration-300" : ""}`}>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <Tag
@@ -745,6 +774,7 @@ export default function Checkout() {
                   </AnimatePresence>
                 </div>
 
+                {/* Subtotal, Delivery, and Final Total */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center text-sm font-bold text-(--color-pakistan)/60">
                     <span>Subtotal</span>
@@ -805,7 +835,7 @@ export default function Checkout() {
                   </div>
                 </div>
 
-                {/* Submit Button (Desktop) */}
+                {/* Submit / Pay Button */}
                 <div className="pt-4">
                   {paymentMethod === "credit_card" ? (
                     <button
@@ -851,7 +881,7 @@ export default function Checkout() {
           </div>
         </motion.div>
 
-        {/* Footer Links */}
+        {/* FOOTER LINKS */}
         <motion.div
           variants={itemVariants}
           className="max-w-4xl mx-auto mt-20 pt-8 border-t border-(--color-earth)/20 text-center"
