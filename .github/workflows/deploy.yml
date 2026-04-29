@@ -55,6 +55,8 @@ jobs:
       # الخطوة السادسة: إعداد GitHub Pages
       - name: Setup Pages 🔧
         uses: actions/configure-pages@v4
+        with:
+          enablement: true
 
       # الخطوة السابعة: رفع الملفات الناتجة (dist) كـ Artifact لنشرها
       - name: Upload Artifact 📤
