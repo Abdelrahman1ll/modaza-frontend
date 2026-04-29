@@ -38,39 +38,6 @@ export default function PaymobPayment({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  /* ================= Messages from iframe ================= */
-  useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
-      let data = event.data;
-      if (typeof data === "string") {
-        try {
-          data = JSON.parse(data);
-        } catch {
-          return;
-        }
-      }
-
-      if (data.type === "CARD_VALID") {
-        onCardValidityChange(data.isValid);
-      }
-
-      if (data.result === "SUCCESS") {
-        await handlePayment();
-        setIsPaying();
-        onCardValidityChange(false);
-      }
-
-      if (data.result === "ERROR") {
-        setIsPaying();
-        onCardValidityChange(false);
-        setError("Payment failed. Please try again.");
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [handlePayment, onCardValidityChange, setIsPaying]);
-
   /* ================= Init payment ================= */
   useEffect(() => {
     if (effectRan.current) return;
@@ -111,6 +78,39 @@ export default function PaymobPayment({
     if (paymentData?.amount > 0) initPayment();
     effectRan.current = true;
   }, [paymentData, postPayment]);
+
+  /* ================= Messages from iframe ================= */
+  useEffect(() => {
+    const handleMessage = async (event: MessageEvent) => {
+      let data = event.data;
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch {
+          return;
+        }
+      }
+
+      if (data.type === "CARD_VALID") {
+        onCardValidityChange(data.isValid);
+      }
+
+      if (data.result === "SUCCESS") {
+        await handlePayment();
+        setIsPaying();
+        onCardValidityChange(false);
+      }
+
+      if (data.result === "ERROR") {
+        setIsPaying();
+        onCardValidityChange(false);
+        setError("Payment failed. Please try again.");
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [handlePayment, onCardValidityChange, setIsPaying]);
 
   /* ================= Trigger pay from parent ================= */
   useEffect(() => {

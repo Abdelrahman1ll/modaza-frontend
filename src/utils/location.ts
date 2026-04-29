@@ -80,87 +80,67 @@ export const detectUserGovernorate = async (): Promise<{
   };
 
   // --- Step 1: IP-based Geolocation (No permission prompt) ---
-  try {
-    const ipResponse = await fetch("https://ipapi.co/json/");
-    const ipData = await ipResponse.json();
+  // We try multiple APIs since some might be rate-limited or blocked by adblockers
+  const apis = [
+    {
+      url: "https://api.bigdatacloud.net/data/reverse-geocode-client",
+      getNames: (data: any) => {
+        if (data && data.countryName === "Egypt") {
+          return [data.principalSubdivision, data.city, data.locality];
+        }
+        return [];
+      },
+    },
+    {
+      url: "https://freeipapi.com/api/json",
+      getNames: (data: any) => {
+        if (data && data.countryName === "Egypt") {
+          return [data.regionName, data.cityName];
+        }
+        return [];
+      },
+    },
+    {
+      url: "https://ipapi.co/json/",
+      getNames: (data: any) => {
+        if (data && data.country_name === "Egypt") {
+          return [data.region, data.city];
+        }
+        return [];
+      },
+    }
+  ];
 
-    if (ipData && ipData.country_name === "Egypt") {
-      const potentialNames = [ipData.region, ipData.city];
+  for (const api of apis) {
+    try {
+      const response = await fetch(api.url);
+      if (!response.ok) continue;
+      
+      const data = await response.json();
+      const potentialNames = api.getNames(data);
+      
       for (const name of potentialNames) {
         if (!name) continue;
         const matched = findMatch(name);
         if (matched) {
-          console.log(`[Location] Detected via IP: ${matched}`);
+          console.log(`[Location] Detected via IP API (${api.url}): ${matched}`);
+          
+          let area = null;
+          const locality = data.city || data.cityName || data.locality;
+          if (locality && !normalize(locality).includes(normalize(matched))) {
+            area = locality;
+          }
+          
           return {
             state: matched,
-            area: ipData.city !== matched ? ipData.city : null,
+            area: area,
           };
         }
       }
+    } catch (error) {
+      console.warn(`[Location] IP Geolocation failed for ${api.url}`);
     }
-  } catch (error) {
-    console.warn(
-      "[Location] IP Geolocation failed, trying browser API...",
-      error,
-    );
   }
 
-  // --- Step 2: Browser-based Geolocation (Requires permission prompt) ---
-  if (!navigator.geolocation) {
-    return null;
-  }
-
-  return new Promise((resolve) => {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        try {
-          const response = await fetch(
-            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
-          );
-          const data = await response.json();
-
-          const potentialNames = new Set<string>();
-          if (data.principalSubdivision)
-            potentialNames.add(data.principalSubdivision);
-          if (data.city) potentialNames.add(data.city);
-          if (data.locality) potentialNames.add(data.locality);
-
-          if (data.localityInfo?.administrative) {
-            data.localityInfo.administrative.forEach(
-              (adm: { name: string }) => {
-                if (adm.name) potentialNames.add(adm.name);
-              },
-            );
-          }
-
-          let matchedGov: string | null = null;
-          for (const rawName of potentialNames) {
-            matchedGov = findMatch(rawName);
-            if (matchedGov) break;
-          }
-
-          let suggestedArea: string | null = null;
-          const locality = data.locality || data.city;
-          if (
-            locality &&
-            (!matchedGov ||
-              !normalize(locality).includes(normalize(matchedGov)))
-          ) {
-            suggestedArea = locality;
-          }
-
-          resolve({ state: matchedGov, area: suggestedArea });
-        } catch (error) {
-          console.error("[Location] Reverse geocoding failed:", error);
-          resolve(null);
-        }
-      },
-      () => {
-        // Log errors but resolve null to let the user pick manually
-        resolve(null);
-      },
-      { timeout: 5000 },
-    );
-  });
+  return null;
 };

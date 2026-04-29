@@ -30,6 +30,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
+    base: "./",
     // List of plugins to enhance Vite functionality
     // قائمة الإضافات (Plugins) لتحسين وظائف Vite
     plugins: [

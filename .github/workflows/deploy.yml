@@ -1,0 +1,61 @@
+# اسم عملية النشر التلقائي
+name: Deploy to GitHub Pages
+
+# متى يتم تشغيل هذه العملية (عند عمل Push لفرع main أو تشغيلها يدوياً)
+on:
+  push:
+    branches:
+      - main # قم بتغيير هذا إذا كان اسم الفرع الرئيسي مختلفاً
+  workflow_dispatch:
+
+# إعطاء الصلاحيات اللازمة لـ GitHub لعملية النشر
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# المهام التي سيقوم بها الـ Workflow
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # تشغيل العملية على نظام Linux
+
+    steps:
+      # الخطوة الأولى: تحميل الكود الخاص بك من GitHub
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      # الخطوة الثانية: إعداد بيئة Node.js لبناء المشروع
+      - name: Setup Node ⚙️
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # الخطوة الثالثة: تثبيت جميع المكتبات (Packages) الخاصة بالمشروع
+      - name: Install Dependencies 📦
+        run: npm ci
+
+      # الخطوة الرابعة: بناء المشروع (تحويل الكود إلى ملفات جاهزة للعمل)
+      - name: Build 🏗️
+        run: npm run build
+
+      # الخطوة الخامسة: حل مشكلة "الصفحة الواحدة" في GitHub Pages
+      # نقوم بنسخ index.html إلى 404.html لكي تعمل الروابط الداخلية (مثل /cart) عند تحديث الصفحة
+      - name: Fix for SPA on GitHub Pages 🛠️
+        run: cp dist/index.html dist/404.html
+
+      # الخطوة السادسة: إعداد GitHub Pages
+      - name: Setup Pages 🔧
+        uses: actions/configure-pages@v4
+
+      # الخطوة السابعة: رفع الملفات الناتجة (dist) كـ Artifact لنشرها
+      - name: Upload Artifact 📤
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      # الخطوة الأخيرة: نشر المشروع فعلياً على GitHub Pages
+      - name: Deploy to GitHub Pages 🚀
+        id: deployment
+        uses: actions/deploy-pages@v4
+
