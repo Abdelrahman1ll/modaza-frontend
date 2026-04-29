@@ -2,25 +2,25 @@
   "name": "Modaza - Modern Fashion Store",
   "short_name": "Modaza",
   "description": "Modaza - Modern Fashion Store | متجر الأزياء العصرية",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#FEFAE0",
   "theme_color": "#BC6C25",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo-512.png",
+      "src": "logo-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo.png",
+      "src": "logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"

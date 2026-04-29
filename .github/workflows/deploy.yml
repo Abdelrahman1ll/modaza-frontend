@@ -39,7 +39,7 @@ jobs:
       # ملاحظة: يمكنك تغيير هذه الروابط لاحقاً من هنا مباشرة
       - name: Create .env file 📝
         run: |
-          echo "VITE_APP_API_URL=http://localhost:3000" >> .env
+          echo "VITE_APP_API_URL=https://modaza-backend.onrender.com" >> .env
           echo "VITE_GOOGLE_CLIENT_ID=your_google_client_id_here" >> .env
           echo "VITE_NODE_ENV=production" >> .env
 
