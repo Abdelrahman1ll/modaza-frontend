@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
-    base: "/Modaza-React/",
+    base: "/modaza-frontend",
     // List of plugins to enhance Vite functionality
     // قائمة الإضافات (Plugins) لتحسين وظائف Vite
     plugins: [
