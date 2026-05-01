@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
-    base: "/",
+    base: mode === "production" ? "/modaza-frontend/" : "/",
     // List of plugins to enhance Vite functionality
     // قائمة الإضافات (Plugins) لتحسين وظائف Vite
     plugins: [
