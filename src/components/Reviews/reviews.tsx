@@ -37,6 +37,10 @@ export default function Reviews({
 
   const { user } = useContext(AuthContext);
 
+  const reviewList = Array.isArray(reviewsData)
+    ? reviewsData
+    : reviewsData?.review || [];
+
   useEffect(() => {
     if (hideForm) {
       setShowReviews(true);
@@ -173,8 +177,8 @@ export default function Reviews({
             {/* Reviews list */}
             <div className="space-y-6">
               <AnimatePresence>
-                {reviewsData?.review
-                  ?.slice(0, limit || reviewsData?.review?.length)
+                {reviewList
+                  ?.slice(0, limit || reviewList?.length)
                   .map((review: ReviewType, idx: number) => (
                     <motion.div
                       key={review?.id}
@@ -267,19 +271,18 @@ export default function Reviews({
 
               {limit &&
                 !hideForm &&
-                reviewsData?.review &&
-                reviewsData.review.length > limit && (
+                reviewList.length > limit && (
                   <div className="mt-12 flex justify-center">
                     <Link
                       to={`/products-details/${id}/reviews`}
                       className="px-10 py-4 border border-(--color-dark) text-(--color-dark) text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-(--color-dark) hover:text-white transition-all duration-300"
                     >
-                      View All Perspectives ({reviewsData.review.length})
+                      View All Perspectives ({reviewList.length})
                     </Link>
                   </div>
                 )}
 
-              {reviewsData?.review?.length === 0 && (
+              {reviewList.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

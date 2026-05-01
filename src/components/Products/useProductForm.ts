@@ -94,7 +94,8 @@ export default function useProductForm(mode: "add" | "edit") {
 
   useEffect(() => {
     if (mode === "edit" && Number(id)) {
-      const found = products?.products?.find(
+      const productList = Array.isArray(products) ? products : products?.products;
+      const found = productList?.find(
         (p: { id: number }) => p.id === Number(id),
       );
 

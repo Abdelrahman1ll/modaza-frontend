@@ -477,7 +477,7 @@ export default function ProductForm({ mode }: { mode: "add" | "edit" }) {
                               handleSizeChange(
                                 index,
                                 field as keyof SizeErrorType,
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="w-full px-3 py-2 bg-white/60 border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-(--color-tiger)/20 focus:bg-white transition-all font-bold text-sm text-(--color-pakistan) shadow-sm"

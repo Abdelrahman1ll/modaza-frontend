@@ -253,7 +253,9 @@ export default function Product() {
     isFetching,
   } = useProduct();
 
-  const productList = products?.products || [];
+  const productList = Array.isArray(products)
+    ? products
+    : products?.products || [];
 
   return (
     <div className="m-4">

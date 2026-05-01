@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "code": "SAVE10",
+    "discount": 10,
+    "type": "percentage"
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 2
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 3
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 4
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 5
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 6
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 7
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 8
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 9
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 10
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 11
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 12
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 13
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 14
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 15
+  },
+  {
+    "code": "LIGHTMASTER",
+    "id": 16
+  }
+]

@@ -19,14 +19,18 @@ export default function HomeProducts() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [dragWidth, setDragWidth] = useState(0);
 
+  const productList = Array.isArray(products)
+    ? products
+    : products?.products || [];
+
   useEffect(() => {
-    if (sliderRef.current) {
+    if (sliderRef.current && productList.length > 0) {
       const container = sliderRef.current;
       const totalScrollWidth = container.scrollWidth;
       const visibleWidth = container.offsetWidth;
       setDragWidth(totalScrollWidth - visibleWidth);
     }
-  }, [products]);
+  }, [productList]);
 
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20, filter: "blur(5px)" },
@@ -88,7 +92,7 @@ export default function HomeProducts() {
             </div>
           ))}
         </div>
-      ) : products?.products.length === 0 || isError ? (
+      ) : productList.length === 0 || isError ? (
         <div className="flex flex-col items-center py-20 relative z-10">
           <div className="w-20 h-20 bg-(--color-tiger)/10 rounded-full flex items-center justify-center mb-6">
             <PackageSearch size={40} className="text-(--color-tiger)" />
@@ -108,7 +112,7 @@ export default function HomeProducts() {
           {/* Enhanced horizontal spacing */}
           <div className="shrink-0 w-6 md:w-16 lg:w-24" />
 
-          {products?.products.map((product: ProductType) => (
+          {productList.map((product: ProductType) => (
             <motion.div
               key={product.id}
               variants={itemVariants}

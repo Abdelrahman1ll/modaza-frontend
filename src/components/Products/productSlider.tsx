@@ -13,6 +13,9 @@ export default function ProductSlider() {
   const navigate = useNavigate();
 
   const { data: products, isLoading } = useGetProductsQuery("/products");
+  const productList = Array.isArray(products)
+    ? products
+    : products?.products || [];
 
   return (
     <div className="relative w-full py-10 flex flex-col items-center justify-center overflow-hidden">
@@ -21,7 +24,6 @@ export default function ProductSlider() {
         <div className="absolute top-[20%] left-[10%] w-96 h-96 bg-(--color-tiger)/5 rounded-full blur-[100px]" />
         <div className="absolute bottom-[20%] right-[10%] w-96 h-96 bg-(--color-pakistan)/5 rounded-full blur-[100px]" />
       </div>
-
       <div className="w-full max-w-[1300px] px-4 md:px-8 z-10">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {isLoading ? (
@@ -33,8 +35,8 @@ export default function ProductSlider() {
                 <div className="rounded-4xl shadow-sm w-full max-w-[340px] aspect-4/5 bg-gray-100/50 animate-pulse" />
               </div>
             ))
-          ) : products?.products.length ? (
-            products?.products.map((product: ProductType) => (
+          ) : productList.length ? (
+            productList.map((product: ProductType) => (
               <div
                 key={product?.id}
                 className="flex flex-col items-center justify-center perspective-1000"
