@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Variants } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   User,
   ShoppingBag,
@@ -21,6 +21,7 @@ export default function UserMenu({
   handleLogout: () => void;
 }) {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
   const avatarRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
@@ -143,14 +144,14 @@ export default function UserMenu({
                 <motion.div key={item.to} variants={itemVariants}>
                   <Link
                     to={item.to}
-                    className="group flex items-center justify-between px-3 py-2 rounded-xl transition-all duration-300 hover:bg-(--color-tiger) hover:text-white"
+                    className={`group flex items-center justify-between px-3 py-2 rounded-xl transition-all duration-300 ${location.pathname === item.to ? "bg-(--color-tiger) text-white" : "hover:bg-(--color-tiger) hover:text-white"}`}
                     onClick={() => setOpenMenu(false)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-1.5 rounded-lg bg-(--color-tiger)/10 group-hover:bg-white/20 transition-colors">
+                      <div className={`p-1.5 rounded-lg transition-colors ${location.pathname === item.to ? "bg-white/20" : "bg-(--color-tiger)/10 group-hover:bg-white/20"}`}>
                         <item.icon
                           size={16}
-                          className="text-(--color-tiger) group-hover:text-white"
+                          className={location.pathname === item.to ? "text-white" : "text-(--color-tiger) group-hover:text-white"}
                         />
                       </div>
                       <span className="font-semibold text-sm">
@@ -170,14 +171,14 @@ export default function UserMenu({
                     <motion.div key={item.to} variants={itemVariants}>
                       <Link
                         to={item.to}
-                        className="group flex items-center justify-between px-3 py-2 rounded-xl transition-all duration-300 hover:bg-(--color-tiger) hover:text-white"
+                        className={`group flex items-center justify-between px-3 py-2 rounded-xl transition-all duration-300 ${location.pathname === item.to ? "bg-(--color-tiger) text-white" : "hover:bg-(--color-tiger) hover:text-white"}`}
                         onClick={() => setOpenMenu(false)}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="p-1.5 rounded-lg bg-(--color-tiger)/10 group-hover:bg-white/20 transition-colors">
+                          <div className={`p-1.5 rounded-lg transition-colors ${location.pathname === item.to ? "bg-white/20" : "bg-(--color-tiger)/10 group-hover:bg-white/20"}`}>
                             <item.icon
                               size={16}
-                              className="text-(--color-tiger) group-hover:text-white"
+                              className={location.pathname === item.to ? "text-white" : "text-(--color-tiger) group-hover:text-white"}
                             />
                           </div>
                           <span className="font-semibold text-sm">
@@ -186,7 +187,7 @@ export default function UserMenu({
                         </div>
                         <ChevronRight
                           size={14}
-                          className="opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
+                          className={`transition-all ${location.pathname === item.to ? "opacity-100 translate-x-0" : "opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"}`}
                         />
                       </Link>
                     </motion.div>

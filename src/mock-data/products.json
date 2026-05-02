@@ -3,9 +3,9 @@
     "id": 1,
     "name": "Classic Cotton T-Shirt",
     "description": "High-quality 100% cotton t-shirt, perfect for everyday wear.",
-    "price": 25,
-    "promotionalPrice": 20,
-    "discountPercentage": 20,
+    "price": 500,
+    "promotionalPrice": 450,
+    "discountPercentage": 10,
     "images": [
       "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811405/products/qw0aijqh3wresp8ygfky.jpg"
     ],
@@ -55,8 +55,8 @@
     "id": 2,
     "name": "Classic Cotton T-Shirt",
     "description": "High-quality 100% cotton t-shirt, perfect for everyday wear.",
-    "price": 25,
-    "promotionalPrice": 20,
+    "price": 1500,
+    "promotionalPrice": 1200,
     "discountPercentage": 20,
     "images": [
       "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811310/products/wtjfvrshx7ka6zzihixg.jpg"
@@ -107,9 +107,9 @@
     "id": 3,
     "name": "Classic Cotton T-Shirt",
     "description": "High-quality 100% cotton t-shirt, perfect for everyday wear.",
-    "price": 25,
-    "promotionalPrice": 20,
-    "discountPercentage": 20,
+    "price": 850,
+    "promotionalPrice": 750,
+    "discountPercentage": 11,
     "images": [
       "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811310/products/wtjfvrshx7ka6zzihixg.jpg"
     ],
@@ -159,8 +159,8 @@
     "id": 4,
     "name": "Classic Cotton T-Shirt",
     "description": "High-quality 100% cotton t-shirt, perfect for everyday wear.",
-    "price": 25,
-    "promotionalPrice": 20,
+    "price": 2500,
+    "promotionalPrice": 1999,
     "discountPercentage": 20,
     "images": [
       "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811310/products/wtjfvrshx7ka6zzihixg.jpg"

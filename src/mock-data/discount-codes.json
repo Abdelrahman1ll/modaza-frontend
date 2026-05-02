@@ -6,63 +6,27 @@
     "type": "percentage"
   },
   {
-    "code": "LIGHTMASTER",
-    "id": 2
+    "id": 2,
+    "code": "WELCOME20",
+    "discount": 20,
+    "type": "percentage"
   },
   {
-    "code": "LIGHTMASTER",
-    "id": 3
+    "id": 3,
+    "code": "FREESHIP",
+    "discount": 50,
+    "type": "fixed"
   },
   {
-    "code": "LIGHTMASTER",
-    "id": 4
+    "id": 4,
+    "code": "SUMMER15",
+    "discount": 15,
+    "type": "percentage"
   },
   {
-    "code": "LIGHTMASTER",
-    "id": 5
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 6
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 7
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 8
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 9
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 10
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 11
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 12
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 13
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 14
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 15
-  },
-  {
-    "code": "LIGHTMASTER",
-    "id": 16
+    "id": 5,
+    "code": "VIP50",
+    "discount": 50,
+    "type": "percentage"
   }
 ]

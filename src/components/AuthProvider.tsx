@@ -6,6 +6,8 @@ import {
   type AuthData,
   type SetUserPayload,
 } from "../context/AuthContext";
+import { getMockUser } from "../mock-data/staticData";
+
 
 /**
  * AuthProvider component that wraps the application and provides the auth state.
@@ -15,7 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, _setUser] = useState<UserType | null>(null);
   const [initializing, setInitializing] = useState(true);
 
-  // SECURITY NOTE: We removed the CryptoJS "encryption" because VITE_SECRET_KEY is 
+  // SECURITY NOTE: We removed the CryptoJS "encryption" because VITE_SECRET_KEY is
   // bundled into the production static files and is publicly accessible.
   // Using it for encryption on the frontend provides a false sense of security.
   // RECOMMENDATION: Move token storage to httpOnly cookies set by the backend.
@@ -108,8 +110,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         _setUser(null);
       }
     } else {
-      _setUser(null);
+      /* 
+         Original Code: _setUser(null);
+         English: This code was originally here; we replaced it with a mock data function 
+         to allow the site to run without a backend server (e.g., on GitHub Pages).
+         Arabic: هذا الكود كان موجوداً في الأصل؛ قمنا باستبداله بوظيفة بيانات وهمية (Mock) 
+         للسماح للموقع بالعمل بدون سيرفر خلفي (مثلاً على GitHub Pages).
+      */
+     
+      // _setUser(null); 
+
+      // --- Static Mock User (for GitHub Pages / No Backend) ---
+      if (import.meta.env.PROD || !import.meta.env.VITE_APP_API_URL || import.meta.env.VITE_APP_API_URL.includes("localhost:3000")) {
+        _setUser(getMockUser());
+      } else {
+        _setUser(null);
+      }
     }
+
+
 
     setInitializing(false);
   }, []);

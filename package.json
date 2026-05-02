@@ -4,9 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "concurrently \"npm run dev\" \"npm run mock\"",
     "dev": "vite --mode development",
-    "mock": "npx json-server@0.17.4 --watch src/mock-data/db.cjs --port 3000 --routes src/mock-data/routes.json",
     "build": "tsc -b && vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview --mode production",
@@ -49,7 +47,6 @@
     "@types/three": "^0.180.0",
     "@vitejs/plugin-react": "^5.0.4",
     "@vitest/ui": "^4.0.17",
-    "concurrently": "^9.2.1",
     "esbuild": "^0.25.12",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",
