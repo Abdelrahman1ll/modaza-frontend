@@ -7,7 +7,8 @@
     "promotionalPrice": 450,
     "discountPercentage": 10,
     "images": [
-      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811405/products/qw0aijqh3wresp8ygfky.jpg"
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811405/products/qw0aijqh3wresp8ygfky.jpg",
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1777734970/Gemini_Generated_Image_syop8tsyop8tsyop_h0rsvn.png"
     ],
     "category": "Clothing",
     "stock": 100,
@@ -59,7 +60,8 @@
     "promotionalPrice": 1200,
     "discountPercentage": 20,
     "images": [
-      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811310/products/wtjfvrshx7ka6zzihixg.jpg"
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811482/products/kj3dp70scdn4kcsinsml.jpg",
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1777734963/Gemini_Generated_Image_imz2vjimz2vjimz2_ptzms8.png"
     ],
     "category": "Clothing",
     "stock": 100,
@@ -111,7 +113,8 @@
     "promotionalPrice": 750,
     "discountPercentage": 11,
     "images": [
-      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811310/products/wtjfvrshx7ka6zzihixg.jpg"
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811310/products/wtjfvrshx7ka6zzihixg.jpg",
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1777734977/Gemini_Generated_Image_qxc5gqxc5gqxc5gq_x9cpcx.png"
     ],
     "category": "Clothing",
     "stock": 100,
@@ -163,7 +166,8 @@
     "promotionalPrice": 1999,
     "discountPercentage": 20,
     "images": [
-      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1771811310/products/wtjfvrshx7ka6zzihixg.jpg"
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1777733912/Gemini_Generated_Image_ok8qb7ok8qb7ok8q_rbzu5g.png",
+      "https://res.cloudinary.com/dawkbwkfd/image/upload/v1777734383/Gemini_Generated_Image_xlfw8uxlfw8uxlfw_dghphs.png"
     ],
     "category": "Clothing",
     "stock": 100,

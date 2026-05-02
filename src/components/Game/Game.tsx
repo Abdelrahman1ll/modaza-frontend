@@ -162,7 +162,7 @@ const Game = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-64 -left-2 md:-left-4 z-50 bg-(--color-tiger) text-white p-4 rounded-tr-full rounded-br-full shadow-[0_10px_40px_rgba(228,168,83,0.5)] flex items-center justify-center gap-2 group border-2 border-white pointer-events-auto"
+            className="fixed bottom-64 -left-3.5 z-50 bg-(--color-tiger) text-white p-2 rounded-tr-full rounded-br-full shadow-[0_10px_40px_rgba(228,168,83,0.5)] flex items-center justify-center gap-2 group border-2 border-white pointer-events-auto"
           >
             <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap text-sm font-black uppercase tracking-widest px-0 group-hover:px-2">
               Play & Win!
