@@ -366,8 +366,9 @@ export default function useCheckout() {
       setIsOrderCompleted(true);
       toast.success("Order placed successfully");
 
-      if (paymentMethod === "credit_card")
+      if (paymentMethod === "credit_card") {
         localStorage.removeItem("orderPaymentId");
+      }
 
       setTimeout(() => navigate("/orders"), 500);
 

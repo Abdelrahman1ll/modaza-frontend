@@ -115,8 +115,8 @@ export default function Checkout() {
           {/* LEFT COLUMN: SHIPPING & PAYMENT */}
           <div className="lg:col-span-7 space-y-8">
             {/* SECTION 1: SHIPPING ADDRESS */}
-            <motion.div 
-              variants={itemVariants} 
+            <motion.div
+              variants={itemVariants}
               className={`${cardClasses} ${isPaying ? "pointer-events-none opacity-60 transition-opacity duration-300" : ""}`}
             >
               <div className="flex items-center gap-3 mb-8">
@@ -218,9 +218,8 @@ export default function Checkout() {
                   <button
                     type="button"
                     disabled={isDetectingLocation}
-                    className={`${inputClasses} flex items-center justify-between text-left ${
-                      isDetectingLocation ? "opacity-50 cursor-wait" : ""
-                    }`}
+                    className={`${inputClasses} flex items-center justify-between text-left ${isDetectingLocation ? "opacity-50 cursor-wait" : ""
+                      }`}
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
                     <span
@@ -242,9 +241,8 @@ export default function Checkout() {
                     ) : (
                       <ChevronDown
                         size={18}
-                        className={`transition-transform duration-300 ${
-                          isDropdownOpen ? "rotate-180" : ""
-                        }`}
+                        className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""
+                          }`}
                       />
                     )}
                   </button>
@@ -288,11 +286,10 @@ export default function Checkout() {
                               <button
                                 key={gov}
                                 type="button"
-                                className={`w-full text-left px-4 py-3 rounded-xl transition-colors font-bold text-sm ${
-                                  state === gov
+                                className={`w-full text-left px-4 py-3 rounded-xl transition-colors font-bold text-sm ${state === gov
                                     ? "bg-(--color-tiger) text-white"
                                     : "hover:bg-(--color-tiger)/10 text-(--color-pakistan)"
-                                }`}
+                                  }`}
                                 onClick={() => {
                                   setState(gov);
                                   setIsDropdownOpen(false);
@@ -411,8 +408,8 @@ export default function Checkout() {
             </motion.div>
 
             {/* SECTION 2: PAYMENT METHOD */}
-            <motion.div 
-              variants={itemVariants} 
+            <motion.div
+              variants={itemVariants}
               className={`${cardClasses} ${isPaying ? "pointer-events-none opacity-60 transition-opacity duration-300" : ""}`}
             >
               <div className="flex items-center gap-3 mb-4 md:mb-8">
@@ -458,18 +455,16 @@ export default function Checkout() {
                       if (isPaying || data?.carts?.items.length === 0) return;
                       handleSelectMethod(m.id);
                     }}
-                    className={`relative flex items-center gap-4 p-5 rounded-3xl border-2 text-left transition-all duration-300 ${
-                      paymentMethod === m.id
+                    className={`relative flex items-center gap-4 p-5 rounded-3xl border-2 text-left transition-all duration-300 ${paymentMethod === m.id
                         ? "border-(--color-tiger) bg-(--color-tiger)/5"
                         : "border-white/40 bg-white/20 hover:border-white/80 hover:bg-white/40"
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`p-3 rounded-2xl transition-colors ${
-                        paymentMethod === m.id
+                      className={`p-3 rounded-2xl transition-colors ${paymentMethod === m.id
                           ? "bg-(--color-tiger) text-white shadow-lg shadow-(--color-tiger)/20"
                           : "bg-white/60 text-(--color-pakistan)"
-                      }`}
+                        }`}
                     >
                       {m.icon}
                     </div>
@@ -496,7 +491,7 @@ export default function Checkout() {
               {/* Conditional Info Sections (Wallet / InstaPay) */}
               <AnimatePresence mode="wait">
                 {openSection === "instaPay" ||
-                openSection === "vodafone_cash" ? (
+                  openSection === "vodafone_cash" ? (
                   <motion.div
                     key="wallet-info"
                     initial={{ opacity: 0, height: 0 }}
@@ -524,11 +519,10 @@ export default function Checkout() {
                           </a>
                           <button
                             onClick={handleCopyLink}
-                            className={`px-4 py-3 border-2 font-bold rounded-2xl transition-all text-sm flex items-center justify-center gap-2 ${
-                              isCopied
+                            className={`px-4 py-3 border-2 font-bold rounded-2xl transition-all text-sm flex items-center justify-center gap-2 ${isCopied
                                 ? "bg-green-500 border-green-500 text-white"
                                 : "bg-white/60 border-(--color-tiger) text-(--color-tiger) hover:bg-(--color-tiger) hover:text-white"
-                            }`}
+                              }`}
                           >
                             {isCopied ? (
                               <>
@@ -637,6 +631,56 @@ export default function Checkout() {
                   {errors.paymentMethod}
                 </div>
               )}
+
+              {/* Submit / Pay Button */}
+              <div className="pt-4 mt-2">
+                {paymentMethod === "credit_card" ? (
+                  <button
+                    disabled={!isCardValid || isPaying}
+                    onClick={() => {
+                      // ✅ تأكد إن الـ ref موجود الأول
+                      if (!payRef.current) {
+                        console.error("payRef is not set yet!");
+                        return;
+                      }
+
+                      setIsPaying(true);
+
+                      // ✅ استنى frame واحد عشان الـ state تتحدث قبل ما تضغط
+                      requestAnimationFrame(() => {
+                        payRef.current?.();
+                      });
+                    }}
+                    className="w-full py-5 rounded-3xl text-white font-black text-xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-70 transform active:scale-[0.98]"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+                    }}
+                  >
+                    {isPaying ? (
+                      <Loader2 className="animate-spin w-6 h-6 mx-auto" />
+                    ) : (
+                      <span>Pay EGP {(finalTotal || 0).toLocaleString()}</span>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handlePayment}
+                    disabled={orderLoading || data?.carts?.items.length === 0}
+                    className="w-full py-5 rounded-3xl text-white font-black text-xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-70 transform active:scale-[0.98]"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
+                    }}
+                  >
+                    {orderLoading ? (
+                      <Loader2 className="animate-spin w-6 h-6 mx-auto" />
+                    ) : (
+                      "Complete Order"
+                    )}
+                  </button>
+                )}
+              </div>
             </motion.div>
           </div>
 
@@ -724,9 +768,11 @@ export default function Checkout() {
               )}
 
               {/* Totals & Discounts Section */}
-              <div className="mt-10 pt-8 border-t border-white/60 space-y-6">
+              <div className="mt-5 pt-5 border-t border-white/60 space-y-4">
                 {/* Promo Code Input */}
-                <div className={`space-y-3 ${isPaying ? "pointer-events-none opacity-60 transition-opacity duration-300" : ""}`}>
+                <div
+                  className={`space-y-3 ${isPaying ? "pointer-events-none opacity-60 transition-opacity duration-300" : ""}`}
+                >
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <Tag
@@ -833,48 +879,6 @@ export default function Checkout() {
                       EGP {(finalTotal || 0).toLocaleString()}
                     </span>
                   </div>
-                </div>
-
-                {/* Submit / Pay Button */}
-                <div className="pt-4">
-                  {paymentMethod === "credit_card" ? (
-                    <button
-                      disabled={!isCardValid || isPaying}
-                      onClick={() => {
-                        setIsPaying(true);
-                        payRef.current?.();
-                      }}
-                      className="w-full py-5 rounded-3xl text-white font-black text-xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-70 transform active:scale-[0.98]"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
-                      }}
-                    >
-                      {isPaying ? (
-                        <Loader2 className="animate-spin w-6 h-6 mx-auto" />
-                      ) : (
-                        <span>
-                          Pay EGP {(finalTotal || 0).toLocaleString()}
-                        </span>
-                      )}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handlePayment}
-                      disabled={orderLoading || data?.carts?.items.length === 0}
-                      className="w-full py-5 rounded-3xl text-white font-black text-xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-70 transform active:scale-[0.98]"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, var(--color-tiger) 0%, var(--color-earth) 100%)",
-                      }}
-                    >
-                      {orderLoading ? (
-                        <Loader2 className="animate-spin w-6 h-6 mx-auto" />
-                      ) : (
-                        "Complete Order"
-                      )}
-                    </button>
-                  )}
                 </div>
               </div>
             </motion.div>

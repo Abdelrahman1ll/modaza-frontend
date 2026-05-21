@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // _setUser(null); 
 
       // --- Static Mock User (for GitHub Pages / No Backend) ---
-      if (import.meta.env.PROD || !import.meta.env.VITE_APP_API_URL || import.meta.env.VITE_APP_API_URL.includes("localhost:3000")) {
+      if (import.meta.env.PROD || !import.meta.env.VITE_APP_API_URL) {
         _setUser(getMockUser());
       } else {
         _setUser(null);

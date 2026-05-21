@@ -40,8 +40,7 @@ export const baseQueryWithReauth = async (
   // Intercept requests and return static data if we are in production or no API is set
   if (
     import.meta.env.PROD ||
-    !import.meta.env.VITE_APP_API_URL ||
-    import.meta.env.VITE_APP_API_URL.includes("localhost:3000")
+    !import.meta.env.VITE_APP_API_URL
   ) {
     // 1. Block Data Modification (POST, PUT, PATCH, DELETE)
     /* 
